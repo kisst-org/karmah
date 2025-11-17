@@ -3,7 +3,9 @@
 libdir=$(dirname $(dirname $(readlink -f ${BASH_SOURCE[0]})))/lib
 file="${1:-karmah}"
 
-for lib in $libdir/pre.bash $libdir/*/*.bash; do
+
+cat $libdir/pre.bash >"$file"
+for lib in  $libdir/*/*.bash; do
     echo adding $lib
     printf '\n#####################################\n# %s\n' $(basename $lib) >>"$file"
     cat $lib  >>"$file"
