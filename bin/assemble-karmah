@@ -1,13 +1,9 @@
 #!/bin/env bash
 
-dir=$(dirname $(dirname $(readlink -f ${BASH_SOURCE[0]})))
-
+libdir=$(dirname $(dirname $(readlink -f ${BASH_SOURCE[0]})))/lib
 file="${1:-karmah}"
-sed -e '/^main "${@}"/d' \
-    -e '/^[ ]*source_files_from_lib$/d' \
-    -e '/^source_files_from_lib() {/,/^}$/d' \
-    "$dir"/main-karmah >"$file"
-for lib in "$dir"/lib/*.lib; do
+
+for lib in $libdir/pre.bash $libdir/*/*.bash; do
     echo adding $lib
     printf '\n#####################################\n# %s\n' $(basename $lib) >>"$file"
     cat $lib  >>"$file"

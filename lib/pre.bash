@@ -11,17 +11,7 @@ set -eu
 shopt -s extglob
 script_name="${0}"
 
-source_files_from_lib() {
-    dir=$(dirname $(readlink -f ${BASH_SOURCE[0]}))/lib
-    if ${load_modules_from_lib:-true}; then
-        for file in $dir/*/*.bash; do
-            source $file
-        done
-    fi
-}
-
 main() {
-    source_files_from_lib
     init_argparse
     init_logging "${@}"
     init_all_modules
@@ -29,5 +19,3 @@ main() {
     parse_options "${@}"
     $command
 }
-
-main "${@}"
