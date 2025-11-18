@@ -2,7 +2,7 @@
 init_bash_module_render() {
     add_action render "render manifests to --to <path> (default tmp/manifests)"
     add_action compare "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
-    global_vars+=" renderer output_dir"
+    global_vars+=" renderer output_dir already_rendered"
     declare -g to_dir
     add_option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
     add_option t to       path  "other path to render to (default is tmp/manifests)"
@@ -13,7 +13,14 @@ parse_option_subdir()    { subdirs+=" $2"; parse_result=2; }
 parse_option_to()        { to_dir="$2"; parse_result=2; }
 parse_option_with()      { with_dir="$2"; parse_result=2; }
 
-
+render_manifests() {
+    if  ${already_rendered:-false}; then
+        debug allready rendered manifests
+    else
+        already_rendered=true
+        run_action_render
+    fi
+}
 run_action_render() {
     run_action_update
     info rendering ${target} with ${renderer} to ${output_dir}
@@ -22,6 +29,7 @@ run_action_render() {
     for r in ${renderer//,/ }; do
         render_$r
     done
+    already_rendered=true
  }
 
 run_action_compare() {
