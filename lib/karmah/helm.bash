@@ -2,7 +2,7 @@
 init_bash_module_helm() {
     use_module render
     add_action helm-install "run helm-install"
-    global_vars+=" helm_template_command helm_value_files helm_charts helm_install_command helm_atomic_wait"
+    global_vars+=" helm_template_command helm_value_files helm_charts helm_install_command helm_atomic_wait helm_release"
     global_arrays+="helm_update_version_path helm_update_replicas_path"
 }
 
@@ -27,7 +27,7 @@ calc_helm_command() {
     shift
     local cmd=$@
     local f
-    local helm_release=$(basename $target)
+    : ${helm_release:=$(basename $target)}
     for f in ${helm_value_files[@]}; do
         cmd+=" -f ${f}";
     done
@@ -57,7 +57,7 @@ run_helm_forall_charts() {
 
 run_action_helm-install() {
     : ${helm_atomic_wait:=--wait --atomic --timeout 4m}
-    local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace"
+    local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
 }
 
@@ -88,4 +88,15 @@ update_replicas_helm() {
         verbose updating $res replicas to $repl
         verbose_cmd yq -i "${helm_update_replicas_path[$res]}=\"$repl\"" $val_file
     done
+}
+
+helm_cluster_options() {
+    local cl=${kube_cluster}
+    local cfg=${kube_config_map[$cl]:-default}
+    local opt=""
+    if [[ $cfg != default ]]; then
+        opt="--kubeconfig $cfg " # extra space at end
+    fi
+    opt+=" --kube-context ${kube_context_map[$cl]}"
+    echo $opt
 }
