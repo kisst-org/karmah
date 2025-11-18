@@ -2,7 +2,13 @@
 init_bash_module_helm() {
     use_module render
     add_action helm-install "run helm-install"
-    global_vars+=" helm_template_command helm_value_files helm_charts helm_install_command helm_atomic_wait helm_release"
+    global_vars+=" helm_template_command"
+    global_vars+=" helm_value_files"
+    global_vars+=" helm_charts"
+    global_vars+=" helm_install_command"
+    global_vars+=" helm_atomic_wait"
+    global_vars+=" helm_release"
+    global_vars+=" helm_wait_timeout"
     global_arrays+="helm_update_version_path helm_update_replicas_path"
 }
 
@@ -56,7 +62,7 @@ run_helm_forall_charts() {
 }
 
 run_action_helm-install() {
-    : ${helm_atomic_wait:=--wait --atomic --timeout 4m}
+    : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
 }
