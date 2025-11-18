@@ -19,10 +19,12 @@ run_action_git-pull() {
 
 run_action_git-diff() {
     info git-diff ${target} to ${output_dir}
-    if $(log_is_verbose); then
+    if $(log_is_debug); then
         verbose_cmd git diff -- ${used_files} ${output_dir} || true
-    else
+    elif $(log_is_verbose); then
         verbose_cmd git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
+    else
+        verbose_cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
     fi
 }
 
