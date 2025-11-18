@@ -32,7 +32,7 @@ kubectl_options() {
 
 filter-kube-diff-output() { grep -E '^[+-] |^---'; }
 run_action_kube-diff() {
-    run_action_render
+    render_manifests
     info kube-diff ${target} to ${output_dir}
     if $(log_is_verbose); then
         verbose_cmd kubectl diff $(kubectl_options) -f $output_dir || true
@@ -42,6 +42,7 @@ run_action_kube-diff() {
 }
 
 run_action_kube-apply() {
+    render_manifests
     run_action_kube-diff
     info kube apply $output_dir
     verbose_cmd kubectl apply $(kubectl_options) -f $output_dir

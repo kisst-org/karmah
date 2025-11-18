@@ -17,12 +17,12 @@ kapp_options() {
 }
 
 run_action_kapp-diff() {
-    run_action_render
+    render_manifests
     verbose_cmd kapp deploy $(kapp_options) --diff-run --diff-changes
 }
 
 run_action_kapp-plan() {
-    run_action_render
+    render_manifests
     verbose_cmd kapp deploy $(kapp_options) --diff-run
 }
 
