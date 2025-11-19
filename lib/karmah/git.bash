@@ -41,5 +41,9 @@ run_action_git-status() {
 run_action_git-commit() {
     run_action_git-add
     : ${git_commit_message:=${action} of ${target}}
-    verbose_cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
+    if git diff-index --quiet HEAD; then
+        verbose Nothing added to commit
+    else
+        verbose_cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
+    fi
 }
