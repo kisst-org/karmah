@@ -1,6 +1,5 @@
 
-init_bash_module_helm() {
-    use_module render
+init_climah_module_helm() {
     add_action helm-install "run helm upgrade --install for target"
     add_action helm-uninstall "run helm uninstall for target"
     global_vars+=" helm_template_command"

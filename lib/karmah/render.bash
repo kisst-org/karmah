@@ -1,5 +1,5 @@
 
-init_bash_module_render() {
+init_climah_module_render() {
     add_action render "render manifests to --to <path> (default tmp/manifests)"
     add_action compare "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
     global_vars+=" renderer output_dir already_rendered"

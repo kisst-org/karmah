@@ -1,5 +1,5 @@
 
-init_bash_module_deploy() {
+init_climah_module_deploy() {
     add_action ask "ask for confirmation (unless --yes is specified)"
     add_action deploy "render to deployed/manifests and optionally deploy to kubernetes"
     add_action plan   "show what deploy action would do"

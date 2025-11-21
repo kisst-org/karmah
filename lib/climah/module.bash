@@ -17,7 +17,7 @@ use_module() {
     local module="$1"
     if ${module_needs_init["${module}"]:-true}; then
         debug running init module for "${module}"
-        init_bash_module_${module}
+        init_climah_module_${module}
         module_needs_init["${module}"]=false
     fi
 }
@@ -26,8 +26,16 @@ init_all_modules() {
     declare -g modules=""
     declare -gA module_needs_init=()
     declare -gA module_files=()
-    use_module logging
-    modules=$(set | grep '^init_bash_module_'| sed -e 's/init_bash_module_//' -e 's/ *()//')
+
+    local func m
+    # first declare any variables that might be used in other modules
+    local var_funcs=$(set | grep '^init_climah_vars_')
+    for func in $var_funcs; do
+        ${func##()}
+    done
+
+    # Then load modules, that may need variable from other modules
+    modules=$(set | grep '^init_climah_module_'| sed -e 's/init_climah_module_//' -e 's/ *()//')
     for m in $modules; do
         use_module $m
     done

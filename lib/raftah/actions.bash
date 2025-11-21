@@ -1,10 +1,13 @@
 # run actions for all targets
 
-init_bash_module_actions() {
-    add_command "forall" "run actions for all targets"
-    command=run_command_forall
+init_climah_vars_actions() {
     declare -g global_vars="karmah_type target"
     declare -g global_arrays=""
+}
+
+init_climah_module_actions() {
+    add_command "forall" "run actions for all targets"
+    command=run_command_forall
 }
 
 

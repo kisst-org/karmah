@@ -1,5 +1,5 @@
 
-init_argparse() {
+init_climah_vars_argparse() {
     declare -gA aliases=()
     declare -ga parsed_args=()
 

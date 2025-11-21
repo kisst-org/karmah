@@ -1,12 +1,12 @@
 
-init_bash_module_git() {
-    use_module render
-    declare -g used_files=""
+init_climah_vars_git() {
     declare -g git_pulled=false
+}
+
+init_climah_module_git() {
     add_action git-diff "shows the changes to source and rendered manifests with git"
     add_action git-add "adds the changes to source and rendered manifests to git, for committing"
     add_action git-commit "commits the changes to source and rendered manifests to git"
-
     add_option m message  msg   set message to us with git commit
     global_vars+=" used_files"  # TODO: git_commit_message
 }

@@ -1,4 +1,5 @@
 
+# This function is called before anything else, to immediately make logging work
 init_logging() {
     declare -gi log_level_fatal=0
     declare -gi log_level_error=10
@@ -11,7 +12,7 @@ init_logging() {
     parse_loglevel "$@"
 }
 
-init_bash_module_logging() {
+init_climah_module_logging() {
     use_module help
     add_option v verbose  ""    give more output
     add_option C show-cmd ""    show the commands being executed

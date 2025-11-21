@@ -1,5 +1,5 @@
 
-init_bash_module_update() {
+init_climah_module_update() {
     add_action update "update source files with expressions from --update"
     add_option V version ver  "specify version (tag) to use for update or scale"
 

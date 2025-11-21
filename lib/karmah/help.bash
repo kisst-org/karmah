@@ -1,5 +1,5 @@
 
-init_bash_module_help() {
+init_climah_module_help() {
     add_command aliases "show all defined aliases"
     add_command version "show version of karmah"
     add_option h help "" "show help information"
