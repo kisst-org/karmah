@@ -13,7 +13,6 @@ init_logging() {
 }
 
 init_climah_module_logging() {
-    use_module help
     add_option v verbose  ""    give more output
     add_option C show-cmd ""    show the commands being executed
     add_option q quiet    ""    show no output

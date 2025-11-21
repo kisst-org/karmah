@@ -1,5 +1,4 @@
 init_climah_module_kube() {
-    use_module render
     declare -Ag kube_config_map
     declare -Ag kube_context_map
     #declare -g kube_resource_list
