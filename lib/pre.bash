@@ -11,11 +11,4 @@ set -eu
 shopt -s extglob
 script_name="${0}"
 
-main() {
-    init_argparse
-    init_logging "${@}"
-    init_all_modules
-    read_config
-    parse_options "${@}"
-    $command
-}
+main() { climah_main "${@}"; }
