@@ -33,3 +33,8 @@ run_action_kapp-deploy() {
     fi
     verbose_cmd kapp deploy $(kapp_options)
 }
+
+run_action_kapp-delete() {
+    run_action_render # render manifests to be deleted
+    verbose_cmd kapp delete $(kapp_options)
+}

@@ -6,6 +6,7 @@ init_bash_module_kube() {
     #declare -g kube_resource_list
     add_action kube-get "get current manifests from cluster to --to <path> (default) deployed/manifests"
     add_action kube-apply "apply rendered manifests with cluster (kubectl apply)"
+    add_action kube-delete "delete all manifests from cluster (kubectl delete)"
     add_action kube-diff "compare rendered manifests with cluster (kubectl diff)"
     add_action kube-tmp-scale "scale resource(s) without changing source or deployment files"
     add_action kube-restart "restart resource(s)"
@@ -47,6 +48,14 @@ run_action_kube-apply() {
     info kube apply $output_dir
     verbose_cmd kubectl apply $(kubectl_options) -f $output_dir
 }
+
+run_action_kube-delete() {
+    render_manifests # render manifests to be deleted
+    run_action_kube-diff
+    info kube delete $output_dir
+    verbose_cmd kubectl delete $(kubectl_options) -f $output_dir
+}
+
 
 run_action_kubectl() {
     info kubectl $output_dir

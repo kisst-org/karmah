@@ -21,6 +21,7 @@ render_manifests() {
         run_action_render
     fi
 }
+
 run_action_render() {
     run_action_update
     info rendering ${target} with ${renderer} to ${output_dir}
@@ -30,7 +31,14 @@ run_action_render() {
         render_$r
     done
     already_rendered=true
- }
+}
+
+run_action_render-rm() {
+    run_action_update
+    info removing  ${target} manifests in ${output_dir}
+    verbose_cmd rm -rf ${output_dir}
+}
+
 
 run_action_compare() {
     run_action_render

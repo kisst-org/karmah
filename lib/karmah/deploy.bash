@@ -31,6 +31,7 @@ run_action_deploy() {
     local actions=${deploy_actions:-render,git-diff,ask,git-commit}
     info deploying ${output_dir} with actions: ${actions}
     # TODO: output_dir is different for actions before this action
+    # should be first (only) action
     run_actions $actions
 }
 
@@ -38,5 +39,12 @@ run_action_plan() {
     output_dir="${to_dir:-deployed/manifests}/${target}"
     local actions=${plan_actions:-render,git-diff}
     info planning deploy ${output_dir} with actions: ${actions}
+    run_actions $actions
+}
+
+run_action_undeploy() {
+    output_dir="${to_dir:-deployed/manifests}/${target}"
+    local actions=${undeploy_actions:-render-rm,git-diff,ask,git-commit}
+    info undeploying ${output_dir} with actions: ${actions}
     run_actions $actions
 }
