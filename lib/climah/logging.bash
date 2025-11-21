@@ -18,7 +18,6 @@ init_bash_module_logging() {
     add_option q quiet    ""    show no output
     add_option n dry-run  ""    do not execute the actual commands
     add_option "" debug   ""    show detailded debug info
-    aliases[plan]="--quiet --dry-run --show-cmd"
 }
 
 # TODO -vv

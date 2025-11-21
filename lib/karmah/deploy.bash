@@ -2,6 +2,7 @@
 init_bash_module_deploy() {
     add_action ask "ask for confirmation (unless --yes is specified)"
     add_action deploy "render to deployed/manifests and optionally deploy to kubernetes"
+    add_action plan   "show what deploy action would do"
     add_option a action act  add action to list of actions to perform
     add_option y yes    ""   do not ask for confirmatopm
     yes_arg=""
@@ -30,5 +31,12 @@ run_action_deploy() {
     local actions=${deploy_actions:-render,git-diff,ask,git-commit}
     info deploying ${output_dir} with actions: ${actions}
     # TODO: output_dir is different for actions before this action
+    run_actions $actions
+}
+
+run_action_plan() {
+    output_dir="${to_dir:-deployed/manifests}/${target}"
+    local actions=${plan_actions:-render,git-diff}
+    info planning deploy ${output_dir} with actions: ${actions}
     run_actions $actions
 }
