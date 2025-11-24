@@ -2,16 +2,19 @@
 init_climah_module_update() {
     add_action update "update source files with expressions from --update"
     add_option V version ver  "specify version (tag) to use for update or scale"
+    add_option u update expr  "apply a custom update"
 
-    global_vars+=" update_version_function update_replicas_function"
+    declare -ga updates=()
+
+    global_vars+=" update_version_function update_replicas_function custom_update_function"
     aliases[tmp-stop]="--action kube-tmp-scale --replicas 0"
     aliases[tmp-start]="--action kube-tmp-scale --replicas default"
     aliases[stop]="--action deploy --replicas 0"
     aliases[start]="--action deploy --replicas default"
 }
 
-parse_option_version()   { update_version="$2"; parse_result=2; }
-
+parse_option_version()  { update_version="$2"; parse_result=2; }
+parse_option_update()   { updates+=("$2"); parse_result=2; }
 
 run_action_update() {
     local any_updates=false
@@ -27,6 +30,18 @@ run_action_update() {
         any_updates=true
         add_message "replicas ${kube_replicas}"
     fi
+    local u
+    for u in "${updates[@]}"; do
+        if [[ -z ${custom_update_function:-} ]]; then
+            error no update function defined for update $u
+            exit 1
+        else
+            verbose custom update function $custom_update_function
+            $custom_update_function "$u"
+            add_message "update ${u}"
+        fi
+    done
+
     $any_updates || verbose no updates detected
 }
 

@@ -81,6 +81,15 @@ render_helm() {
     run_helm_forall_charts "verbose_pipe split_into_files" ${helm_template_command:-$default_cmd}
 }
 
+update_helm_value_path() {
+    local path="$1"
+    local value="$2"
+    local val_file=($karmah_dir/values*.yaml)
+    verbose updating $path to \"$value\"
+    verbose_cmd yq -i $path=$value $val_file
+}
+
+
 update_version_helm() {
     local res
     local val_file=($karmah_dir/values*.yaml)
