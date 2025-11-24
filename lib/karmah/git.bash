@@ -7,6 +7,7 @@ init_climah_module_git() {
     add_action git-diff "shows the changes to source and rendered manifests with git"
     add_action git-add "adds the changes to source and rendered manifests to git, for committing"
     add_action git-commit "commits the changes to source and rendered manifests to git"
+    add_action git-restore "restores the changed files (source and rendered manifests)"
     add_option m message  msg   set fixed message to use with git commit
     add_option M prepend-message  msg   prepend commit message before auto generated message
     global_vars+=" used_files git_commit_message"
@@ -44,6 +45,10 @@ run_action_git-diff() {
 run_action_git-add() {
     info git-add ${target} to ${output_dir}
     verbose_cmd git add ${used_files} ${output_dir}
+}
+run_action_git-restore() {
+    info git-restore ${used_files} ${output_dir}
+    verbose_cmd git restore ${used_files} ${output_dir}
 }
 
 run_action_git-status() {
