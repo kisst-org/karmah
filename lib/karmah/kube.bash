@@ -8,6 +8,7 @@ init_climah_module_kube() {
     add_action kube-diff "compare rendered manifests with cluster (kubectl diff)"
     add_action kube-tmp-scale "scale resource(s) without changing source or deployment files"
     add_action kube-restart "restart resource(s)"
+    add_action kube-watch "watch target resources every 2 seconds"
     add_action kubectl --collect "generic kubectl in the right cluster and namespace of all targets"
     add_option R replicas nr  "specify number of replicas"
     global_vars+=" kube_cluster namespace"
