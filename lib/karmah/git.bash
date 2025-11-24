@@ -63,7 +63,7 @@ run_action_git-commit() {
     fi
     : ${git_commit_message:=${action} of ${target}}
     if git diff-index --quiet HEAD; then
-        verbose Nothing added to commit
+        verbose Nothing added to commit for message: "${git_commit_message}"
     else
         verbose_cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
     fi
