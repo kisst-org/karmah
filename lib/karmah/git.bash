@@ -49,6 +49,7 @@ run_action_git-add() {
 run_action_git-restore() {
     info git-restore ${used_files} ${output_dir}
     verbose_cmd git restore ${used_files} ${output_dir}
+    verbose_cmd git clean --force ${output_dir}  # remove any files that were not there initially
 }
 
 run_action_git-status() {
