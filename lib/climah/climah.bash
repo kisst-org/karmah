@@ -14,7 +14,12 @@ climah_init() {
     init_logging "${@}"
     init_all_modules
     read_config
-    parse_options "${@}"
+    if [[ $# == 0 ]]; then
+        printf "no arguments passed, pass at least one path or command\n\n"
+        show_short_help
+    else
+        parse_options "${@}"
+    fi
 }
 
 
