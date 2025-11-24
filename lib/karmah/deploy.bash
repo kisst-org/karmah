@@ -30,6 +30,7 @@ run_action_deploy() {
     output_dir="${to_dir:-deployed/manifests}/${target}"
     local actions=${deploy_actions:-render,git-diff,ask,git-commit}
     info deploying ${output_dir} with actions: ${actions}
+    add_message "deploy $target"
     # TODO: output_dir is different for actions before this action
     # should be first (only) action
     run_actions $actions

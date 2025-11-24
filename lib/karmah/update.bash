@@ -19,11 +19,13 @@ run_action_update() {
         #info update $target version to $update_version
         ${update_version_function:-default_update_version}
         any_updates=true
+        add_message "version ${update_version}"
     fi
     if [[ ! -z ${kube_replicas:-} ]]; then
         #info update $target replicas to $kube_replicas
         ${update_replicas_function:-default_update_replicas}
         any_updates=true
+        add_message "replicas ${kube_replicas}"
     fi
     $any_updates || verbose no updates detected
 }
