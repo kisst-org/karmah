@@ -47,9 +47,16 @@ run_action_git-add() {
     verbose_cmd git add ${used_files} ${output_dir}
 }
 run_action_git-restore() {
-    info git-restore ${used_files} ${output_dir}
-    verbose_cmd git restore ${used_files} ${output_dir}
-    verbose_cmd git clean --force ${output_dir}  # remove any files that were not there initially
+    # TODO: find better way to determine if path is tracked
+    if [[ $output_dir == tmp/* ]]; then
+        # git restore gives pathspec error on untracked paths
+        info git-restore ${used_files}
+        verbose_cmd git restore ${used_files}
+    else
+        info git-restore ${used_files} ${output_dir}
+        verbose_cmd git restore ${used_files} ${output_dir}
+        verbose_cmd git clean --force ${output_dir}  # remove any files that were not there initially
+    fi
 }
 
 run_action_git-status() {
