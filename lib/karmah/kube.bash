@@ -102,7 +102,9 @@ run_action_kube-restart() {
 run_action_kube-tmp-scale() {
     local res
     for res in $(calc_resource_names); do
-        verbose_cmd kubectl $(kubectl_options) -n $namespace scale $res --replicas $(calc_kube_replicas $res)
+        local repl=$(calc_kube_replicas $res)
+        res=${kube_resource_alias[$res]:-$res}
+        verbose_cmd kubectl $(kubectl_options) -n $namespace scale $res --replicas ${repl}
     done
 }
 
