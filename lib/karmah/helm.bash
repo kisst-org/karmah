@@ -51,7 +51,9 @@ run_helm_forall_charts() {
         local chart=${ch//@*}
         if [[ $ch == $chart ]]; then
             local helm_cmd=$(calc_helm_command $chart ${base_cmd})
-            used_files+=" $ch"
+            # TODO: used_files+=" $ch"
+            # This does not work nicely with git-restore, when testing a template
+            # better issur a warning if a helm chart is modified when commiting
             $run_cmd "$helm_cmd"
         else
             local helm_cmd=$(calc_helm_command $chart $base_cmd})
