@@ -6,6 +6,7 @@ init_climah_module_kube() {
     add_action kube-apply "apply rendered manifests with cluster (kubectl apply)"
     add_action kube-delete "delete all manifests from cluster (kubectl delete)"
     add_action kube-diff "compare rendered manifests with cluster (kubectl diff)"
+    add_action kube-diff-delete "show resources that will be deleted with kube-delete"
     add_action kube-tmp-scale "scale resource(s) without changing source or deployment files"
     add_action kube-restart "restart resource(s)"
     add_action kube-watch "watch target resources every 2 seconds"
@@ -39,6 +40,12 @@ run_action_kube-diff() {
     else
         verbose_pipe filter-kube-diff-output kubectl diff $(kubectl_options) -f $output_dir || true
     fi
+}
+
+run_action_kube-diff-delete() {
+    render_manifests
+    info kube-diff-delete all resources ${target} from ${output_dir}
+    verbose_cmd ls -l $output_dir
 }
 
 run_action_kube-apply() {
