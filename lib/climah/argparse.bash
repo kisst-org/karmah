@@ -5,9 +5,6 @@ init_climah_vars_argparse() {
 
     declare -g karmah_paths=""
     declare -g subdirs=""
-    declare -ga action_help=()
-    declare -ga command_help=()
-    declare -ga option_help=()
 
     declare -gA parse_arg_func=()
     declare -g action_list=""

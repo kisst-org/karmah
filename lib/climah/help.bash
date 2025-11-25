@@ -1,3 +1,8 @@
+init_climah_vars_help() {
+    declare -ga action_help=()
+    declare -ga command_help=()
+    declare -ga option_help=()
+}
 
 init_climah_module_help() {
     add_command aliases "show all defined aliases"
