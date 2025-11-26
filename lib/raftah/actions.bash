@@ -11,7 +11,7 @@ init_climah_vars_actions() {
 }
 
 init_climah_module_actions() {
-    add_command "forall" "run actions for all targets"
+    #add_command "forall" "run actions for all targets"
     command=render
     help_level=expert
     add_option a action act  add action to list of actions to perform
@@ -38,8 +38,9 @@ add-flow-command() {
     local short=$1
     local name=$2
     action_list=$3
+    local help=${4:-${action_help[$name]:-no help}}
     shift 3
-    add-command "$short" $name run_command_forall $@
+    add-command "$short" $name run_command_forall $help $@
 }
 
 

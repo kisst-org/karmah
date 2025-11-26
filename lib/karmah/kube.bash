@@ -2,11 +2,14 @@ init_climah_module_kube() {
     declare -Ag kube_config_map
     declare -Ag kube_context_map
     #declare -g kube_resource_list
+
+    add_action kube-diff "compare rendered manifests with cluster (kubectl diff)"
+    add-flow-command kd kube-diff update,render,kube-diff
+
     help_level=expert
     add_action kube-get "get current manifests from cluster to --to <path> (default) deployed/manifests"
     add_action kube-apply "apply rendered manifests with cluster (kubectl apply)"
     add_action kube-delete "delete all manifests from cluster (kubectl delete)"
-    add_action kube-diff "compare rendered manifests with cluster (kubectl diff)"
     add_action kube-diff-delete "show resources that will be deleted with kube-delete"
     add_action kube-tmp-scale "scale resource(s) without changing source or deployment files"
     add_action kube-restart "restart resource(s)"

@@ -28,11 +28,11 @@ add-command() {
     local short=$1
     local name=$2
     local func=${3:-run-command-$name}
-    shift 2
+    shift 3
     local help=$@
     command_function[$name]=$func
     command_help[$name]="${help:-${action_help[$name]:-}}"
-    add_help_text command "$(printf "\n  %-20s %s" "$name" "$help")"
+    add_help_text command "$(printf "\n  %-13s %s" "$name" "$help")"
 }
 
 

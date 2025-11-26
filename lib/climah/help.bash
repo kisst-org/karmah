@@ -57,6 +57,9 @@ show_short_help() {
     for h in "${help_text[option,expert]}"; do printf "%s\n" "$h"; done
   fi
 
+  echo -n Commands:
+  for h in "${help_text[command,basic]}"; do printf "%s\n" "$h"; done
+
   echo -n Actions:
   for h in "${help_text[action,basic]}"; do printf "%s\n" "$h"; done
   if $(log_is_verbose); then
