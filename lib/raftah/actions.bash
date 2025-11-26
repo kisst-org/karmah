@@ -6,14 +6,44 @@ init_climah_vars_actions() {
     declare -g karmah_paths=""
     declare -g subdirs=""
     declare -g action_list=""
+    declare -gA action_help=()
+    declare -gA command_help=()
 }
 
 init_climah_module_actions() {
     add_command "forall" "run actions for all targets"
-    command=run_command_forall
+    command=render
     help_level=expert
     add_option a action act  add action to list of actions to perform
 }
+
+
+parse_append_action() { action_list+=$1;  }
+parse_append_action_with_args() { action_list+=$1; collect_unknown_args=true; }
+add_action() {
+    local name=$1
+    shift 1
+    if [[ ${1:-} == --collect ]]; then
+        shift
+        parse_arg_func[$name]=parse_append_action_with_args
+    else
+        parse_arg_func[$name]=parse_append_action
+    fi
+    local help="$@"
+    add_help_text action "$(printf "\n  %-13s %s" "$name" "$help")"
+    action_help[$name]=$help
+}
+
+add-flow-command() {
+    local short=$1
+    local name=$2
+    action_list=$3
+    shift 3
+    local help=$@
+    command_function[$name]="run_command_forall"
+    command_help[$name]="${help:-${action_help[$name]:-}}"
+}
+
 
 
 run_command_forall() {

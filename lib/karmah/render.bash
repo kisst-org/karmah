@@ -1,6 +1,7 @@
 
 init_climah_module_render() {
     add_action render "render manifests to --to <path> (default tmp/manifests)"
+    add-flow-command "" render update,render
     global_vars+=" renderer output_dir already_rendered"
     declare -g to_dir
     help_level=expert

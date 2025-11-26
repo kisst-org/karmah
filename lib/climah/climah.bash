@@ -25,5 +25,5 @@ climah_init() {
 
 climah_main() {
     climah_init "${@}"
-    $command
+    ${command_function[$command]}
 }

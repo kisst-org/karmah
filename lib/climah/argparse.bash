@@ -4,6 +4,7 @@ init_climah_vars_argparse() {
     declare -ga parsed_args=()
     declare -gA parse_arg_func=()
     declare -g command
+    declare -gA command_function=()
 }
 
 add_option() {
@@ -30,21 +31,6 @@ add_command() {
     local help=$@
     parse_arg_func[$name]=parse_set_command
     add_help_text command "$(printf "\n  %-13s %s" "$name" "$help")"
-}
-
-parse_append_action() { action_list+=$1;  }
-parse_append_action_with_args() { action_list+=$1; collect_unknown_args=true; }
-add_action() {
-    local name=$1
-    shift 1
-    if [[ ${1:-} == --collect ]]; then
-        shift
-        parse_arg_func[$name]=parse_append_action_with_args
-    else
-        parse_arg_func[$name]=parse_append_action
-    fi
-    local help="$@"
-    add_help_text action "$(printf "\n  %-13s %s" "$name" "$help")"
 }
 
 parse_arg() {
