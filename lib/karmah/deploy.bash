@@ -2,6 +2,8 @@
 init_climah_module_deploy() {
     add_action deploy "render to deployed/manifests and optionally deploy to kubernetes"
     add_action plan   "show what deploy action would do"
+    add-command "" deploy
+    add-command "" plan
     help_level=expert
     add_action ask "ask for confirmation (unless --yes is specified)"
     add_option y yes    ""   do not ask for confirmatopm

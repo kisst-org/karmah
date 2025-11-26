@@ -39,9 +39,7 @@ add-flow-command() {
     local name=$2
     action_list=$3
     shift 3
-    local help=$@
-    command_function[$name]="run_command_forall"
-    command_help[$name]="${help:-${action_help[$name]:-}}"
+    add-command "$short" $name run_command_forall $@
 }
 
 

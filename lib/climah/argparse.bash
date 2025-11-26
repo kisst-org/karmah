@@ -24,6 +24,18 @@ add_option() {
     add_help_text option "$(printf "\n  %-20s %s" "$name" "$help")"
 }
 
+add-command() {
+    local short=$1
+    local name=$2
+    local func=${3:-run-command-$name}
+    shift 2
+    local help=$@
+    command_function[$name]=$func
+    command_help[$name]="${help:-${action_help[$name]:-}}"
+    add_help_text command "$(printf "\n  %-20s %s" "$name" "$help")"
+}
+
+
 parse_set_command() { command=run_command_$1; }
 add_command() {
     local name=$1
