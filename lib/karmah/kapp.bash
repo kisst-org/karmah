@@ -1,5 +1,6 @@
 
 init_climah_module_kapp() {
+    help_level=expert
     add_action kapp-plan "show what resources will be updated"
     add_action kapp-diff "show what resources will be updated, including detailed diffs"
     add_action kapp-deploy "deploy the application with kapp"

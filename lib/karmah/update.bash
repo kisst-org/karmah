@@ -1,6 +1,7 @@
 
 init_climah_module_update() {
     add_action update "update source files with expressions from --update"
+    help_level=expert
     add_option V version ver  "specify version (tag) to use for update or scale"
     add_option u update expr  "apply a custom update"
 

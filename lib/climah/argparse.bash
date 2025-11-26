@@ -25,7 +25,7 @@ add_option() {
         name="-$short|--$name"
     fi
     [[ -z $arg ]] || name+=" <$arg>"
-    option_help+="$(printf "\n  %-20s %s" "$name" "$help")"
+    add_help_text option "$(printf "\n  %-20s %s" "$name" "$help")"
 }
 
 parse_set_command() { command=run_command_$1; }
@@ -34,7 +34,7 @@ add_command() {
     shift 1
     local help=$@
     parse_arg_func[$name]=parse_set_command
-    command_help+="$(printf "\n  %-13s %s" "$name" "$help")"
+    add_help_text command "$(printf "\n  %-13s %s" "$name" "$help")"
 }
 
 parse_append_action() { action_list+=$1;  }
@@ -49,7 +49,7 @@ add_action() {
         parse_arg_func[$name]=parse_append_action
     fi
     local help="$@"
-    action_help+="$(printf "\n  %-13s %s" "$name" "$help")"
+    add_help_text action "$(printf "\n  %-13s %s" "$name" "$help")"
 }
 
 parse_arg() {

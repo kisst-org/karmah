@@ -2,6 +2,7 @@ init_climah_module_kube() {
     declare -Ag kube_config_map
     declare -Ag kube_context_map
     #declare -g kube_resource_list
+    help_level=expert
     add_action kube-get "get current manifests from cluster to --to <path> (default) deployed/manifests"
     add_action kube-apply "apply rendered manifests with cluster (kubectl apply)"
     add_action kube-delete "delete all manifests from cluster (kubectl delete)"

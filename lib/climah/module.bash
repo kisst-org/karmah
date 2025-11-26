@@ -37,6 +37,7 @@ init_all_modules() {
     # Then load modules, that may need variable from other modules
     modules=$(set | grep '^init_climah_module_'| sed -e 's/init_climah_module_//' -e 's/ *()//')
     for m in $modules; do
+        help_level=basic
         use_module $m
     done
 }

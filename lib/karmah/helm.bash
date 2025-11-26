@@ -1,5 +1,6 @@
 
 init_climah_module_helm() {
+    help_level=expert
     add_action helm-install "run helm upgrade --install for target"
     add_action helm-uninstall "run helm uninstall for target"
     add_option K force-helm-chart  chart   force to use a specific helm chart

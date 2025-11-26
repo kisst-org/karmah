@@ -4,6 +4,7 @@ init_climah_vars_git() {
 }
 
 init_climah_module_git() {
+    help_level=expert
     add_action git-diff "shows the changes to source and rendered manifests with git"
     add_action git-add "adds the changes to source and rendered manifests to git, for committing"
     add_action git-commit "commits the changes to source and rendered manifests to git"

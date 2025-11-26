@@ -2,6 +2,8 @@ init_climah_vars_help() {
     declare -g action_help=""
     declare -g command_help=""
     declare -g option_help=""
+    declare -gA help_text=()
+    declare -g help_level=basic
 }
 
 init_climah_module_help() {
@@ -11,6 +13,12 @@ init_climah_module_help() {
 }
 
 parse_option_help() { show_help; exit; }
+
+add_help_text() {
+  local section=$1
+  shift
+  help_text[$section,$help_level]+="${@}"
+}
 
 show_help() {
 cat <<EOF
@@ -42,11 +50,23 @@ EOF
 }
 
 show_short_help() {
-echo -n Options:
-for h in "${option_help[@]}"; do printf "%s\n" "$h"; done
+  echo -n Options:
+  for h in "${help_text[option,basic]}"; do printf "%s\n" "$h"; done
+  if $(log_is_verbose); then
+    echo -n "expert options:"
+    for h in "${help_text[option,expert]}"; do printf "%s\n" "$h"; done
+  fi
 
-echo -n Actions:
-for h in "${action_help[@]}"; do printf "%s\n" "$h"; done
+  echo -n Actions:
+  for h in "${help_text[action,basic]}"; do printf "%s\n" "$h"; done
+  if $(log_is_verbose); then
+    echo -n "expert actions:"
+    for h in "${help_text[action,expert]}"; do printf "%s\n" "$h"; done
+  else
+    echo show more verbose help using the following command
+    echo "  karmah --verbose --help"
+    echo "  karmah -v -h"
+  fi
 }
 
 
