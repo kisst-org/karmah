@@ -3,11 +3,16 @@
 init_climah_vars_actions() {
     declare -g global_vars="karmah_type target"
     declare -g global_arrays=""
+    declare -g karmah_paths=""
+    declare -g subdirs=""
+    declare -g action_list=""
 }
 
 init_climah_module_actions() {
     add_command "forall" "run actions for all targets"
     command=run_command_forall
+    help_level=expert
+    add_option a action act  add action to list of actions to perform
 }
 
 

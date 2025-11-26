@@ -4,7 +4,6 @@ init_climah_module_deploy() {
     add_action plan   "show what deploy action would do"
     help_level=expert
     add_action ask "ask for confirmation (unless --yes is specified)"
-    add_option a action act  add action to list of actions to perform
     add_option y yes    ""   do not ask for confirmatopm
     yes_arg=""
 }
