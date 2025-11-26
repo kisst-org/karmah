@@ -1,7 +1,7 @@
 init_climah_vars_help() {
-    declare -ga action_help=()
-    declare -ga command_help=()
-    declare -ga option_help=()
+    declare -g action_help=""
+    declare -g command_help=""
+    declare -g option_help=""
 }
 
 init_climah_module_help() {
@@ -42,10 +42,10 @@ EOF
 }
 
 show_short_help() {
-echo Options:
+echo -n Options:
 for h in "${option_help[@]}"; do printf "%s\n" "$h"; done
 
-echo Actions:
+echo -n Actions:
 for h in "${action_help[@]}"; do printf "%s\n" "$h"; done
 }
 
