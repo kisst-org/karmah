@@ -6,6 +6,7 @@ init_climah_vars_commands() {
     declare -gA command_module=()
     declare -gA command_short=()
     declare -gA command_level=()
+    declare -gA command_alias=()
 }
 
 
@@ -18,7 +19,7 @@ add-command() {
     if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
         local s
         for s in ${short//,/ }; do
-            command_function[$short]=$func
+            command_alias[$s]=$name
         done
         help+=" ($short)"
     fi

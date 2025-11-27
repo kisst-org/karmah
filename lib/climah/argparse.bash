@@ -71,6 +71,7 @@ parse-arguments() {
         elif [[ "$parse_result" > 0 ]]; then
             shift $(( "$parse_result" - 1))
         else
+            arg=${command_alias[$arg]:-$arg}
             if [[ ! -z ${command_function[$arg]:-} ]]; then command=$arg
             elif [[ -f ${arg} ]]; then karmah_paths+=" ${arg}"
             elif [[ -d ${arg} ]]; then karmah_paths+=" ${arg%%/}" # remove a trailing /
