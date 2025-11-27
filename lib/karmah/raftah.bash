@@ -7,8 +7,9 @@ init_climah_vars_raftah() {
     declare -g subdirs=""
     declare -g flow_name
     declare -g action_list=""
-    declare -gA action_help=()
-    declare -gA command_help=()
+    declare -g all_actions=""
+    #declare -gA action_help=()
+    declare -gA action_flow=()
 }
 
 init_climah_module_raftah() {
@@ -18,6 +19,7 @@ init_climah_module_raftah() {
     add_option a action act  "add action to list of actions to perform"
     add_option F flow   flw  "use a (custom) flow named <flw>"
     global_arrays+=" custom_flow"
+    global_var+=" run_pre_flow"
 }
 
 parse_option_action() { action_list=" $2"; parse_result=2; }
@@ -37,14 +39,19 @@ add_action() {
     action_help[$name]=$help
 }
 
-add-flow-command() {
+
+add-action() {
+    debug adding action: "${@}"
     local short=$1
     local name=$2
-    action_list=$3
-    local help=${4:-${action_help[$name]:-no help}}
-    shift 3
-    add-command "$short" $name run-flow $help $@
-    declare -g flow_name=$=name
+    local flow=$3
+    shift 2
+    if [[ $short != no-cmd ]]; then
+        add-command "$short" $name run-flow "${@}"
+    fi
+    action_flow[$name]=$flow
+    #action_function[$name]=$func
+    all_actions+=" $name"
 }
 
 run-flow() {
@@ -70,6 +77,7 @@ init_karmah_type_basic() {
 
 run_karmah_file() {
     local karmah_type
+
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
         debug clearing $global_vars $global_arrays
@@ -87,7 +95,9 @@ run_karmah_file() {
         source ${karmah_file}
         init_karmah_type_${karmah_type:-basic}
         output_dir="${to_dir:-tmp/manifests}/${target}"
-        run_actions ${custom_flow[${flow_name:-none}]:-$action_list}
+        local actions=${action_flow[$command]:-$action_list}
+        actions=${custom_flow[${command:-none}]:-$actions}
+        run_actions $actions $command
     else
         info skipping $karmah_file
     fi
@@ -96,6 +106,6 @@ run_karmah_file() {
 run_actions() {
     for action in ${@//,/ }; do
         verbose running $action for ${target}
-        run_action_$action;
+        run-action-$action;
     done
 }

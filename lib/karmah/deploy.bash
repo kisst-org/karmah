@@ -1,18 +1,18 @@
 
 init_climah_module_deploy() {
-    add_action deploy "render to deployed/manifests and optionally deploy to kubernetes"
-    add_action plan   "show what deploy action would do"
-    add-command "" deploy ""
-    add-command "" plan ""
+    #add-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
+    #add-action "" plan   "show what deploy action would do"
+    add-command "" deploy run-command-deploy "render to deployed/manifests and optionally deploy to kubernetes"
+    add-command p  plan   run-command-plan "render to deployed/manifests and optionally deploy to kubernetes"
     help_level=expert
-    add_action ask "ask for confirmation (unless --yes is specified)"
+    add-action no-cmd ask "" "ask for confirmation (unless --yes is specified)"
     add_option y yes    ""   do not ask for confirmatopm
     yes_arg=""
 }
 
 parse_option_yes()    { yes_arg="--yes"; }
 
-run_action_ask() {
+run-action-ask() {
     if [[  $yes_arg == --yes ]]; then
         verbose skipping ask, because --yes is specified
         return 0
@@ -27,7 +27,7 @@ run_action_ask() {
 
 
 
-run_action_deploy() {
+run-command-deploy() {
     output_dir="${to_dir:-deployed/manifests}/${target}"
     local actions=${deploy_actions:-render,git-diff,ask,git-commit}
     info deploying ${output_dir} with actions: ${actions}
@@ -37,14 +37,14 @@ run_action_deploy() {
     run_actions $actions
 }
 
-run_action_plan() {
+run-command-plan() {
     output_dir="${to_dir:-deployed/manifests}/${target}"
     local actions=${plan_actions:-render,git-diff}
     info planning deploy ${output_dir} with actions: ${actions}
     run_actions $actions
 }
 
-run_action_undeploy() {
+run-command-undeploy() {
     output_dir="${to_dir:-deployed/manifests}/${target}"
     local actions=${undeploy_actions:-render-rm,git-diff,ask,git-commit}
     info undeploying ${output_dir} with actions: ${actions}

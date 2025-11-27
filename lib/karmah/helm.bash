@@ -1,8 +1,8 @@
 
 init_climah_module_helm() {
     help_level=expert
-    add_action helm-install "run helm upgrade --install for target"
-    add_action helm-uninstall "run helm uninstall for target"
+    add-action "" helm-install   update,render "run helm upgrade --install for target"
+    add-action "" helm-uninstall update,render "run helm uninstall for target"
     add_option K force-helm-chart  chart   force to use a specific helm chart
     global_vars+=" helm_template_command"
     global_vars+=" helm_value_files"
@@ -71,13 +71,13 @@ run_helm_forall_charts() {
     done
 }
 
-run_action_helm-install() {
+run-action-helm-install() {
     : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
 }
 
-run_action_helm-uninstall() {
+run-action-helm-uninstall() {
     : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall ${helm_atomic_wait} $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}

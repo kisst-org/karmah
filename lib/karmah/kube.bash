@@ -3,18 +3,18 @@ init_climah_module_kube() {
     declare -Ag kube_context_map
     #declare -g kube_resource_list
 
-    add_action kube-diff "compare rendered manifests with cluster (kubectl diff)"
-    add-flow-command kd kube-diff update,render,kube-diff
+    add-action kd kube-diff     update,render    "compare rendered manifests with cluster (kubectl diff)"
+    add-action ka kube-apply    update,render,kube-diff,ask     "apply rendered manifests with cluster (kubectl apply)"
+    add-action "" kube-delete   update,render,kube-diff-delete,ask    "delete all manifests from cluster (kubectl delete)"
+    add-action kw kube-watch    ""  "watch target resources every 2 seconds"
 
     help_level=expert
-    add_action kube-get "get current manifests from cluster to --to <path> (default) deployed/manifests"
-    add_action kube-apply "apply rendered manifests with cluster (kubectl apply)"
-    add_action kube-delete "delete all manifests from cluster (kubectl delete)"
-    add_action kube-diff-delete "show resources that will be deleted with kube-delete"
-    add_action kube-tmp-scale "scale resource(s) without changing source or deployment files"
-    add_action kube-restart "restart resource(s)"
-    add_action kube-watch "watch target resources every 2 seconds"
-    add_action kubectl --collect "generic kubectl in the right cluster and namespace of all targets"
+    add-action "" kube-get         "" "get current manifests from cluster to --to <path> (default) deployed/manifests"
+    add-action "" kube-diff-delete render "show resources that will be deleted with kube-delete"
+    add-action "" kube-tmp-scale   "" "scale resource(s) without changing source or deployment files"
+    add-action "" kube-restart     "" "restart resource(s)"
+    add-action k  kubectl          "" "generic kubectl in the right cluster and namespace of all targets"
+
     add_option R replicas nr  "specify number of replicas"
     global_vars+=" kube_cluster namespace"
     global_arrays+=" kube_resource_alias kube_default_replicas"
@@ -36,8 +36,7 @@ kubectl_options() {
 }
 
 filter-kube-diff-output() { grep -E '^[+-] |^---'; }
-run_action_kube-diff() {
-    render_manifests
+run-action-kube-diff() {
     info kube-diff ${target} to ${output_dir}
     if $(log_is_verbose); then
         verbose_cmd kubectl diff $(kubectl_options) -f $output_dir || true
@@ -46,28 +45,23 @@ run_action_kube-diff() {
     fi
 }
 
-run_action_kube-diff-delete() {
-    render_manifests
+run-action-kube-diff-delete() {
     info kube-diff-delete all resources ${target} from ${output_dir}
     verbose_cmd ls -l $output_dir
 }
 
-run_action_kube-apply() {
-    render_manifests
-    run_action_kube-diff
+run-action-kube-apply() {
     info kube apply $output_dir
     verbose_cmd kubectl apply $(kubectl_options) -f $output_dir
 }
 
-run_action_kube-delete() {
-    render_manifests # render manifests to be deleted
-    run_action_kube-diff
+run-action-kube-delete() {
     info kube delete $output_dir
     verbose_cmd kubectl delete $(kubectl_options) -f $output_dir
 }
 
 
-run_action_kubectl() {
+run-action-kubectl() {
     info kubectl $output_dir
     verbose_cmd kubectl $(kubectl_options) $extra_args
 }
@@ -77,7 +71,7 @@ split_kubectl_output_into_files() {
     yq  '.items.[]' -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
 }
 
-run_action_kube-get-manifests() {
+run-action-kube-get-manifests() {
     info kube get manifests  ${target} to ${output_dir}
     verbose_cmd rm -rf ${output_dir}
     verbose_cmd mkdir -p ${output_dir}
@@ -97,20 +91,20 @@ run_action_kube-get-manifests() {
     done
 }
 
-run_action_kube-get() {
+run-action-kube-get() {
     verbose_cmd kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm}
 }
-run_action_kube-watch() {
+run-action-kube-watch() {
     verbose_cmd watch kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm}
 }
-run_action_kube-restart() {
+run-action-kube-restart() {
     local res
     for res in ${kube_resource_list//,/ }; do
         res=${kube_resource_alias[$res]:-$res}
         verbose_cmd kubectl $(kubectl_options) -n $namespace rollout restart $res
     done
 }
-run_action_kube-tmp-scale() {
+run-action-kube-tmp-scale() {
     local res
     for res in $(calc_resource_names); do
         local repl=$(calc_kube_replicas $res)
@@ -133,4 +127,10 @@ calc_kube_replicas() {
         repl=${kube_default_replicas[$1]}
     fi
     echo $repl
+}
+
+render_kustomize() {
+    local command="kubectl kustomize --enable-helm"
+    #used_files+=" $helm_chart_dir/$ch"
+    verbose_pipe split_into_files "$command ${karmah_dir}"
 }

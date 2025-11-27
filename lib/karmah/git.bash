@@ -5,10 +5,10 @@ init_climah_vars_git() {
 
 init_climah_module_git() {
     help_level=expert
-    add_action git-diff "shows the changes to source and rendered manifests with git"
-    add_action git-add "adds the changes to source and rendered manifests to git, for committing"
-    add_action git-commit "commits the changes to source and rendered manifests to git"
-    add_action git-restore "restores the changed files (source and rendered manifests)"
+    add-action gd git-diff     update,render  "shows the changes to source and rendered manifests with git"
+    add-action ga git-add      update,render  "adds the changes to source and rendered manifests to git, for committing"
+    add-action gc git-commit   update,render,git-add  "commits the changes to source and rendered manifests to git"
+    add-action gr git-restore  ""             "restores the changed files (source and rendered manifests)"
     add_option m message  msg   set fixed message to use with git commit
     add_option M prepend-message  msg   prepend commit message before auto generated message
     global_vars+=" used_files git_commit_message"
@@ -28,11 +28,11 @@ add_message() {
     debug "commmit message is: $git_commit_message"
 }
 
-run_action_git-pull() {
+run-action-git-pull() {
     verbose_cmd git pull
 }
 
-run_action_git-diff() {
+run-action-git-diff() {
     info git-diff ${target} to ${output_dir}
     if $(log_is_debug); then
         verbose_cmd git diff -- ${used_files} ${output_dir} || true
@@ -43,11 +43,11 @@ run_action_git-diff() {
     fi
 }
 
-run_action_git-add() {
+run-action-git-add() {
     info git-add ${target} to ${output_dir}
     verbose_cmd git add ${used_files} ${output_dir}
 }
-run_action_git-restore() {
+run-action-git-restore() {
     # TODO: find better way to determine if path is tracked
     if [[ $output_dir == tmp/* ]]; then
         # git restore gives pathspec error on untracked paths
@@ -60,13 +60,12 @@ run_action_git-restore() {
     fi
 }
 
-run_action_git-status() {
+run-action-git-status() {
     git status
 }
 
 
-run_action_git-commit() {
-    run_action_git-add
+run-action-git-commit() {
     if [[ ! -z ${git_fixed_message:-} ]]; then
         git_commit_message=$git_fixed_message
     fi

@@ -1,9 +1,10 @@
 
 init_climah_module_kapp() {
     help_level=expert
-    add_action kapp-plan "show what resources will be updated"
-    add_action kapp-diff "show what resources will be updated, including detailed diffs"
-    add_action kapp-deploy "deploy the application with kapp"
+    add-action "" kapp-plan    update,render   "show what resources will be updated"
+    add-action "" kapp-diff    update,render   "show what resources will be updated, including detailed diffs"
+    add-action "" kapp-deploy  update,render   "deploy the application with kapp"
+    add-action "" kapp-delete  update,render   "delete the application with kapp"
 }
 
 kapp_options() {
@@ -17,25 +18,21 @@ kapp_options() {
     echo $opt
 }
 
-run_action_kapp-diff() {
-    render_manifests
+run-action-kapp-diff() {
     verbose_cmd kapp deploy $(kapp_options) --diff-run --diff-changes
 }
 
-run_action_kapp-plan() {
-    render_manifests
+run-action-kapp-plan() {
     verbose_cmd kapp deploy $(kapp_options) --diff-run
 }
 
-run_action_kapp-deploy() {
-    run_action_render
+run-action-kapp-deploy() {
     if ! kubectl $(kubectl_options) get ns $namespace >/dev/null 2>&1; then
         verbose_cmd kubectl $(kubectl_options) create ns $namespace
     fi
     verbose_cmd kapp deploy $(kapp_options)
 }
 
-run_action_kapp-delete() {
-    run_action_render # render manifests to be deleted
+run-action-kapp-delete() {
     verbose_cmd kapp delete $(kapp_options)
 }

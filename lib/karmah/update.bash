@@ -1,6 +1,6 @@
 
 init_climah_module_update() {
-    add_action update "update source files with expressions from --update"
+    add-action u update "" "update source files with expressions from --update"
     help_level=expert
     add_option V version ver  "specify version (tag) to use for update or scale"
     add_option u update expr  "apply a custom update"
@@ -17,7 +17,7 @@ init_climah_module_update() {
 parse_option_version()  { update_version="$2"; parse_result=2; }
 parse_option_update()   { updates+=("$2"); parse_result=2; }
 
-run_action_update() {
+run-action-update() {
     local any_updates=false
     if [[ ! -z ${update_version:-} ]]; then
         #info update $target version to $update_version

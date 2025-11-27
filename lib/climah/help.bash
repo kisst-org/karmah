@@ -1,5 +1,4 @@
 init_climah_vars_help() {
-    declare -g action_help=""
     declare -g command_help=""
     declare -g option_help=""
     declare -gA help_text=()
