@@ -1,20 +1,23 @@
 # raftah: run actions for all targets
 
-init_climah_vars_actions() {
+init_climah_vars_raftah() {
     declare -g global_vars="karmah_type target"
     declare -g global_arrays=""
     declare -g karmah_paths=""
     declare -g subdirs=""
+    declare -g flow_name
     declare -g action_list=""
     declare -gA action_help=()
     declare -gA command_help=()
 }
 
-init_climah_module_actions() {
+init_climah_module_raftah() {
     #add_command "forall" "run actions for all targets"
     command=render
     help_level=expert
-    add_option a action act  add action to list of actions to perform
+    add_option a action act  "add action to list of actions to perform"
+    add_option F flow   flw  "use a (custom) flow named <flw>"
+    global_arrays+=" custom_flow"
 }
 
 parse_option_action() { action_list=" $2"; parse_result=2; }
@@ -40,12 +43,11 @@ add-flow-command() {
     action_list=$3
     local help=${4:-${action_help[$name]:-no help}}
     shift 3
-    add-command "$short" $name run_command_forall $help $@
+    add-command "$short" $name run-flow $help $@
+    declare -g flow_name=$=name
 }
 
-
-
-run_command_forall() {
+run-flow() {
     for path in $karmah_paths; do
         if [[ -f $path ]]; then
             karmah_file=$path
@@ -85,7 +87,7 @@ run_karmah_file() {
         source ${karmah_file}
         init_karmah_type_${karmah_type:-basic}
         output_dir="${to_dir:-tmp/manifests}/${target}"
-        run_actions ${action_list:-render}
+        run_actions ${custom_flow[${flow_name:-none}]:-$action_list}
     else
         info skipping $karmah_file
     fi

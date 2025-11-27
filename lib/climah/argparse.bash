@@ -3,8 +3,6 @@ init_climah_vars_argparse() {
     declare -gA aliases=()
     declare -ga parsed_args=()
     declare -gA parse_arg_func=()
-    declare -g command
-    declare -gA command_function=()
 }
 
 add_option() {
@@ -24,19 +22,9 @@ add_option() {
     add_help_text option "$(printf "\n  %-20s %s" "$name" "$help")"
 }
 
-add-command() {
-    local short=$1
-    local name=$2
-    local func=${3:-run-command-$name}
-    shift 3
-    local help=$@
-    command_function[$name]=$func
-    command_help[$name]="${help:-${action_help[$name]:-}}"
-    add_help_text command "$(printf "\n  %-13s %s" "$name" "$help")"
-}
 
 
-parse_set_command() { command=run_command_$1; }
+parse_set_command() { command=$1; }
 add_command() {
     local name=$1
     shift 1
@@ -67,7 +55,7 @@ replace_aliases() {
     done
 }
 
-parse_options() {
+parse-arguments() {
     local replaced=false
     local collect_unknown_args=false
     declare -g extra_args=""
@@ -83,7 +71,8 @@ parse_options() {
         elif [[ "$parse_result" > 0 ]]; then
             shift $(( "$parse_result" - 1))
         else
-            if [[ -f ${arg} ]]; then karmah_paths+=" ${arg}"
+            if [[ ! -z ${command_function[$arg]:-} ]]; then command=$arg
+            elif [[ -f ${arg} ]]; then karmah_paths+=" ${arg}"
             elif [[ -d ${arg} ]]; then karmah_paths+=" ${arg%%/}" # remove a trailing /
             elif $collect_unknown_args; then extra_args+=" $arg"
             else

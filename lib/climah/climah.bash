@@ -18,12 +18,12 @@ climah_init() {
         printf "no arguments passed, pass at least one path or command\n\n"
         show_short_help
     else
-        parse_options "${@}"
+        parse-arguments "${@}"
     fi
 }
 
 
 climah_main() {
     climah_init "${@}"
-    ${command_function[$command]}
+     ${command_function[$command]}
 }

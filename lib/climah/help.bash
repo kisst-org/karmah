@@ -7,12 +7,24 @@ init_climah_vars_help() {
 }
 
 init_climah_module_help() {
-    add_command aliases "show all defined aliases"
-    add_command version "show version of karmah"
-    add_option h help "" "show help information"
+    add-command h   help     show_help    "show general help"
+    add-command al  aliases  show-aliases "show all defined aliases"
+    add-command ver version  show-version "show version of karmah"
+    add-command ""  commands show-commands "show available commands"
+
+    add_option h help "" "show general help information"
 }
 
 parse_option_help() { show_help; exit; }
+
+add-help() {
+  local section=$1
+  local name=$2
+  local option=$3
+  shift 3
+  help_text[$help_level,$section,$module,$name]+="${@}"
+}
+
 
 add_help_text() {
   local section=$1
@@ -72,14 +84,13 @@ show_short_help() {
   fi
 }
 
-
-run_command_aliases() {
+show-aliases() {
   echo Aliases:
   for key in $(printf "%s\n" ${!aliases[@]} | sort); do
       printf "  %-13s %s\n" $key "${aliases[$key]}"
   done |sort -k2 -k1
 }
 
-show_help_version() {
+show-version() {
   echo karmah version: $karmah_version
 }
