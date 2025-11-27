@@ -10,7 +10,6 @@ init_climah_module_deploy() {
     yes_arg=""
 }
 
-parse_option_action() { action_list+=" $2"; parse_result=2; }
 parse_option_yes()    { yes_arg="--yes"; }
 
 run_action_ask() {

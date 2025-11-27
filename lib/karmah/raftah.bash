@@ -1,4 +1,4 @@
-# run actions for all targets
+# raftah: run actions for all targets
 
 init_climah_vars_actions() {
     declare -g global_vars="karmah_type target"
@@ -17,7 +17,7 @@ init_climah_module_actions() {
     add_option a action act  add action to list of actions to perform
 }
 
-
+parse_option_action() { action_list=" $2"; parse_result=2; }
 parse_append_action() { action_list+=$1;  }
 parse_append_action_with_args() { action_list+=$1; collect_unknown_args=true; }
 add_action() {
