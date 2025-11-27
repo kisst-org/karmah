@@ -9,11 +9,11 @@ init_climah_module_kube() {
     add-action kw kube-watch    ""  "watch target resources every 2 seconds"
 
     help_level=expert
-    add-action "" kube-get         "" "get current manifests from cluster to --to <path> (default) deployed/manifests"
-    add-action "" kube-diff-delete render "show resources that will be deleted with kube-delete"
-    add-action "" kube-tmp-scale   "" "scale resource(s) without changing source or deployment files"
-    add-action "" kube-restart     "" "restart resource(s)"
-    add-action k  kubectl          "" "generic kubectl in the right cluster and namespace of all targets"
+    add-action "" kube-get         ""     "get current manifests from cluster to --to <path> (default) deployed/manifests"
+    add-action "" kube-diff-del    render "show resources that will be deleted with kube-delete"
+    add-action "" kube-tmp-scale   ""     "scale resource(s) without changing source or deployment files"
+    add-action "" kube-restart     ""     "restart resource(s)"
+    add-action k  kubectl          ""     "generic kubectl in the right cluster and namespace of all targets"
 
     add_option R replicas nr  "specify number of replicas"
     global_vars+=" kube_cluster namespace"

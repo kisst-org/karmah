@@ -86,7 +86,7 @@ show_short_help() {
 show-aliases() {
   echo Aliases:
   for key in $(printf "%s\n" ${!aliases[@]} | sort); do
-      printf "  %-13s %s\n" $key "${aliases[$key]}"
+      printf "  %-14s %s\n" $key "${aliases[$key]}"
   done |sort -k2 -k1
 }
 
