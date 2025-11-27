@@ -11,7 +11,7 @@ init_climah_module_helm() {
     global_vars+=" helm_atomic_wait"
     global_vars+=" helm_release"
     global_vars+=" helm_wait_timeout"
-    global_arrays+="helm_update_version_path helm_update_replicas_path"
+    global_arrays+=" helm_update_version_path helm_update_replicas_path"
 }
 
 parse_option_force-helm-chart()   { helm_fixed_charts="$2"; parse_result=2; }
