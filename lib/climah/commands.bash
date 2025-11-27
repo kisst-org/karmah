@@ -7,6 +7,7 @@ init_climah_vars_commands() {
     declare -gA command_short=()
     declare -gA command_level=()
     declare -gA command_alias=()
+    declare -gA command_help=()
 }
 
 
