@@ -5,15 +5,6 @@ init_climah_vars_argparse() {
     declare -gA parse_arg_func=()
 }
 
-parse_arg() {
-    local name=$1
-    local func=${parse_arg_func[$name]:-}
-    if [[ ! -z $func ]]; then
-        parse_result=1
-        $func "$@"
-    fi
-}
-
 replace_aliases() {
     for arg in "${@}"; do
         local al="${aliases[$arg]:-none}"
@@ -24,6 +15,15 @@ replace_aliases() {
             parsed_args+=("$arg")
         fi
     done
+}
+
+parse_arg() {
+    local name=$1
+    local func=${parse_arg_func[$name]:-}
+    if [[ ! -z $func ]]; then
+        parse_result=1
+        $func "$@"
+    fi
 }
 
 parse-arguments() {
