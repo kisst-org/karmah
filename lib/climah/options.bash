@@ -33,7 +33,6 @@ add-option() {
 
 show-options() {
     local opt
-    echo $all_options
     for opt in $all_options; do
         if [[ ${level:-basic} == *${option_level[$opt]}* || ${level:-basic} == all ]]; then
             local head="--$opt ${option_arg[$opt]}"
