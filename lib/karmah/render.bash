@@ -44,3 +44,9 @@ split_into_files() {
     yq -P 'sort_keys(..)' | yq -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
     rm -f ${output_dir}/_.yaml
 }
+
+
+render_copy-files() {
+    files_list="$karmah_dir"/files/*.yaml
+    verbose_cmd cp -f ${files_list} ${output_dir}
+}
