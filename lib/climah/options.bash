@@ -58,12 +58,25 @@ add-value-option() {
     add-generic-option "$short" $name "$arg" parse-value-option "$@"
 }
 
+add-list-option() {
+    local short=$1
+    local name=$2
+    local arg=$3
+    shift 3
+    add-generic-option "$short" $name "$arg" parse-list-option "$@"
+}
+
 
 parse-flag-option() {
     eval ${option_var[$1]}=true
 }
 parse-value-option() {
-    eval ${option_var[$1]}=$2
+    eval ${option_var[$1]}=\"$2\"
+    parse_result=2
+}
+parse-list-option() {
+    local var=${option_var[$1]}
+    eval ${var}+=\" $2\"
     parse_result=2
 }
 

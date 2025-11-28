@@ -7,12 +7,10 @@ init_climah_module_render() {
     add-action "" compare update,render  "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
     add-action rm render-rm "" "remove all rendered manifests"
 
-    add-option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
     add-option t to       path  "other path to render to (default is tmp/manifests)"
     add-option w with     path  used for comparison between two manifest trees
 }
 
-parse-option-subdir()    { subdirs+=" $2"; parse_result=2; }
 parse-option-to()        { to_dir="$2"; parse_result=2; }
 parse-option-with()      { with_dir="$2"; parse_result=2; }
 

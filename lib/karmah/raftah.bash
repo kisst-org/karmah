@@ -4,7 +4,7 @@ init_climah_vars_raftah() {
     declare -g global_vars="karmah_type target"
     declare -g global_arrays=""
     declare -g karmah_paths=""
-    declare -g subdirs=""
+    declare -g subdir=""
     declare -g flow_name
     declare -g action_list=""
     declare -g all_actions=""
@@ -21,6 +21,7 @@ init_climah_module_raftah() {
     add-command ""  actions show-actions "show available actions"
     add-option a action act  "add action to list of actions to perform"
     add-option F flow   flw  "use a (custom) flow named <flw>"
+    add-list-option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
     global_arrays+=" custom_flow"
     global_var+=" run_pre_flow"
 }
@@ -50,11 +51,11 @@ run-flow() {
         if [[ -f $path ]]; then
             karmah_file=$path
             run_karmah_file
-        elif [[ -z ${subdirs:-} ]]; then
+        elif [[ -z ${subdir:-} ]]; then
             karmah_file=($path/*.karmah) # use array for globbing
             run_karmah_file
         else
-            for sd in ${subdirs//,/ }; do
+            for sd in ${subdir//,/ }; do
                 karmah_file=($path/$sd/*.karmah)  # use array for globbing
                 run_karmah_file
             done
