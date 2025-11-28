@@ -12,9 +12,9 @@ init_climah_module_render() {
     add-option w with     path  used for comparison between two manifest trees
 }
 
-parse_option_subdir()    { subdirs+=" $2"; parse_result=2; }
-parse_option_to()        { to_dir="$2"; parse_result=2; }
-parse_option_with()      { with_dir="$2"; parse_result=2; }
+parse-option-subdir()    { subdirs+=" $2"; parse_result=2; }
+parse-option-to()        { to_dir="$2"; parse_result=2; }
+parse-option-with()      { with_dir="$2"; parse_result=2; }
 
 
 run-action-render() {

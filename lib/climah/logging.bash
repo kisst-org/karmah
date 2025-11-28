@@ -22,11 +22,11 @@ init_climah_module_logging() {
 }
 
 # TODO -vv
-parse_option_verbose()   { log_level+=10; }
-parse_option_quiet()     { log_level=$log_level_warn; }
-parse_option_show-cmd()  { log_commands=true; }
-parse_option_dry-run()   { dry_run=true; }
-parse_option_debug()     { set -x; }
+parse-option-verbose()   { log_level+=10; }
+parse-option-quiet()     { log_level=$log_level_warn; }
+parse-option-show-cmd()  { log_commands=true; }
+parse-option-dry-run()   { dry_run=true; }
+parse-option-debug()     { set -x; }
 
 
 log_is_error()   { (( ${log_level} >= ${log_level_error} )) }

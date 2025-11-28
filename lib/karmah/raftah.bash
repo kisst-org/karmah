@@ -25,7 +25,7 @@ init_climah_module_raftah() {
     global_var+=" run_pre_flow"
 }
 
-parse_option_action() { action_list=" $2"; parse_result=2; }
+parse-option-action() { action_list=" $2"; parse_result=2; }
 
 add-action() {
     debug adding action: "${@}"

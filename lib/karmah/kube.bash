@@ -20,8 +20,8 @@ init_climah_module_kube() {
     global_arrays+=" kube_resource_alias kube_default_replicas"
 }
 
-parse_option_resource()  { kube_resource_list+=" $2"; parse_result=2; }
-parse_option_replicas()  { kube_replicas="$2";  parse_result=2; }
+parse-option-resource()  { kube_resource_list+=" $2"; parse_result=2; }
+parse-option-replicas()  { kube_replicas="$2";  parse_result=2; }
 
 
 kubectl_options() {

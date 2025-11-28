@@ -19,9 +19,9 @@ add-option() {
     local arg=$3
     shift 3
     local help="$@"
-    parse_arg_func[--$name]=parse_option_$name
+    parse_arg_func[--$name]=parse-option-$name
     if [[ ! -z $short ]]; then
-        parse_arg_func[-$short]=parse_option_$name
+        parse_arg_func[-$short]=parse-option-$name
     fi
     option_short[$name]=$short
     option_arg[$name]=$arg

@@ -14,7 +14,7 @@ init_climah_module_helm() {
     global_arrays+=" helm_update_version_path helm_update_replicas_path"
 }
 
-parse_option_force-helm-chart()   { helm_fixed_charts="$2"; parse_result=2; }
+parse-option-force-helm-chart()   { helm_fixed_charts="$2"; parse_result=2; }
 
 add-optional_helm_values_file() {
     local f=($1)

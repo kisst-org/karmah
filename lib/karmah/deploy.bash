@@ -10,7 +10,7 @@ init_climah_module_deploy() {
     yes_arg=""
 }
 
-parse_option_yes()    { yes_arg="--yes"; }
+parse-option-yes()    { yes_arg="--yes"; }
 
 run-action-ask() {
     if [[  $yes_arg == --yes ]]; then

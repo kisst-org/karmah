@@ -14,8 +14,8 @@ init_climah_module_git() {
     global_vars+=" used_files git_commit_message"
 }
 
-parse_option_message()   { git_fixed_message="$2";   parse_result=2; }
-parse_option_prepend-message()   { git_prepend_message="$2";   parse_result=2; }
+parse-option-message()   { git_fixed_message="$2";   parse_result=2; }
+parse-option-prepend-message()   { git_prepend_message="$2";   parse_result=2; }
 add_message() {
     if [[ -z ${git_commit_message:-} ]] then
         git_commit_message="${git_prepend_message:-}"

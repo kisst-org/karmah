@@ -13,7 +13,7 @@ init_climah_module_help() {
     add-option h help "" "show general help information"
 }
 
-parse_option_help() { show_help; exit; }
+parse-option-help() { show_help; exit; }
 
 add-help() {
   local section=$1
