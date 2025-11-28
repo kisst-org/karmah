@@ -10,6 +10,10 @@ init_climah_vars_commands() {
     declare -gA command_help=()
 }
 
+init_climah_module_commands() {
+    add-command ""  commands show-commands "show available commands"
+}
+
 
 add-command() {
     local short=$1

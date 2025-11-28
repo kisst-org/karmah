@@ -8,7 +8,9 @@ init_climah_vars_raftah() {
     declare -g flow_name
     declare -g action_list=""
     declare -g all_actions=""
-    #declare -gA action_help=()
+    declare -gA action_module=()
+    declare -gA action_level=()
+    declare -gA action_help=()
     declare -gA action_flow=()
 }
 
@@ -16,6 +18,7 @@ init_climah_module_raftah() {
     #add_command "forall" "run actions for all targets"
     command=render
     help_level=expert
+    add-command ""  actions show-actions "show available actions"
     add_option a action act  "add action to list of actions to perform"
     add_option F flow   flw  "use a (custom) flow named <flw>"
     global_arrays+=" custom_flow"
@@ -45,11 +48,15 @@ add-action() {
     local short=$1
     local name=$2
     local flow=$3
-    shift 2
+    shift 3
     if [[ $short != no-cmd ]]; then
         add-command "$short" $name run-flow "${@}"
     fi
     action_flow[$name]=$flow
+    action_help[$name]="$@"
+    action_level[$name]=$help_level
+    action_module[$name]=$module
+
     #action_function[$name]=$func
     all_actions+=" $name"
 }
@@ -108,4 +115,13 @@ run_actions() {
         verbose running $action for ${target}
         run-action-$action;
     done
+}
+
+show-actions() {
+    local act
+    for act in $all_actions; do
+        if [[ ${levels:-basic} == *${action_level[$act]}* || ${levels:-basic} == all ]]; then
+            printf "  %-13s %s\n" $act "${action_help[$act]:-no help}"
+        fi
+    done #|sort -k2 -k1
 }

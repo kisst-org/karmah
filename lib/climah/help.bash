@@ -9,7 +9,6 @@ init_climah_module_help() {
     add-command h   help     show_help    "show general help"
     add-command al  aliases  show-aliases "show all defined aliases"
     add-command ver version  show-version "show version of karmah"
-    add-command ""  commands show-commands "show available commands"
 
     add_option h help "" "show general help information"
 }
