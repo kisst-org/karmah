@@ -6,11 +6,11 @@ init_climah_module_deploy() {
     add-command p  plan   run-command-plan "render to deployed/manifests and optionally deploy to kubernetes"
     help_level=expert
     add-action no-cmd ask "" "ask for confirmation (unless --yes is specified)"
-    add-option y yes    ""   do not ask for confirmatopm
+    add-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
 }
 
-parse-option-yes()    { yes_arg="--yes"; }
+parse-option-yes() { yes_arg="--yes"; }
 
 run-action-ask() {
     if [[  $yes_arg == --yes ]]; then

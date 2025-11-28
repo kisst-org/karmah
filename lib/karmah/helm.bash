@@ -3,7 +3,7 @@ init_climah_module_helm() {
     help_level=expert
     add-action "" helm-install   update,render "run helm upgrade --install for target"
     add-action "" helm-uninstall update,render "run helm uninstall for target"
-    add-option K force-helm-chart  chart   force to use a specific helm chart
+    add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     global_vars+=" helm_template_command"
     global_vars+=" helm_value_files"
     global_vars+=" helm_charts"
@@ -13,8 +13,6 @@ init_climah_module_helm() {
     global_vars+=" helm_wait_timeout"
     global_arrays+=" helm_update_version_path helm_update_replicas_path"
 }
-
-parse-option-force-helm-chart()   { helm_fixed_charts="$2"; parse_result=2; }
 
 add-optional_helm_values_file() {
     local f=($1)
@@ -51,9 +49,9 @@ run_helm_forall_charts() {
     run_cmd=$1
     shift
     local base_cmd=${@}
-    if [[ ! -z ${helm_fixed_charts:-} ]]; then
-        verbose overriding original helm chart $helm_charts with ${helm_fixed_charts}
-        helm_charts=${helm_fixed_charts}
+    if [[ ! -z ${force_helm_chart:-} ]]; then
+        verbose overriding original helm chart $helm_charts with ${force_helm_chart}
+        helm_charts=${force_helm_chart}
     fi
     for ch in ${helm_charts//,/ }; do
         local chart=${ch//@*}

@@ -9,16 +9,16 @@ init_climah_module_git() {
     add-action ga git-add      update,render  "adds the changes to source and rendered manifests to git, for committing"
     add-action gc git-commit   update,render,git-add  "commits the changes to source and rendered manifests to git"
     add-action gr git-restore  ""             "restores the changed files (source and rendered manifests)"
-    add-option m message  msg   set fixed message to use with git commit
-    add-option M prepend-message  msg   prepend commit message before auto generated message
+    add-value-option m fixed-message    msg   "set fixed message to use with git commit"
+    add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
     global_vars+=" used_files git_commit_message"
 }
 
-parse-option-message()   { git_fixed_message="$2";   parse_result=2; }
-parse-option-prepend-message()   { git_prepend_message="$2";   parse_result=2; }
+parse-option-message()   { fixed_message="$2";   parse_result=2; }
+parse-option-prepend-message()   { prepend_message="$2";   parse_result=2; }
 add_message() {
     if [[ -z ${git_commit_message:-} ]] then
-        git_commit_message="${git_prepend_message:-}"
+        git_commit_message="${prepend_message:-}"
     fi
     if [[ -z ${git_commit_message:-} ]] then
         git_commit_message+="${1}"
@@ -66,8 +66,8 @@ run-action-git-status() {
 
 
 run-action-git-commit() {
-    if [[ ! -z ${git_fixed_message:-} ]]; then
-        git_commit_message=$git_fixed_message
+    if [[ ! -z ${fixed_message:-} ]]; then
+        git_commit_message=$fixed_message
     fi
     : ${git_commit_message:=${action} of ${target}}
     if git diff-index --quiet HEAD; then

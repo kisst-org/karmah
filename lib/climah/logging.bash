@@ -8,15 +8,16 @@ init_logging() {
     declare -gi log_level_verbose=40
     declare -gi log_level_debug=50
     declare -gi log_level=$log_level_info
-    declare -g  log_commands=false
+    declare -g  log_cmds=false
     parse_loglevel "$@"
 }
 
 init_climah_module_logging() {
-    add-option v verbose  ""    give more output
-    add-option C show-cmd ""    show the commands being executed
-    add-option q quiet    ""    show no output
-    add-option n dry-run  ""    do not execute the actual commands
+    add-option v verbose  ""    "give more output"
+    add-option q quiet    ""    "show no output"
+    add-flag-option C log-cmds  "show the commands being executed"
+    add-flag-option n dry-run   "do not execute the actual commands"
+
     help_level=expert
     add-option "" debug   ""    show detailded debug info
 }
@@ -24,8 +25,6 @@ init_climah_module_logging() {
 # TODO -vv
 parse-option-verbose()   { log_level+=10; }
 parse-option-quiet()     { log_level=$log_level_warn; }
-parse-option-show-cmd()  { log_commands=true; }
-parse-option-dry-run()   { dry_run=true; }
 parse-option-debug()     { set -x; }
 
 
@@ -44,7 +43,7 @@ debug()   { if $(log_is_debug) ;   then printf "### ";  printf "%s " "${@}"; ech
 verbose_cmd() {
     if (( $log_level >= $log_level_verbose )); then
         printf "    "; echo "${@}";
-    elif $log_commands; then
+    elif $log_cmds; then
         printf "    "; echo "${@}";
     fi
     if ! ${dry_run:-false}; then
@@ -58,7 +57,7 @@ verbose_pipe() {
     shift
     if (( $log_level >= $log_level_verbose )); then
         printf "    "; echo "${@}" \| $pipe;
-    elif $log_commands; then
+    elif $log_cmds; then
         printf "    "; echo "${@}" \| $pipe;
     fi
     if ! ${dry_run:-false}; then
