@@ -11,7 +11,7 @@ init_climah_vars_commands() {
 }
 
 init_climah_module_commands() {
-    add-command ""  commands show-commands "show available commands"
+    add-help-subject ""  commands show-commands "show available commands"
 }
 
 parse-command() {
