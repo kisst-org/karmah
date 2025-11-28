@@ -22,17 +22,6 @@ add_option() {
     add_help_text option "$(printf "\n  %-20s %s" "$name" "$help")"
 }
 
-
-
-parse_set_command() { command=$1; }
-add_command() {
-    local name=$1
-    shift 1
-    local help=$@
-    parse_arg_func[$name]=parse_set_command
-    add_help_text command "$(printf "\n  %-13s %s" "$name" "$help")"
-}
-
 parse_arg() {
     local name=$1
     local func=${parse_arg_func[$name]:-}
