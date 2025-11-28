@@ -19,8 +19,8 @@ init_climah_module_raftah() {
     command=render
     help_level=expert
     add-command ""  actions show-actions "show available actions"
-    add_option a action act  "add action to list of actions to perform"
-    add_option F flow   flw  "use a (custom) flow named <flw>"
+    add-option a action act  "add action to list of actions to perform"
+    add-option F flow   flw  "use a (custom) flow named <flw>"
     global_arrays+=" custom_flow"
     global_var+=" run_pre_flow"
 }
@@ -104,7 +104,7 @@ run_actions() {
 show-actions() {
     local act
     for act in $all_actions; do
-        if [[ ${levels:-basic} == *${action_level[$act]}* || ${levels:-basic} == all ]]; then
+        if [[ ${level:-basic} == *${action_level[$act]}* || ${level:-basic} == all ]]; then
             printf "  %-13s %s\n" $act "${action_help[$act]:-no help}"
         fi
     done #|sort -k2 -k1

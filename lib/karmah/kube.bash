@@ -15,7 +15,7 @@ init_climah_module_kube() {
     add-action "" kube-restart     ""     "restart resource(s)"
     add-action k  kubectl          ""     "generic kubectl in the right cluster and namespace of all targets"
 
-    add_option R replicas nr  "specify number of replicas"
+    add-option R replicas nr  "specify number of replicas"
     global_vars+=" kube_cluster namespace"
     global_arrays+=" kube_resource_alias kube_default_replicas"
 }

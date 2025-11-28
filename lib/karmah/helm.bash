@@ -3,7 +3,7 @@ init_climah_module_helm() {
     help_level=expert
     add-action "" helm-install   update,render "run helm upgrade --install for target"
     add-action "" helm-uninstall update,render "run helm uninstall for target"
-    add_option K force-helm-chart  chart   force to use a specific helm chart
+    add-option K force-helm-chart  chart   force to use a specific helm chart
     global_vars+=" helm_template_command"
     global_vars+=" helm_value_files"
     global_vars+=" helm_charts"
@@ -16,7 +16,7 @@ init_climah_module_helm() {
 
 parse_option_force-helm-chart()   { helm_fixed_charts="$2"; parse_result=2; }
 
-add_optional_helm_values_file() {
+add-optional_helm_values_file() {
     local f=($1)
     if [[ -f $f ]]; then
         debug adding values file $f
@@ -28,8 +28,8 @@ add_optional_helm_values_file() {
 
 init_helm_vars() {
     local parent_dir=$(dirname "$karmah_dir")
-    add_optional_helm_values_file "$common_dir/values*.yaml"
-    add_optional_helm_values_file "$karmah_dir/values*.yaml"
+    add-optional_helm_values_file "$common_dir/values*.yaml"
+    add-optional_helm_values_file "$karmah_dir/values*.yaml"
 }
 
 calc_helm_command() {

@@ -38,7 +38,7 @@ add-command() {
 show-commands() {
     local cmd
     for cmd in $all_commands; do
-        if [[ ${levels:-basic} == *${command_level[$cmd]}* || ${levels:-basic} == all ]]; then
+        if [[ ${level:-basic} == *${command_level[$cmd]}* || ${level:-basic} == all ]]; then
             printf "  %-13s %s\n" $cmd "${command_help[$cmd]}"
         fi
     done #|sort -k2 -k1

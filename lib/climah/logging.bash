@@ -13,12 +13,12 @@ init_logging() {
 }
 
 init_climah_module_logging() {
-    add_option v verbose  ""    give more output
-    add_option C show-cmd ""    show the commands being executed
-    add_option q quiet    ""    show no output
-    add_option n dry-run  ""    do not execute the actual commands
+    add-option v verbose  ""    give more output
+    add-option C show-cmd ""    show the commands being executed
+    add-option q quiet    ""    show no output
+    add-option n dry-run  ""    do not execute the actual commands
     help_level=expert
-    add_option "" debug   ""    show detailded debug info
+    add-option "" debug   ""    show detailded debug info
 }
 
 # TODO -vv

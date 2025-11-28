@@ -5,23 +5,6 @@ init_climah_vars_argparse() {
     declare -gA parse_arg_func=()
 }
 
-add_option() {
-    local short=$1
-    local name=$2
-    local arg=$3
-    shift 3
-    local help=$@
-    parse_arg_func[--$name]=parse_option_$name
-    if [[ -z $short ]]; then
-        name="--$name"
-    else
-        parse_arg_func[-$short]=parse_option_$name
-        name="-$short|--$name"
-    fi
-    [[ -z $arg ]] || name+=" <$arg>"
-    add_help_text option "$(printf "\n  %-20s %s" "$name" "$help")"
-}
-
 parse_arg() {
     local name=$1
     local func=${parse_arg_func[$name]:-}
@@ -30,7 +13,6 @@ parse_arg() {
         $func "$@"
     fi
 }
-
 
 replace_aliases() {
     for arg in "${@}"; do

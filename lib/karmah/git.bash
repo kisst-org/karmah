@@ -9,8 +9,8 @@ init_climah_module_git() {
     add-action ga git-add      update,render  "adds the changes to source and rendered manifests to git, for committing"
     add-action gc git-commit   update,render,git-add  "commits the changes to source and rendered manifests to git"
     add-action gr git-restore  ""             "restores the changed files (source and rendered manifests)"
-    add_option m message  msg   set fixed message to use with git commit
-    add_option M prepend-message  msg   prepend commit message before auto generated message
+    add-option m message  msg   set fixed message to use with git commit
+    add-option M prepend-message  msg   prepend commit message before auto generated message
     global_vars+=" used_files git_commit_message"
 }
 

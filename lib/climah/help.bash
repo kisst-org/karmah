@@ -10,7 +10,7 @@ init_climah_module_help() {
     add-command al  aliases  show-aliases "show all defined aliases"
     add-command ver version  show-version "show version of karmah"
 
-    add_option h help "" "show general help information"
+    add-option h help "" "show general help information"
 }
 
 parse_option_help() { show_help; exit; }
@@ -60,26 +60,14 @@ EOF
 }
 
 show_short_help() {
-  echo -n Options:
-  for h in "${help_text[option,basic]}"; do printf "%s\n" "$h"; done
-  if $(log_is_verbose); then
-    echo -n "expert options:"
-    for h in "${help_text[option,expert]}"; do printf "%s\n" "$h"; done
-  fi
-
-  echo -n Commands:
-  for h in "${help_text[command,basic]}"; do printf "%s\n" "$h"; done
-
-  echo -n Actions:
-  for h in "${help_text[action,basic]}"; do printf "%s\n" "$h"; done
-  if $(log_is_verbose); then
-    echo -n "expert actions:"
-    for h in "${help_text[action,expert]}"; do printf "%s\n" "$h"; done
-  else
-    echo show more verbose help using the following command
-    echo "  karmah --verbose --help"
-    echo "  karmah -v -h"
-  fi
+  echo Options:
+  show-options
+  echo
+  echo Commands:
+  show-commands
+  echo
+  echo Actions:
+  show-actions
 }
 
 show-aliases() {
