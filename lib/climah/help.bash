@@ -11,8 +11,9 @@ init_climah_vars_help() {
 }
 
 init_climah_module_help() {
-    add-command h  help show-help  "show general help"
-    add-option  h  help ""         "show general help information"
+    add-command h  help show-help    "show general help"
+    add-option  h  help ""           "show general help information"
+    add-option  X  extended-help ""  "show extensive help information"
 
     add-help-subject al  aliases  show-aliases "show all defined aliases"
     add-help-subject ver version  show-version "show version of karmah"
@@ -21,6 +22,9 @@ init_climah_module_help() {
 
     parse_arg_func[help]=parse-option-help
 }
+
+parse-option-help() { collect_unknown_args=true;  command=help;  }
+parse-option-extended-help() { level=all;  }
 
 add-help-subject() {
     local short=$1
@@ -44,8 +48,6 @@ add-help-subject() {
     help_topic_level[$name]=$help_level
     all_help_topics+=" $name"
 }
-
-parse-option-help() { collect_unknown_args=true;  command=help;  }
 
 add-help() {
   local section=$1
