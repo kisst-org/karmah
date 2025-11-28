@@ -14,15 +14,22 @@ init_climah_module_commands() {
     add-command ""  commands show-commands "show available commands"
 }
 
+parse-command() {
+    name=${command_alias[$1]:-$1}
+    command=$name
+}
+
 add-command() {
     local short=$1
     local name=$2
     local func=${3:-run-command-$name}
     shift 3
     local help=$@
+    parse_arg_func[$name]=parse-command
     if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
         local s
         for s in ${short//,/ }; do
+            parse_arg_func[$s]=parse-command
             command_alias[$s]=$name
         done
         help+=" ($short)"
