@@ -37,9 +37,10 @@ add-command() {
 }
 
 show-commands() {
-  #echo Commands:
-  local cmd
-  for cmd in $all_commands; do
-      printf "  %-13s %s\n" $cmd "${command_help[$cmd]}"
-  done #|sort -k2 -k1
+    local cmd
+    for cmd in $all_commands; do
+        if [[ ${levels:-basic} == *${command_level[$cmd]}* || ${levels:-basic} == all ]]; then
+            printf "  %-13s %s\n" $cmd "${command_help[$cmd]}"
+        fi
+    done #|sort -k2 -k1
 }
