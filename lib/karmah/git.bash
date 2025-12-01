@@ -11,6 +11,7 @@ init_climah_module_git() {
     add-action gr git-restore  ""             "restores the changed files (source and rendered manifests)"
     add-value-option m fixed-message    msg   "set fixed message to use with git commit"
     add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
+    add-flag-option Q quiet-diff "do not show the output of diff"
     local_vars+=" used_files git_commit_message"
 }
 
@@ -34,7 +35,9 @@ run-action-git-pull() {
 
 run-action-git-diff() {
     info git-diff ${target} to ${output_dir}
-    if $(log_is_debug); then
+    if ${quiet_diff:-false}; then
+        verbose_cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
+    elif $(log_is_debug); then
         verbose_cmd git diff -- ${used_files} ${output_dir} || true
     elif $(log_is_verbose); then
         verbose_cmd git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
