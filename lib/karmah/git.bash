@@ -44,6 +44,10 @@ run-action-git-diff() {
 }
 
 run-action-git-add() {
+    if $tmp; then
+        info skipping git-add because --tmp specfied
+        return
+    fi
     info git-add ${target} to ${output_dir}
     verbose_cmd git add ${used_files} ${output_dir}
 }
@@ -66,6 +70,10 @@ run-action-git-status() {
 
 
 run-action-git-commit() {
+    if $tmp; then
+        info skipping git-commit because --tmp specfied
+        return
+    fi
     if [[ ! -z ${fixed_message:-} ]]; then
         git_commit_message=$fixed_message
     fi

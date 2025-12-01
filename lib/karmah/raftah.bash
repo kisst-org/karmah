@@ -6,6 +6,7 @@ init_climah_vars_raftah() {
     declare -g karmah_paths=""
     declare -g subdir=""
     declare -g flow_name
+    declare -g tmp=false
     declare -g action_list=""
     declare -g all_actions=""
     declare -gA action_module=()
@@ -21,6 +22,7 @@ init_climah_module_raftah() {
     add-command ""  actions show-actions "show available actions"
     add-option a action act  "add action to list of actions to perform"
     add-option F flow   flw  "use a (custom) flow named <flw>"
+    add-flag-option T tmp    "render to tmp/manifests, do not commit"
     add-list-option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
     global_arrays+=" custom_flow"
     global_var+=" run_pre_flow"
@@ -86,7 +88,10 @@ run_karmah_file() {
         fi
         source ${karmah_file}
         init_karmah_type_${karmah_type:-basic}
-        output_dir="${to_dir:-tmp/manifests}/${target}"
+        output_dir="${to_dir:-deployed/manifests}/${target}"
+        if $tmp; then
+            output_dir="${to_dir:-tmp/manifests}/${target}"
+        fi
         local actions=${action_flow[$command]:-$action_list}
         actions=${custom_flow[${command:-none}]:-$actions}
         run_actions $actions $command
