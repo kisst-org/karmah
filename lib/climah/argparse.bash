@@ -37,9 +37,7 @@ parse-arguments() {
         arg=$1
         parse_result=0
         parse_arg "$@";
-        if [[ $arg = -vv ]]; then # TODO: parse multiple short options
-            log_level+=20;
-        elif [[ "$parse_result" > 0 ]]; then
+        if [[ "$parse_result" > 0 ]]; then
             shift $(( "$parse_result" - 1))
         else
             if [[ -f ${arg} ]]; then karmah_paths+=" ${arg}"

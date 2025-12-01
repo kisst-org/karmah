@@ -16,6 +16,9 @@ init_climah_module_logging() {
     add-option v verbose  ""    "give more output"
     add-option q quiet    ""    "show no output"
     add-option S show-script "" "show all commands without doing much"
+    # TODO: parse multiple short options
+    parse_arg_func[-vv]=parse-option-verbose2
+    parse_arg_func[-vvv]=parse-option-verbose3
 
     add-flag-option C log-cmds  "show the commands being executed"
     add-flag-option n dry-run   "do not execute the actual commands"
@@ -26,6 +29,8 @@ init_climah_module_logging() {
 
 # TODO -vv
 parse-option-verbose()   { log_level+=10; }
+parse-option-verbose2()  { log_level+=20; }
+parse-option-verbose3()  { log_level+=30; }
 parse-option-quiet()     { log_level=$log_level_warn; }
 parse-option-debug()     { set -x; }
 parse-option-show-script() {
