@@ -24,6 +24,7 @@ init_climah_module_raftah() {
     add-option F flow   flw  "use a (custom) flow named <flw>"
     add-flag-option T tmp    "render to tmp/manifests, do not commit"
     add-list-option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
+    add-value-option K force-karmah-type typ "force to use another karmah_type"
     local_arrays+=" custom_flow"
     local_var+=" run_pre_flow"
 }
@@ -87,6 +88,7 @@ run_karmah_file() {
             source $common_karmnah_file
         fi
         source ${karmah_file}
+        karmah_type=${force_karmah_type:-$karmah_type}
         init_karmah_type_${karmah_type:-basic}
         output_dir="${to_dir:-deployed/manifests}/${target}"
         if $tmp; then
