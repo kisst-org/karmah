@@ -1,8 +1,11 @@
 
 init_climah_vars_argparse() {
     declare -gA aliases=()
-    declare -ga parsed_args=()
+    declare -ga args_to_parse=()
+    declare -gA arg_alias=()
     declare -gA parse_arg_func=()
+    declare -gA collect_remaining_after=()
+    declare -gA collect_unknown_after=()
 }
 
 replace_aliases() {
@@ -10,9 +13,9 @@ replace_aliases() {
         local al="${aliases[$arg]:-none}"
         if [[ "$al" != none ]]; then
             replaced=true
-            parsed_args+=($al)
+            args_to_parse+=($al)
         else
-            parsed_args+=("$arg")
+            args_to_parse+=("$arg")
         fi
     done
 }
@@ -31,12 +34,14 @@ parse-arguments() {
     local collect_unknown_args=false
     declare -g extra_args=""
     replace_aliases "${@}"
-    set -- "${parsed_args[@]}"
+    set -- "${args_to_parse[@]}"
+    parse_arg_func[--]=collect-remaining-arguments
     log_level=$log_level_info
     while [[ $# > 0 ]]; do
-        arg=$1
+        arg=${arg_alias[$1]:-$1}
+        shift
         parse_result=0
-        parse_arg "$@";
+        parse_arg $arg "$@";
         if [[ "$parse_result" > 0 ]]; then
             shift $(( "$parse_result" - 1))
         else
@@ -49,10 +54,30 @@ parse-arguments() {
                 exit 1
             fi
         fi
-        shift
+        if ${collect_unknown_after[$arg]:-false};   then collect-unknown-arguments;   fi
+        if ${collect_remaining_after[$arg]:-false}; then collect-remaining-arguments; fi
+        if ${collect_remaining_args:-false}; then break; fi
     done
-    verbose COMMAND $(basename $0) ${parsed_args[@]}
+    extra_args+=" $*"
+    extra_args=${extra_args%% }
+    verbose COMMAND $(basename $0) ${args_to_parse[@]}
 }
+
+collect-unknown-after()   {
+    local a
+    for a in "${@//,/ }"; do
+        collect_unknown_after[a]=true;
+    done
+}
+collect-remaining-after()   {
+    local a
+    for a in "${@//,/ }"; do
+        collect_remaining_after[a]=true;
+    done
+}
+
+collect-unknown-arguments()   { collect_unknown_args=true; }
+collect-remaining-arguments() { collect_remaining_args=true; }
 
 add-commas() {
     local args="$*"

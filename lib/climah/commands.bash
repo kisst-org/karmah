@@ -29,7 +29,8 @@ add-command() {
     if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
         local s
         for s in ${short//,/ }; do
-            parse_arg_func[$s]=parse-command
+            #parse_arg_func[$s]=parse-command
+            arg_alias[$s]=$name
             command_alias[$s]=$name
         done
         help+=" ($short)"
