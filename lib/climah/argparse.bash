@@ -66,13 +66,13 @@ parse-arguments() {
 collect-unknown-after()   {
     local a
     for a in "${@//,/ }"; do
-        collect_unknown_after[a]=true;
+        collect_unknown_after[$a]=true;
     done
 }
 collect-remaining-after()   {
     local a
     for a in "${@//,/ }"; do
-        collect_remaining_after[a]=true;
+        collect_remaining_after[$a]=true;
     done
 }
 
