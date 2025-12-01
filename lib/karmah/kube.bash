@@ -9,18 +9,25 @@ init_climah_module_kube() {
     add-action kw kube-watch   "watch target resources every 2 seconds"
 
     help_level=expert
-    add-action "" kube-get        "get current manifests from cluster to --to <path> (default) deployed/manifests"
-    add-action "" kube-diff-del   "show resources that will be deleted with kube-delete"
-    add-action "" kube-tmp-scale  "scale resource(s) without changing source or deployment files"
-    add-action "" kube-restart    "restart resource(s)"
-    add-action k  kubectl         "generic kubectl in the right cluster and namespace of all targets"
+    add-action ""  kube-get       "get current manifests from cluster to --to <path> (default) deployed/manifests"
+    add-action ""  kube-diff-del  "show resources that will be deleted with kube-delete"
+    add-action ""  kube-tmp-scale "scale resource(s) without changing source or deployment files"
+    add-action ""  kube-restart   "restart resource(s)"
+    add-action k   kubectl        "generic kubectl in the right cluster and namespace of all targets"
+    add-action ks  kube-status    "show status of relevant resources"
+    add-action ke  kube-exec      "execute a command on a pod of a resource"
+    add-action kei kube-exec-it   "execute interactive command on a pod of a resource"    add-action kei kube-exec-it   "execute interactive command on a pod of a resource"
+    add-action kl  kube-log       "show logging of a resource"
 
     set-pre-actions update,render                       kube-diff
     set-pre-actions update,render,kube-diff,ask         kube-apply
     set-pre-actions update,render,kube-diff-delete,ask  kube-delete
     set-pre-actions render                              kube-diff-del
+    collect-unknown-after  kube-exec kube-exec-it kube-log
+    collect-remaining-after kubectl
 
     add-option R replicas nr  "specify number of replicas"
+    add-option r resource res "specify a resource"
     local_vars+=" kube_cluster namespace"
     local_arrays+=" kube_resource_alias kube_default_replicas"
 }
@@ -70,7 +77,6 @@ run-action-kube-delete() {
     verbose_cmd kubectl delete $(kubectl_options) -f $output_dir
 }
 
-
 run-action-kubectl() {
     info kubectl $output_dir
     verbose_cmd kubectl $(kubectl_options) $extra_args
@@ -107,6 +113,17 @@ run-action-kube-get() {
 run-action-kube-watch() {
     verbose_cmd watch kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm}
 }
+run-action-kube-exec() {
+    verbose_cmd kubectl $(kubectl_options) -n $namespace exec $(calc_full_resource_names) ${extra_args:--- sh}
+}
+run-action-kube-exec-it() {
+    verbose_cmd kubectl $(kubectl_options) -n $namespace exec -it $(calc_full_resource_names) ${extra_args:--- sh}
+}
+run-action-kube-log() {
+    verbose_cmd kubectl $(kubectl_options) -n $namespace logs $(calc_full_resource_names) ${extra_args:-}
+}
+
+
 run-action-kube-restart() {
     local res
     for res in ${kube_resource_list//,/ }; do
@@ -116,7 +133,7 @@ run-action-kube-restart() {
 }
 run-action-kube-tmp-scale() {
     local res
-    for res in $(calc_resource_names); do
+    for res in $(calc_resource_names all); do
         local repl=$(calc_kube_replicas $res)
         res=${kube_resource_alias[$res]:-$res}
         verbose_cmd kubectl $(kubectl_options) -n $namespace scale $res --replicas ${repl}
@@ -130,6 +147,18 @@ calc_resource_names() {
     fi
     echo ${result//,/ }
 }
+
+calc_full_resource_names() {
+    local r result="" res=${kube_resource_list:-${1:-}}
+    if [[ $res == all ]]; then
+        res=${all_resources}
+    fi
+    for r in ${res//,/ }; do
+        result+=" ${kube_resource_alias[$r]:-$r}"
+    done
+    echo ${result//,/ }
+}
+
 
 calc_kube_replicas() {
     local repl=${kube_replicas:-default}

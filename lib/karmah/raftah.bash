@@ -45,10 +45,10 @@ add-action() {
     if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
         local s
         for s in ${short//,/ }; do
-            parse_arg_func[$s]=parse-action
+            arg_alias[$s]=$name
             action_alias[$s]=$name
-            help+=" $short"
         done
+        help+=" ($short)"
     fi
     action_help[$name]="$help"
     action_level[$name]=$help_level
