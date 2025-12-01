@@ -4,14 +4,14 @@ init_climah_module_helm() {
     add-action "" helm-install   update,render "run helm upgrade --install for target"
     add-action "" helm-uninstall update,render "run helm uninstall for target"
     add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
-    global_vars+=" helm_template_command"
-    global_vars+=" helm_value_files"
-    global_vars+=" helm_charts"
-    global_vars+=" helm_install_command"
-    global_vars+=" helm_atomic_wait"
-    global_vars+=" helm_release"
-    global_vars+=" helm_wait_timeout"
-    global_arrays+=" helm_update_version_path helm_update_replicas_path"
+    local_vars+=" helm_template_command"
+    local_vars+=" helm_value_files"
+    local_vars+=" helm_charts"
+    local_vars+=" helm_install_command"
+    local_vars+=" helm_atomic_wait"
+    local_vars+=" helm_release"
+    local_vars+=" helm_wait_timeout"
+    local_arrays+=" helm_update_version_path helm_update_replicas_path"
 }
 
 add-optional_helm_values_file() {

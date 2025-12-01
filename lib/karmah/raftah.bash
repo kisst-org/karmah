@@ -1,8 +1,8 @@
 # raftah: run actions for all targets
 
 init_climah_vars_raftah() {
-    declare -g global_vars="karmah_type target"
-    declare -g global_arrays=""
+    declare -g local_vars="karmah_type target"
+    declare -g local_arrays=""
     declare -g karmah_paths=""
     declare -g subdir=""
     declare -g flow_name
@@ -24,8 +24,8 @@ init_climah_module_raftah() {
     add-option F flow   flw  "use a (custom) flow named <flw>"
     add-flag-option T tmp    "render to tmp/manifests, do not commit"
     add-list-option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
-    global_arrays+=" custom_flow"
-    global_var+=" run_pre_flow"
+    local_arrays+=" custom_flow"
+    local_var+=" run_pre_flow"
 }
 
 parse-option-action() { action_list=" $2"; parse_result=2; }
@@ -74,10 +74,10 @@ run_karmah_file() {
 
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
-        debug clearing $global_vars $global_arrays
-        unset $global_vars $global_arrays
-        declare -g $global_vars
-        declare -gA $global_arrays
+        debug clearing $local_vars $local_arrays
+        unset $local_vars $local_arrays
+        declare $local_vars
+        declare -A $local_arrays
         verbose loading ${karmah_file}
         local karmah_dir=$(dirname $karmah_file)
         local common_dir=$(dirname $karmah_dir)/common

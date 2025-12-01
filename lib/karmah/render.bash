@@ -1,6 +1,6 @@
 
 init_climah_module_render() {
-    global_vars+=" renderer output_dir already_rendered"
+    local_vars+=" renderer output_dir already_rendered"
     declare -g to_dir
     add-action r render update "render manifests to --to <path> (default tmp/manifests)"
     help_level=expert

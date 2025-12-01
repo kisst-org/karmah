@@ -7,7 +7,7 @@ init_climah_module_update() {
 
     declare -ga updates=()
 
-    global_vars+=" update_version_function update_replicas_function custom_update_function"
+    local_vars+=" update_version_function update_replicas_function custom_update_function"
     aliases[tmp-stop]="--action kube-tmp-scale --replicas 0"
     aliases[tmp-start]="--action kube-tmp-scale --replicas default"
     aliases[stop]="--action deploy --replicas 0"
