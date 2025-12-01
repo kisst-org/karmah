@@ -4,8 +4,10 @@ init_climah_module_render() {
     declare -g to_dir
     add-action r render update "render manifests to --to <path> (default tmp/manifests)"
     help_level=expert
-    add-action "" compare update,render  "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
-    add-action rm render-rm "" "remove all rendered manifests"
+    add-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
+    add-action rm render-rm "remove all rendered manifests"
+    set-pre-actions update        render
+    set-pre-actions update,render compare
 
     add-option t to       path  "other path to render to (default is tmp/manifests)"
     add-option w with     path  used for comparison between two manifest trees

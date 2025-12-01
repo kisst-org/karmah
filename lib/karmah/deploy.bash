@@ -1,9 +1,9 @@
 
 init_climah_module_deploy() {
-    add-action "" deploy "" "render to deployed/manifests and optionally deploy to kubernetes"
-    add-action "" plan   "" "show what deploy action would do"
+    add-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
+    add-action "" plan   "show what deploy action would do"
     help_level=expert
-    add-action no-cmd ask "" "ask for confirmation (unless --yes is specified)"
+    add-action no-cmd ask "ask for confirmation (unless --yes is specified)"
     add-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
 }
@@ -12,7 +12,7 @@ parse-option-yes() { yes_arg="--yes"; }
 
 run-action-ask() {
     if [[  $yes_arg == --yes ]]; then
-        verbose skipping ask, because --yes is specified
+        info skipping ask, because --yes is specified
         return 0
     fi
     local answer

@@ -35,18 +35,24 @@ add-action() {
     debug adding action: "${@}"
     local short=$1
     local name=$2
-    local flow=$3
-    shift 3
+    shift 2
     if [[ $short != no-cmd ]]; then
         add-command "$short" $name run-flow "${@}"
     fi
-    action_flow[$name]=$flow
     action_help[$name]="$@"
     action_level[$name]=$help_level
     action_module[$name]=$module
-
     #action_function[$name]=$func
     all_actions+=" $name"
+}
+
+set-pre-actions() {
+    local name actions="$1"
+    shift
+    for name in "${@//,/ }"; do
+        action_flow[$name]=$actions,$name
+    done
+
 }
 
 run-flow() {
@@ -94,16 +100,16 @@ run_karmah_file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target}"
         fi
-        local actions=${action_list:-$action_flow[$command]}
-        actions=${custom_flow[${command:-none}]:-$actions}
-        verbose running actions $actions for $target
-        run_actions $actions $command
+        local actions=${action_list:-${action_flow[$command]:-command}}
+        #actions=${custom_flow[${command:-none}]:-$actions}
+        run_actions $actions
     else
         info skipping $karmah_file
     fi
 }
 
 run_actions() {
+    info running actions $@ for $target
     for action in ${@//,/ }; do
         verbose running $action for ${target}
         run-action-$action;

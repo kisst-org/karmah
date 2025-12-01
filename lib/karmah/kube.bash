@@ -3,17 +3,22 @@ init_climah_module_kube() {
     declare -Ag kube_context_map
     #declare -g kube_resource_list
 
-    add-action kd kube-diff     update,render    "compare rendered manifests with cluster (kubectl diff)"
-    add-action ka kube-apply    update,render,kube-diff,ask     "apply rendered manifests with cluster (kubectl apply)"
-    add-action "" kube-delete   update,render,kube-diff-delete,ask    "delete all manifests from cluster (kubectl delete)"
-    add-action kw kube-watch    ""  "watch target resources every 2 seconds"
+    add-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
+    add-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
+    add-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
+    add-action kw kube-watch   "watch target resources every 2 seconds"
 
     help_level=expert
-    add-action "" kube-get         ""     "get current manifests from cluster to --to <path> (default) deployed/manifests"
-    add-action "" kube-diff-del    render "show resources that will be deleted with kube-delete"
-    add-action "" kube-tmp-scale   ""     "scale resource(s) without changing source or deployment files"
-    add-action "" kube-restart     ""     "restart resource(s)"
-    add-action k  kubectl          ""     "generic kubectl in the right cluster and namespace of all targets"
+    add-action "" kube-get        "get current manifests from cluster to --to <path> (default) deployed/manifests"
+    add-action "" kube-diff-del   "show resources that will be deleted with kube-delete"
+    add-action "" kube-tmp-scale  "scale resource(s) without changing source or deployment files"
+    add-action "" kube-restart    "restart resource(s)"
+    add-action k  kubectl         "generic kubectl in the right cluster and namespace of all targets"
+
+    set-pre-actions update,render                       kube-diff
+    set-pre-actions update,render,kube-diff,ask         kube-apply
+    set-pre-actions update,render,kube-diff-delete,ask  kube-delete
+    set-pre-actions render                              kube-diff-del
 
     add-option R replicas nr  "specify number of replicas"
     local_vars+=" kube_cluster namespace"
@@ -56,7 +61,7 @@ run-action-kube-diff-delete() {
 }
 
 run-action-kube-apply() {
-    info kube apply $output_dir
+    info kube-apply $output_dir
     verbose_cmd kubectl apply $(kubectl_options) -f $output_dir
 }
 
