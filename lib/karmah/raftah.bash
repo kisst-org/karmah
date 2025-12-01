@@ -13,14 +13,17 @@ init_climah_vars_raftah() {
     declare -gA action_level=()
     declare -gA action_help=()
     declare -gA action_flow=()
+    declare -gA action_alias=()
 }
 
 init_climah_module_raftah() {
     #add_command "forall" "run actions for all targets"
-    command=render
-    help_level=expert
+    command=run-actions
+    add-command run run-actions ""   "run actions forall targets"
     add-command ""  actions show-actions "show available actions"
-    add-option a action act  "add action to list of actions to perform"
+    help_level=expert
+    add-option a add-actions act  "add action to list of actions to perform"
+    add-option A set-actions act  "set the action to list of actions to perform"
     add-option F flow   flw  "use a (custom) flow named <flw>"
     add-flag-option T tmp    "render to tmp/manifests, do not commit"
     add-list-option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
@@ -29,21 +32,36 @@ init_climah_module_raftah() {
     local_var+=" run_pre_flow"
 }
 
-parse-option-action() { action_list=" $2"; parse_result=2; }
+parse-option-add-actions() { action_list+=" $2"; parse_result=2; }
+parse-option-set-actions() { action_list=" $2"; parse_result=2; }
 
 add-action() {
     debug adding action: "${@}"
     local short=$1
     local name=$2
+    parse_arg_func[$name]=parse-action
     shift 2
-    if [[ $short != no-cmd ]]; then
-        add-command "$short" $name run-flow "${@}"
+    local help="$*"
+    if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
+        local s
+        for s in ${short//,/ }; do
+            parse_arg_func[$s]=parse-action
+            action_alias[$s]=$name
+            help+=" $short"
+        done
     fi
-    action_help[$name]="$@"
+    action_help[$name]="$help"
     action_level[$name]=$help_level
     action_module[$name]=$module
     #action_function[$name]=$func
     all_actions+=" $name"
+}
+
+parse-action() {
+    local name=${action_alias[$1]:-$1}
+    action_list+=" ${action_flow[$name]:-$name}"
+    #actions=${custom_flow[${command:-none}]:-$actions}
+    command=run-actions
 }
 
 set-pre-actions() {
@@ -55,7 +73,7 @@ set-pre-actions() {
 
 }
 
-run-flow() {
+run-command-run-actions() {
     for path in $karmah_paths; do
         if [[ -f $path ]]; then
             karmah_file=$path
@@ -100,8 +118,8 @@ run_karmah_file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target}"
         fi
-        local actions=${action_list:-${action_flow[$command]:-$command}}
-        #actions=${custom_flow[${command:-none}]:-$actions}
+        local actions=$(add-commas ${action_list:-update,render})
+        info "running actions $actions for $target"
         run_actions $actions
     else
         info skipping $karmah_file
@@ -109,7 +127,6 @@ run_karmah_file() {
 }
 
 run_actions() {
-    info running actions $@ for $target
     for action in ${@//,/ }; do
         verbose running $action for ${target}
         run-action-$action;

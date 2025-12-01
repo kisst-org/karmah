@@ -70,12 +70,14 @@ run_helm_forall_charts() {
 }
 
 run-action-helm-install() {
+    info "running helm-install for $target"
     : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-uninstall() {
+    info "running helm-uninstall for $target"
     : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall ${helm_atomic_wait} $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}

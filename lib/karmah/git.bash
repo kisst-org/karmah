@@ -32,6 +32,7 @@ add_message() {
 }
 
 run-action-git-pull() {
+    info "running git-pull for $target"
     verbose_cmd git pull
 }
 
@@ -76,9 +77,10 @@ run-action-git-status() {
 
 run-action-git-commit() {
     if $tmp; then
-        info skipping git-commit because --tmp specfied
+        info skipping git-commit because --tmp specified
         return
     fi
+    info "running git-commit for $target"
     if [[ ! -z ${fixed_message:-} ]]; then
         git_commit_message=$fixed_message
     fi

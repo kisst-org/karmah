@@ -55,3 +55,15 @@ parse-arguments() {
     done
     verbose COMMAND $(basename $0) ${parsed_args[@]}
 }
+
+add-commas() {
+    local args="$*"
+    args=${args// /,}
+    echo ${args%%,}
+}
+
+add-spaces() {
+    local args="$*"
+    args=${args//,/ }
+    echo ${args%% }
+}
