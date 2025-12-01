@@ -94,8 +94,9 @@ run_karmah_file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target}"
         fi
-        local actions=${action_flow[$command]:-$action_list}
+        local actions=${action_list:-$action_flow[$command]}
         actions=${custom_flow[${command:-none}]:-$actions}
+        verbose running actions $actions for $target
         run_actions $actions $command
     else
         info skipping $karmah_file
