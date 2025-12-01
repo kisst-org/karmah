@@ -100,7 +100,7 @@ run_karmah_file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target}"
         fi
-        local actions=${action_list:-${action_flow[$command]:-command}}
+        local actions=${action_list:-${action_flow[$command]:-$command}}
         #actions=${custom_flow[${command:-none}]:-$actions}
         run_actions $actions
     else
