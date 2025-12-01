@@ -35,7 +35,7 @@ kubectl_options() {
     echo $opt
 }
 
-filter-kube-diff-output() { grep -E '^[+-] |^---'; }
+filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation: [0-9]*$'; }
 run-action-kube-diff() {
     info kube-diff ${target} to ${output_dir}
     if $(log_is_verbose); then
