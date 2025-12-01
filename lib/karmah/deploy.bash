@@ -1,9 +1,7 @@
 
 init_climah_module_deploy() {
-    #add-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
-    #add-action "" plan   "show what deploy action would do"
-    add-command "" deploy run-command-deploy "render to deployed/manifests and optionally deploy to kubernetes"
-    add-command p  plan   run-command-plan "render to deployed/manifests and optionally deploy to kubernetes"
+    add-action "" deploy "" "render to deployed/manifests and optionally deploy to kubernetes"
+    add-action "" plan   "" "show what deploy action would do"
     help_level=expert
     add-action no-cmd ask "" "ask for confirmation (unless --yes is specified)"
     add-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
@@ -25,10 +23,7 @@ run-action-ask() {
     fi
 }
 
-
-
-run-command-deploy() {
-    output_dir="${to_dir:-deployed/manifests}/${target}"
+run-action-deploy() {
     local actions=${deploy_actions:-render,git-diff,ask,git-commit}
     info deploying ${output_dir} with actions: ${actions}
     add_message "deploy $target"
@@ -37,8 +32,7 @@ run-command-deploy() {
     run_actions $actions
 }
 
-run-command-plan() {
-    output_dir="${to_dir:-deployed/manifests}/${target}"
+run-action-plan() {
     local actions=${plan_actions:-render,git-diff}
     info planning deploy ${output_dir} with actions: ${actions}
     run_actions $actions
