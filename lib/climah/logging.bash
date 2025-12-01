@@ -44,14 +44,14 @@ parse-option-show-script() {
 log_is_error()   { (( ${log_level} >= ${log_level_error} )) }
 log_is_warn()    { (( ${log_level} >= ${log_level_warn} )) }
 log_is_info()    { (( ${log_level} >= ${log_level_info} )) }
-log_is_verbose() { (( ${log_level:-30} >= ${log_level_verbose:-40} )) }
+log_is_verbose() { (( ${log_level} >= ${log_level_verbose} )) }
 log_is_debug()   { (( ${log_level} >= ${log_level_debug} )) }
 
-error()   { if $(log_is_error) ;   then printf "ERROR "; printf "%s " "${@}"; echo; fi }
-warn()    { if $(log_is_warn) ;    then printf "WARN "; printf "%s " "${@}"; echo; fi }
-info()    { if $(log_is_info) ;    then printf "# ";  printf "%s " "${@}"; echo; fi }
-verbose() { if $(log_is_verbose) ; then printf "## "; printf "%s " "${@}"; echo; fi }
-debug()   { if $(log_is_debug) ;   then printf "### ";  printf "%s " "${@}"; echo; fi }
+error()   { if $(log_is_error);   then printf "ERROR %s \n" "${*}";  fi }
+warn()    { if $(log_is_warn);    then printf "WARN %s \n" "${*}";  fi }
+info()    { if $(log_is_info);    then printf "# %s \n" "${*}";  fi }
+verbose() { if $(log_is_verbose); then printf "## %s \n" "${*}";  fi }
+debug()   { if $(log_is_debug);   then printf "### %s \n" "${*}";  fi }
 
 verbose_cmd() {
     if (( $log_level >= $log_level_verbose )); then
