@@ -111,7 +111,7 @@ run-action-kube-get() {
     verbose_cmd kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm}
 }
 run-action-kube-watch() {
-    verbose_cmd watch kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm}
+    verbose_cmd watch kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm,svc,ingress,pdb}
 }
 run-action-kube-exec() {
     verbose_cmd kubectl $(kubectl_options) -n $namespace exec $(calc_full_resource_names) ${extra_args:--- sh}
