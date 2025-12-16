@@ -112,7 +112,7 @@ run_karmah_file() {
             source $common_karmnah_file
         fi
         source ${karmah_file}
-        karmah_type=${force_karmah_type:-$karmah_type}
+        karmah_type=${force_karmah_type:-${karmah_type:-basic}}
         init_karmah_type_${karmah_type:-basic}
         output_dir="${to_dir:-deployed/manifests}/${target}"
         if $tmp; then
