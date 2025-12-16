@@ -11,7 +11,8 @@ init_climah_module_git() {
     add-action gr git-restore  "restores the changed files (source and rendered manifests)"
     set-pre-actions update,render           git-diff git-add
     set-pre-actions update,render,git-add   git-commit
-    add-value-option m fixed-message    msg   "set fixed message to use with git commit"
+    add-value-option m   message        msg   "set message to use with git commit"
+    add-value-option "" fixed-message   msg   "set fixed message to use with git commit"
     add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
     add-flag-option Q quiet-diff "do not show the output of diff"
     local_vars+=" used_files git_commit_message"
