@@ -28,7 +28,7 @@ init_climah_module_kube() {
 
     add-option R replicas nr  "specify number of replicas"
     add-option r resource res "specify a resource"
-    local_vars+=" kube_cluster namespace"
+    local_vars+=" kube_cluster namespace all_resources"
     local_arrays+=" kube_resource_alias kube_default_replicas"
 }
 
