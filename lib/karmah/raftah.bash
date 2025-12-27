@@ -109,6 +109,7 @@ run_karmah_file() {
         local used_files=${karmah_dir}
         local common_karmnah_file=($common_dir/common*.karmah)
         if [[ -f $common_karmnah_file ]]; then
+            debug loading $common_karmnah_file
             source $common_karmnah_file
         fi
         source ${karmah_file}
