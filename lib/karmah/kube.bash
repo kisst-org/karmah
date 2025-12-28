@@ -108,19 +108,19 @@ run-action-kube-get-manifests() {
 }
 
 run-action-kube-get() {
-    verbose_cmd kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm}
+    verbose_cmd kubectl $(kubectl_options) get ${extra_args:-pods,deploy,sts,cm}
 }
 run-action-kube-watch() {
-    verbose_cmd watch kubectl $(kubectl_options) -n $namespace get ${extra_args:-pods,deploy,sts,cm,svc,ingress,pdb}
+    verbose_cmd watch kubectl $(kubectl_options) get ${extra_args:-pods,deploy,sts,cm,svc,ingress,pdb}
 }
 run-action-kube-exec() {
-    verbose_cmd kubectl $(kubectl_options) -n $namespace exec $(calc_full_resource_names) ${extra_args:--- sh}
+    verbose_cmd kubectl $(kubectl_options) exec $(calc_full_resource_names) ${extra_args:--- sh}
 }
 run-action-kube-exec-it() {
-    verbose_cmd kubectl $(kubectl_options) -n $namespace exec -it $(calc_full_resource_names) ${extra_args:--- sh}
+    verbose_cmd kubectl $(kubectl_options) exec -it $(calc_full_resource_names) ${extra_args:--- sh}
 }
 run-action-kube-log() {
-    verbose_cmd kubectl $(kubectl_options) -n $namespace logs $(calc_full_resource_names) ${extra_args:-}
+    verbose_cmd kubectl $(kubectl_options) logs $(calc_full_resource_names) ${extra_args:-}
 }
 
 
@@ -128,7 +128,7 @@ run-action-kube-restart() {
     local res
     for res in ${kube_resource_list//,/ }; do
         res=${kube_resource_alias[$res]:-$res}
-        verbose_cmd kubectl $(kubectl_options) -n $namespace rollout restart $res
+        verbose_cmd kubectl $(kubectl_options) rollout restart $res
     done
 }
 run-action-kube-tmp-scale() {
@@ -136,7 +136,7 @@ run-action-kube-tmp-scale() {
     for res in $(calc_resource_names all); do
         local repl=$(calc_kube_replicas $res)
         res=${kube_resource_alias[$res]:-$res}
-        verbose_cmd kubectl $(kubectl_options) -n $namespace scale $res --replicas ${repl}
+        verbose_cmd kubectl $(kubectl_options) scale $res --replicas ${repl}
     done
 }
 
