@@ -13,6 +13,7 @@ init_climah_module_helm() {
     local_vars+=" helm_atomic_wait"
     local_vars+=" helm_release"
     local_vars+=" helm_wait_timeout"
+    local_vars+=" helm_post_renderer"
     local_arrays+=" helm_update_version_path helm_update_replicas_path"
 }
 
@@ -44,6 +45,9 @@ calc_helm_command() {
     cmd+=" $helm_release"
     cmd+=" --namespace $namespace"
     cmd+=" $chart"
+    if [[ ! -z ${helm_post_renderer:-} ]]; then
+        cmd+=" --post-renderer ${helm_post_renderer}"
+    fi
     echo $cmd
 }
 
