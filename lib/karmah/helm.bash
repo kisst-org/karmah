@@ -6,6 +6,12 @@ init_climah_module_helm() {
     add-action "" helm-install   update,render "deprecated: run helm upgrade --install for target"
     add-action "" helm-uninstall update,render "run helm uninstall for target"
     add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
+
+    set-pre-actions update,render                       helm-diff
+    set-pre-actions update,render,kube-diff,ask         helm-install
+    set-pre-actions update,render,kube-diff,ask         helm-upgrade
+    set-pre-actions update,render,kube-diff-delete,ask  helm-uninstall
+
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
     local_vars+=" helm_charts"
