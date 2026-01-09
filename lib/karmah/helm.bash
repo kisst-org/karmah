@@ -1,10 +1,12 @@
 
 init_climah_module_helm() {
     help_level=expert
-    add-action hd helm-diff      update,render "run helm diff for target"
-    add-action "" helm-upgrade   update,render "run helm upgrade --install for target"
-    add-action "" helm-install   update,render "deprecated: run helm upgrade --install for target"
-    add-action "" helm-uninstall update,render "run helm uninstall for target"
+    add-action hD helm-diff           "run helm diff plugin for target"
+    add-action "" helm-upgrade        "run helm upgrade --install for target"
+    add-action "" helm-install        "deprecated: run helm upgrade --install for target"
+    add-action "" helm-uninstall      "run helm uninstall for target"
+    add-action "" helm-get-manifests  "download helm manifests from cluster"
+    add-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
     add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
 
     set-pre-actions update,render                       helm-diff
@@ -101,6 +103,27 @@ run-action-helm-uninstall() {
     : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall ${helm_atomic_wait} $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
+}
+
+run-action-helm-get-manifests() {
+    local release=${helm_release:=$(basename $target)}
+    info getting manifests from helm release ${release} in namespace $namespace to ${output_dir}
+    verbose_cmd rm -rf ${output_dir}
+    verbose_cmd mkdir -p ${output_dir}
+    local cmd="helm $(helm_cluster_options) get manifest $release --namespace $namespace"
+    verbose_pipe split_into_files $cmd
+}
+
+run-action-helm-get-diff() {
+    local render_dir=tmp/manifests/${target}
+    local get_dir=${with_dir:-tmp/get}/${target}
+    local output_dir=$render_dir
+    run-action-update
+    run-action-render
+    local output_dir=$get_dir
+    run-action-helm-get-manifests
+    info comparing ${target}: helm-get ${get_dir} with rendered ${render_dir}
+    verbose_cmd diff -r $get_dir $render_dir || true
 }
 
 
