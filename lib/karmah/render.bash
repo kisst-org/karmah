@@ -41,7 +41,13 @@ run-action-compare() {
 }
 
 split_into_files() {
-    yq -P 'sort_keys(..)' | yq -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
+    # Cleans the stdin yaml to a normalized format
+    # - pretty print with normalized indents
+    # - sort all the keys
+    # - remove comments
+    # - apply a style with no quotes if not needed
+    # Then it will split all documents in files named <kind>_<metadata.name>.yaml
+    yq -P 'sort_keys(..)' | yq '... comments=""' | yq '.. style=""' | yq -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
     rm -f ${output_dir}/_.yaml
 }
 
