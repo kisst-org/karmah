@@ -41,7 +41,7 @@ kubectl_options() {
     local cfg=${kube_config_map[$cl]:-default}
     local opt=""
     if [[ $cfg != default ]]; then
-        opt="--kube_config_map $cfg " # extra space at end
+        opt="--kubeconfig $cfg " # extra space at end
     fi
     opt+="--context ${kube_context_map[$cl]} -n $namespace"
     echo $opt
