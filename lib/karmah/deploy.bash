@@ -24,6 +24,7 @@ run-action-ask() {
 }
 
 run-action-deploy() {
+    output_dir=deployed/manifests/$target
     local actions=$(add-commas ${deploy_actions:-render,git-diff,ask,git-commit})
     verbose deploying ${output_dir} with actions: ${actions}
     add_message "deploy $target"
