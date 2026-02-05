@@ -115,6 +115,18 @@ run-action-helm-get-manifests() {
 }
 
 run-action-helm-get-diff() {
+    # do a check status to see if the release exists
+    local release=${helm_release:=$(basename $target)}
+    debug checking for helm release ${release} in namespace $namespace
+    local cmd="helm $(helm_cluster_options) status $release --namespace $namespace"
+    verbose "   $cmd"
+    local tmp_status_failed=false
+    $cmd >/dev/null || tmp_status_failed=true
+    if $tmp_status_failed ; then
+        info helm release $helm_release does not yet exist in namespace $namespace, skipping helm-get-diff
+        return 0;
+    fi
+
     local render_dir=tmp/manifests/${target}
     local get_dir=${with_dir:-tmp/get}/${target}
     local output_dir=$render_dir
