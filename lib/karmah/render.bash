@@ -1,6 +1,6 @@
 
 init_climah_module_render() {
-    local_vars+=" renderer output_dir already_rendered"
+    local_vars+=" renderer output_dir already_rendered sort_env_vars"
     declare -g to_dir
     add-action r render update "render manifests to --to <path> (default tmp/manifests)"
     help_level=expert
@@ -40,7 +40,7 @@ run-action-compare() {
     verbose_cmd diff -r $newdir $olddir || true
 }
 
-sort_env_vars() {
+sort-env-vars() {
     if [[ $(yq '.spec.template.spec.containers[].env // null' $1) != null ]]; then
         debug sorting containers env keys in manifest $1
         yq -i '.spec.template.spec.containers[].env |= sort_by(.name)' $1
@@ -55,10 +55,12 @@ split_into_files() {
     # - apply a style with no quotes if not needed
     # Then it will split all documents in files named <kind>_<metadata.name>.yaml
     yq -P 'sort_keys(..)' | yq '... comments=""' | yq '.. style=""' | yq -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
-    local f
-    for f in ${output_dir}/*.yaml; do
-        sort_env_vars $f
-    done
+    if ${sort_env_vars:-true}; then
+        local f
+        for f in ${output_dir}/*.yaml; do
+            sort-env-vars $f
+        done
+    fi
     rm -f ${output_dir}/_.yaml
 }
 
