@@ -107,10 +107,10 @@ run_karmah_file() {
         local karmah_dir=$(dirname $karmah_file)
         local common_dir=$(dirname $karmah_dir)/common
         local used_files=${karmah_dir}
-        local common_karmnah_file=($common_dir/common*.karmah)
-        if [[ -f $common_karmnah_file ]]; then
-            debug loading $common_karmnah_file
-            source $common_karmnah_file
+        local common_karmah_file=($common_dir/common*.karmah)
+        if [[ -f $common_karmah_file ]]; then
+            debug loading $common_karmah_file
+            source $common_karmah_file
         fi
         source ${karmah_file}
         karmah_type=${force_karmah_type:-${karmah_type:-basic}}
