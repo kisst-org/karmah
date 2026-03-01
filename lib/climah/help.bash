@@ -117,11 +117,6 @@ show_short_help() {
   echo
   echo Commands:
   show-commands
-  if [[ ${level:-basic} == all ]]; then
-    echo
-    echo Actions:
-    show-actions
-  fi
 }
 
 show-aliases() {

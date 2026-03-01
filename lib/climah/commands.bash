@@ -51,3 +51,5 @@ show-commands() {
         fi
     done #|sort -k2 -k1
 }
+
+run-command() { ${command_function[$command]}; }

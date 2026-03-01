@@ -1,10 +1,10 @@
 
 init_climah_module_kapp() {
     help_level=expert
-    add-action "" kapp-plan    "show what resources will be updated"
-    add-action "" kapp-diff    "show what resources will be updated, including detailed diffs"
-    add-action "" kapp-deploy  "deploy the application with kapp"
-    add-action "" kapp-delete  "delete the application with kapp"
+    add-karmah-action "" kapp-plan    "show what resources will be updated"
+    add-karmah-action "" kapp-diff    "show what resources will be updated, including detailed diffs"
+    add-karmah-action "" kapp-deploy  "deploy the application with kapp"
+    add-karmah-action "" kapp-delete  "delete the application with kapp"
     set-pre-actions update,render kapp-plan kapp-diff kapp-deploy kapp-delete
 }
 

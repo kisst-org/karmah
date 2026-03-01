@@ -45,8 +45,8 @@ parse-arguments() {
         if [[ "$parse_result" > 0 ]]; then
             shift $(( "$parse_result" - 1))
         else
-            if [[ -f ${arg} ]]; then karmah_paths+=" ${arg}"
-            elif [[ -d ${arg} ]]; then karmah_paths+=" ${arg%%/}" # remove a trailing /
+            if [[ -f ${arg} ]]; then target_paths+=" ${arg}"
+            elif [[ -d ${arg} ]]; then target_paths+=" ${arg%%/}" # remove a possible trailing /
             elif $collect_unknown_args; then extra_args+=" $arg"
             else
                 echo unknown argument ${arg}, should be an option, action or path

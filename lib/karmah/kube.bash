@@ -3,21 +3,21 @@ init_climah_module_kube() {
     declare -Ag kube_context_map
     #declare -g kube_resource_list
 
-    add-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
-    add-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
-    add-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
-    add-action kw kube-watch   "watch target resources every 2 seconds"
+    add-karmah-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
+    add-karmah-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
+    add-karmah-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
+    add-karmah-action kw kube-watch   "watch target resources every 2 seconds"
 
     help_level=expert
-    add-action ""  kube-get       "get current manifests from cluster to --to <path> (default) deployed/manifests"
-    add-action ""  kube-diff-del  "show resources that will be deleted with kube-delete"
-    add-action ""  kube-tmp-scale "scale resource(s) without changing source or deployment files"
-    add-action ""  kube-restart   "restart resource(s)"
-    add-action k   kubectl        "generic kubectl in the right cluster and namespace of all targets"
-    add-action ks  kube-status    "show status of relevant resources"
-    add-action ke  kube-exec      "execute a command on a pod of a resource"
-    add-action kei kube-exec-it   "execute interactive command on a pod of a resource"    add-action kei kube-exec-it   "execute interactive command on a pod of a resource"
-    add-action kl  kube-log       "show logging of a resource"
+    add-karmah-action ""  kube-get       "get current manifests from cluster to --to <path> (default) deployed/manifests"
+    add-karmah-action ""  kube-diff-del  "show resources that will be deleted with kube-delete"
+    add-karmah-action ""  kube-tmp-scale "scale resource(s) without changing source or deployment files"
+    add-karmah-action ""  kube-restart   "restart resource(s)"
+    add-karmah-action k   kubectl        "generic kubectl in the right cluster and namespace of all targets"
+    add-karmah-action ks  kube-status    "show status of relevant resources"
+    add-karmah-action ke  kube-exec      "execute a command on a pod of a resource"
+    add-karmah-action kei kube-exec-it   "execute interactive command on a pod of a resource"
+    add-karmah-action kl  kube-log       "show logging of a resource"
 
     set-pre-actions update,render                       kube-diff
     set-pre-actions update,render,kube-diff,ask         kube-apply

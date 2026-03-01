@@ -1,12 +1,12 @@
 
 init_climah_module_helm() {
     help_level=expert
-    add-action hD helm-diff           "run helm diff plugin for target"
-    add-action "" helm-upgrade        "run helm upgrade --install for target"
-    add-action "" helm-install        "deprecated: run helm upgrade --install for target"
-    add-action "" helm-uninstall      "run helm uninstall for target"
-    add-action "" helm-get-manifests  "download helm manifests from cluster"
-    add-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
+    add-karmah-action hD helm-diff           "run helm diff plugin for target"
+    add-karmah-action "" helm-upgrade        "run helm upgrade --install for target"
+    add-karmah-action "" helm-install        "deprecated: run helm upgrade --install for target"
+    add-karmah-action "" helm-uninstall      "run helm uninstall for target"
+    add-karmah-action "" helm-get-manifests  "download helm manifests from cluster"
+    add-karmah-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
     add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
 
     set-pre-actions update,render                       helm-diff

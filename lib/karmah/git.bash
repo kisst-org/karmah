@@ -5,10 +5,10 @@ init_climah_vars_git() {
 
 init_climah_module_git() {
     help_level=expert
-    add-action gd git-diff     "shows the changes to source and rendered manifests with git"
-    add-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
-    add-action gc git-commit   "commits the changes to source and rendered manifests to git"
-    add-action gr git-restore  "restores the changed files (source and rendered manifests)"
+    add-karmah-action gd git-diff     "shows the changes to source and rendered manifests with git"
+    add-karmah-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
+    add-karmah-action gc git-commit   "commits the changes to source and rendered manifests to git"
+    add-karmah-action gr git-restore  "restores the changed files (source and rendered manifests)"
     set-pre-actions update,render           git-diff git-add
     set-pre-actions update,render,git-add   git-commit
     add-value-option m   message        msg   "set message to use with git commit"

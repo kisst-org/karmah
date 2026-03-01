@@ -1,9 +1,9 @@
 
 init_climah_module_deploy() {
-    add-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
-    add-action "" plan   "show what deploy action would do"
+    add-karmah-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
+    add-karmah-action "" plan   "show what deploy action would do"
     help_level=expert
-    add-action no-cmd ask "ask for confirmation (unless --yes is specified)"
+    add-karmah-action no-cmd ask "ask for confirmation (unless --yes is specified)"
     add-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
 }
