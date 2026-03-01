@@ -1,7 +1,7 @@
-# raftah: run actions for all targets
+# karmah: do stuff based on *.karmah file
 
 init_climah_vars_karmah() {
-    declare -g local_vars="karmah_type target"
+    declare -g local_vars="karmah_type target karmah_func"
     declare -g local_arrays=""
     declare -g karmah_paths=""
     }
@@ -28,19 +28,19 @@ run-for-all-karmah-paths() {
 run-karmah-path() {
     if [[ -f $target_path ]]; then
         karmah_file=$target_path
-        run_karmah_file
+        run-karmah-file
     elif [[ -z ${subdir:-} ]]; then
         karmah_file=($target_path/*.karmah) # use array for globbing
-        run_karmah_file
+        run-karmah-file
     else
         for sd in ${subdir//,/ }; do
             karmah_file=($target_path/$sd/*.karmah)  # use array for globbing
-            run_karmah_file
+            run-karmah-file
         done
     fi
 }
 
-run_karmah_file() {
+run-karmah-file() {
     local karmah_type
     local actions=$(add-commas ${action_flow[$command]:-$command})
 
@@ -50,18 +50,8 @@ run_karmah_file() {
         unset $local_vars $local_arrays
         declare $local_vars
         declare -A $local_arrays
-        verbose loading ${karmah_file}
-        local karmah_dir=$(dirname $karmah_file)
-        local common_dir=$(dirname $karmah_dir)/common
-        local used_files=${karmah_dir}
-        local common_karmah_file=($common_dir/common*.karmah)
-        if [[ -f $common_karmah_file ]]; then
-            debug loading $common_karmah_file
-            source $common_karmah_file
-        fi
         source ${karmah_file}
-        karmah_type=${force_karmah_type:-${karmah_type:-basic}}
-        init_karmah_type_${karmah_type:-basic}
+        common-karmah
         output_dir="${to_dir:-tmp/manifests}/${target}"
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target}"
@@ -70,5 +60,24 @@ run_karmah_file() {
         run_actions $actions
     else
         info skipping $karmah_file
+    fi
+}
+
+common-karmah() {
+    karmah_dir=$(dirname $karmah_file)
+    common_dir=$(dirname $karmah_dir)/common
+    used_files=${karmah_dir}
+    local common_karmah_file=($common_dir/common*.karmah)
+    if [[ -f $common_karmah_file ]]; then
+        debug loading $common_karmah_file
+        source $common_karmah_file
+    fi
+    if [[ ! -z ${karmah_func:-} ]]; then
+        # TODO: force-karmah-func?
+        $karmah_func
+    elif [[ ! -z ${karmah_type:-} ]]; then
+        #warn karmah_type is deprecated, use karmah_func instead
+        karmah_type=${force_karmah_type:-${karmah_type:-basic}}
+        init_karmah_type_${karmah_type}
     fi
 }
