@@ -50,6 +50,7 @@ run-karmah-file() {
         unset $local_vars $local_arrays
         declare $local_vars
         declare -A $local_arrays
+        debug sourcing $karmah_file
         source ${karmah_file}
         common-karmah
         output_dir="${to_dir:-tmp/manifests}/${target}"
@@ -69,7 +70,7 @@ common-karmah() {
     used_files=${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
-        debug loading $common_karmah_file
+        debug sourcing $common_karmah_file
         source $common_karmah_file
     fi
     if [[ ! -z ${karmah_func:-} ]]; then

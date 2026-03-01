@@ -43,7 +43,7 @@ run-action-update() {
         fi
     done
 
-    $any_updates || verbose no updates detected
+    $any_updates || verbose no updates specified
 }
 
 default_update_version() {
