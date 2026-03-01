@@ -100,7 +100,7 @@ Description:
   - helper info, e.g. how to inspect, scale and change versions
 
 Usage:
-  karmah [ option | action | target ]...
+  karmah [ option | command | target ]...
 
 EOF
 show_short_help

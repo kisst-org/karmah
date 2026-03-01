@@ -49,7 +49,7 @@ parse-arguments() {
             elif [[ -d ${arg} ]]; then target_paths+=" ${arg%%/}" # remove a possible trailing /
             elif $collect_unknown_args; then extra_args+=" $arg"
             else
-                echo unknown argument ${arg}, should be an option, action or path
+                echo unknown argument ${arg}, should be an option, command or path
                 show_short_help
                 exit 1
             fi
