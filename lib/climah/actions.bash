@@ -39,7 +39,7 @@ add-action() {
             arg_alias[$s]=$name
             action_alias[$s]=$name
         done
-        help+=" ($short)"
+        #help+=" ($short)"
     fi
     add-command "$short" "$name" $cmd_func "$help"
     action_help[$name]="$help"

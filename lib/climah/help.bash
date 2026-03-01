@@ -78,7 +78,11 @@ show-help() {
         fi
     done
     if ! $found; then
-        show_short_help
+        if [[ ${level} == all ]]; then
+            show_full_help
+        else
+            show_short_help
+        fi
     fi
 }
 
@@ -107,7 +111,8 @@ Targets:
   When one or more --subdirs are specfied, these will be append to the path
 
 Note:
-  If multiple commands are given, only last command will be used
+  Options, commands and paths can be mixed freely.
+  If multiple commands are given, only last command will be used.
 EOF
 }
 

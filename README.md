@@ -8,10 +8,22 @@ The purpose is to render the manifests for a specific application (`appname`) an
 
 
 # Running `karmah`
-It can be run with the following options:
+It can be run with many options. A full help is shown with `karmah help -X`
 
 ```
-karmah [ option | command | action | path ]...
+karmah: Kubernetes Application Rendered MAnifest Helper (version 0.9x)
+
+Description:
+  karmah helps to enforce the rendered manifest pattern for targets
+  Each target is defined in a karmah file, which defines various options, like:
+  - rendering method to use (e.g. helm, kustomize)
+  - rendering parameters, e.g. helm charts and value file
+  - deployment method, e.g helm intstall, kapp deploy, kubectl apply
+  - kubernetes info, e.g. kubeconfig, context and namespace
+  - helper info, e.g. how to inspect, scale and change versions
+
+Usage:
+  karmah [ option | action | target ]...
 
 Options:
   h|--help                  show general help information
@@ -28,24 +40,19 @@ Options:
   --fixed-message msg       set fixed message to use with git commit
   M|--prepend-message msg   prepend commit message before auto generated message
   Q|--quiet-diff            do not show the output of diff
+  s|--subdir dir            add subdir to list of subdirs (can be comma separated list)
+  T|--tmp                   render to tmp/manifests (obsolete, tmp is already default), do not commit
   y|--yes                   do not ask for confirmation (with ask, kapp-deploy, ...)
   H|--force-helm-chart chrt force to use a specific helm chart
+  K|--force-karmah-type typ force to use another karmah_type
   R|--replicas nr           specify number of replicas
   r|--resource res          specify a resource
-  a|--add-actions act       add action to list of actions to perform
-  A|--set-actions act       set the action to list of actions to perform
-  F|--flow flw              use a (custom) flow named <flw>
-  T|--tmp                   render to tmp/manifests, do not commit
-  s|--subdir dir            add subdir to list of subdirs (can be comma separated list)
-  K|--force-karmah-type typ force to use another karmah_type
   V|--version ver           specify version (tag) to use for update or scale
   u|--update expr           apply a custom update
+
 Commands:
   help          show general help (h)
   options       show available options
-  run-actions   run actions forall targets (run)
-  actions       show available actions
-Actions:
   render        update render manifests to --to <path> (default tmp/manifests) (r)
   compare       render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)
   render-rm     remove all rendered manifests (rm)
@@ -53,6 +60,8 @@ Actions:
   git-add       adds the changes to source and rendered manifests to git, for committing (ga)
   git-commit    commits the changes to source and rendered manifests to git (gc)
   git-restore   restores the changed files (source and rendered manifests) (gr)
+  print-target  print all target paths (pt)
+  actions       show available actions
   deploy        render to deployed/manifests and optionally deploy to kubernetes
   plan          show what deploy action would do
   ask           ask for confirmation (unless --yes is specified) (no-cmd)
@@ -77,17 +86,18 @@ Actions:
   kubectl       generic kubectl in the right cluster and namespace of all targets (k)
   kube-status   show status of relevant resources (ks)
   kube-exec     execute a command on a pod of a resource (ke)
-  kube-exec-it  execute interactive command on a pod of a resource add-action kei kube-exec-it execute interactive command on a pod of a resource (kei)
+  kube-exec-it  execute interactive command on a pod of a resource (kei)
   kube-log      show logging of a resource (kl)
   update        update source files with expressions from --update (u)
-Paths:
+Targets:
   Each path defines an application definition, that will be sourced,
   This can either be a file, or a directory that contains exactly 1 file with a name '*.karmah'.
   When one or more --subdirs are specfied, these will be append to the path
 
 Note:
-  Options, commands, actions and paths can be mixed freely
-  If multiple commands are given, only last command will be used
+  Options, commands and paths can be mixed freely.
+  If multiple commands are given, only last command will be used.
+
 ```
 
 # Installation
