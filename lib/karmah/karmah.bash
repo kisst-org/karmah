@@ -57,7 +57,7 @@ run-karmah-file() {
             output_dir="${to_dir:-tmp/manifests}/${target}"
         fi
         info "running actions $actions for $target"
-        run_actions $actions
+        run-actions $actions
     else
         info skipping $karmah_file
     fi

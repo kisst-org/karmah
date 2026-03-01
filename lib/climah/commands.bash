@@ -15,6 +15,9 @@ init_climah_module_commands() {
 }
 
 parse-command() {
+    if [[ ! -z ${command:-} ]]; then
+        debug overriding current command $command with $name
+    fi
     name=${command_alias[$1]:-$1}
     command=$name
 }
