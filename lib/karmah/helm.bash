@@ -16,7 +16,7 @@ init_climah_module_helm() {
 
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
-    local_vars+=" helm_charts"
+    local_vars+=" helm_chart"
     local_vars+=" helm_install_command"
     local_vars+=" helm_atomic_wait"
     local_vars+=" helm_release"
@@ -36,7 +36,6 @@ add-optional_helm_values_file() {
 }
 
 init_helm_vars() {
-    local parent_dir=$(dirname "$karmah_dir")
     add-optional_helm_values_file "$common_dir/values*.yaml"
     add-optional_helm_values_file "$karmah_dir/values*.yaml"
 }
@@ -64,10 +63,10 @@ run_helm_forall_charts() {
     shift
     local base_cmd=${@}
     if [[ ! -z ${force_helm_chart:-} ]]; then
-        verbose overriding original helm chart $helm_charts with ${force_helm_chart}
-        helm_charts=${force_helm_chart}
+        verbose overriding original helm chart $helm_chart with ${force_helm_chart}
+        helm_chart=${force_helm_chart}
     fi
-    for ch in ${helm_charts//,/ }; do
+    for ch in ${helm_chart//,/ }; do
         local chart=${ch//@*}
         if [[ $ch == $chart ]]; then
             local helm_cmd=$(calc_helm_command $chart ${base_cmd})
