@@ -43,7 +43,7 @@ run-karmah-path() {
 run-karmah-file() {
     local karmah_type
     local actions=$(add-commas ${action_flow[$command]:-$command})
-
+    #local target_name=$(dirname $karmah_file)
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
         debug clearing $local_vars $local_arrays
@@ -53,11 +53,11 @@ run-karmah-file() {
         debug sourcing $karmah_file
         source ${karmah_file}
         common-karmah
-        output_dir="${to_dir:-tmp/manifests}/${target}"
+        output_dir="${to_dir:-tmp/manifests}/${target_name}"
         if $tmp; then
-            output_dir="${to_dir:-tmp/manifests}/${target}"
+            output_dir="${to_dir:-tmp/manifests}/${target_name}"
         fi
-        info "running actions $actions for $target"
+        info "running actions $actions for $target_name"
         run-actions $actions
     else
         info skipping $karmah_file

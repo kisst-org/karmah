@@ -33,12 +33,12 @@ add_message() {
 }
 
 run-action-git-pull() {
-    info "running git-pull for $target"
+    info "running git-pull for $target_name"
     verbose_cmd git pull
 }
 
 run-action-git-diff() {
-    info git-diff ${target} to ${output_dir}
+    info git-diff ${target_name} to ${output_dir}
     if ${quiet_diff:-false}; then
         verbose_cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
     elif $(log_is_debug); then
@@ -55,7 +55,7 @@ run-action-git-add() {
         info skipping git-add because --tmp specfied
         return
     fi
-    info git-add ${target} to ${output_dir}
+    info git-add ${target_name} to ${output_dir}
     verbose_cmd git add ${used_files} ${output_dir}
 }
 run-action-git-restore() {
@@ -81,11 +81,11 @@ run-action-git-commit() {
         info skipping git-commit because --tmp specified
         return
     fi
-    info "running git-commit for $target"
+    info "running git-commit for $target_name"
     if [[ ! -z ${fixed_message:-} ]]; then
         git_commit_message=$fixed_message
     fi
-    : ${git_commit_message:=${action} of ${target}}
+    : ${git_commit_message:=${action} of ${target_name}}
     if git diff-index --quiet HEAD; then
         verbose Nothing added to commit for message: "${git_commit_message}"
     else

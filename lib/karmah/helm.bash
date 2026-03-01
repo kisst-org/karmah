@@ -45,7 +45,7 @@ calc_helm_command() {
     shift
     local cmd=$@
     local f
-    : ${helm_release:=$(basename $target)}
+    : ${helm_release:=$(basename $target_name)}
     for f in ${helm_value_files[@]}; do
         cmd+=" -f ${f}";
     done
@@ -83,13 +83,13 @@ run_helm_forall_charts() {
 }
 
 run-action-helm-diff() {
-    info "running helm-diff for $target"
+    info "running helm-diff for $target_name"
     local default_cmd="helm diff upgrade $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-upgrade() {
-    info "running helm-upgrade for $target"
+    info "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
@@ -98,14 +98,14 @@ run-action-helm-upgrade() {
 run-action-helm-install() { run-action-helm-upgrade; }
 
 run-action-helm-uninstall() {
-    info "running helm-uninstall for $target"
+    info "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall ${helm_atomic_wait} $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-get-manifests() {
-    local release=${helm_release:=$(basename $target)}
+    local release=${helm_release:=$(basename $target_name)}
     info getting manifests from helm release ${release} in namespace $namespace to ${output_dir}
     verbose_cmd rm -rf ${output_dir}
     verbose_cmd mkdir -p ${output_dir}
@@ -115,7 +115,7 @@ run-action-helm-get-manifests() {
 
 run-action-helm-get-diff() {
     # do a check status to see if the release exists
-    local release=${helm_release:=$(basename $target)}
+    local release=${helm_release:=$(basename $target_name)}
     debug checking for helm release ${release} in namespace $namespace
     local cmd="helm $(helm_cluster_options) status $release --namespace $namespace"
     verbose "   $cmd"
@@ -126,14 +126,14 @@ run-action-helm-get-diff() {
         return 0;
     fi
 
-    local render_dir=tmp/manifests/${target}
-    local get_dir=${with_dir:-tmp/get}/${target}
+    local render_dir=tmp/manifests/${target_name}
+    local get_dir=${with_dir:-tmp/get}/${target_name}
     local output_dir=$render_dir
     run-action-update
     run-action-render
     local output_dir=$get_dir
     run-action-helm-get-manifests
-    info comparing ${target}: helm-get ${get_dir} with rendered ${render_dir}
+    info comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}
     verbose_cmd diff -r $get_dir $render_dir || true
 }
 

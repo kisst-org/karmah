@@ -20,13 +20,13 @@ parse-option-update()   { updates+=("$2"); parse_result=2; }
 run-action-update() {
     local any_updates=false
     if [[ ! -z ${update_version:-} ]]; then
-        #info update $target version to $update_version
+        #info update $target_name version to $update_version
         ${update_version_function:-default_update_version}
         any_updates=true
         add_message "version ${update_version}"
     fi
     if [[ ! -z ${kube_replicas:-} ]]; then
-        #info update $target replicas to $kube_replicas
+        #info update $target_name replicas to $kube_replicas
         ${update_replicas_function:-default_update_replicas}
         any_updates=true
         add_message "replicas ${kube_replicas}"
@@ -51,7 +51,7 @@ default_update_version() {
     local any_updates=false
     for r in ${renderer//,/ }; do
         if [[ $(type -t update_version_$r) == function ]]; then
-            info updating $target version in $r to $update_version
+            info updating $target_name version in $r to $update_version
             update_version_$r
             any_updates=true
         else
@@ -66,7 +66,7 @@ default_update_replicas() {
     local any_updates=false
     for r in ${renderer//,/ }; do
         if [[ $(type -t update_replicas_$r) == function ]]; then
-            info updating $target replicas in $r to $kube_replicas
+            info updating $target_name replicas in $r to $kube_replicas
             update_replicas_$r
             any_updates=true
         else

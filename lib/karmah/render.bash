@@ -18,7 +18,7 @@ parse-option-with()      { with_dir="$2"; parse_result=2; }
 
 
 run-action-render() {
-    info rendering ${target} with ${renderer} to ${output_dir}
+    info rendering ${target_name} with ${renderer} to ${output_dir}
     verbose_cmd rm -rf ${output_dir}
     verbose_cmd mkdir -p ${output_dir}
     for r in ${renderer//,/ }; do
@@ -28,15 +28,15 @@ run-action-render() {
 }
 
 run-action-render-rm() {
-    info removing  ${target} manifests in ${output_dir}
+    info removing  ${target_name} manifests in ${output_dir}
     verbose_cmd rm -rf ${output_dir}
 }
 
 
 run-action-compare() {
     olddir=${output_dir}
-    local newdir=${with_dir:-deployed/manifests}/${target}
-    info comparing ${target}: ${output_dir} with ${newdir}
+    local newdir=${with_dir:-deployed/manifests}/${target_name}
+    info comparing ${target_name}: ${output_dir} with ${newdir}
     verbose_cmd diff -r $newdir $olddir || true
 }
 

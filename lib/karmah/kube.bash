@@ -53,7 +53,7 @@ filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation:
 filter-kube-diff-quiet() { filter-kube-diff-output | grep -E ^--- | sed -e 's|--- /tmp/LIVE-[0-9]*/||' -e 's/[ \t].*$//' -e 's/^/  changed: /'; }
 
 run-action-kube-diff() {
-    info kube-diff ${target} to ${output_dir}
+    info kube-diff ${target_name} to ${output_dir}
     if ${quiet_diff:-false}; then
         #KUBECTL_EXTERNAL_DIFF='diff -qr'
         verbose_pipe filter-kube-diff-quiet kubectl diff $(kubectl_options) -f $output_dir || true
@@ -65,7 +65,7 @@ run-action-kube-diff() {
 }
 
 run-action-kube-diff-delete() {
-    info kube-diff-delete all resources ${target} from ${output_dir}
+    info kube-diff-delete all resources ${target_name} from ${output_dir}
     verbose_cmd ls -l $output_dir
 }
 
@@ -90,7 +90,7 @@ split_kubectl_output_into_files() {
 }
 
 run-action-kube-get-manifests() {
-    info kube get manifests  ${target} to ${output_dir}
+    info kube get manifests  ${target_name} to ${output_dir}
     verbose_cmd rm -rf ${output_dir}
     verbose_cmd mkdir -p ${output_dir}
     verbose_pipe split_kubectl_output_into_files kubectl ${kubectl_options[$kube_cluster]} -n "${namespace}" get deploy,svc,sts,cm,ingress -o yaml

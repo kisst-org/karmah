@@ -15,7 +15,7 @@ kapp_options() {
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
     fi
-    opt+=" $yes_arg --kubeconfig-context ${kube_context_map[$cl]} -n ${namespace} -a $(basename $target) -f ${output_dir}"
+    opt+=" $yes_arg --kubeconfig-context ${kube_context_map[$cl]} -n ${namespace} -a $(basename $target_name) -f ${output_dir}"
     echo $opt
 }
 

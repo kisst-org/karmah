@@ -24,25 +24,25 @@ run-action-ask() {
 }
 
 run-action-deploy() {
-    output_dir=deployed/manifests/$target
+    output_dir=deployed/manifests/$target_name
     local actions=$(add-commas ${deploy_actions:-render,git-diff,ask,git-commit})
     verbose deploying ${output_dir} with actions: ${actions}
-    add_message "deploy $target"
+    add_message "deploy $target_name"
     # TODO: output_dir is different for actions before this action
     # should be first (only) action
-    info "deploying $target with actions ${actions// /,}"
+    info "deploying $target_name with actions ${actions// /,}"
     run-actions $actions
 }
 
 run-action-plan() {
     local actions=$(add-commas ${plan_actions:-render,git-diff})
-    info "planning deploy $target with actions: ${actions// /,}"
+    info "planning deploy $target_name with actions: ${actions// /,}"
     run-actions $actions
 }
 
 run-command-undeploy() {
-    output_dir="${to_dir:-deployed/manifests}/${target}"
+    output_dir="${to_dir:-deployed/manifests}/${target_name}"
     local actions=$(add-commas ${undeploy_actions:-render-rm,git-diff,ask,git-commit})
-    info "undeploying ${target} with actions: ${actions}"
+    info "undeploying ${target_name} with actions: ${actions}"
     run-actions $actions
 }

@@ -59,7 +59,7 @@ set-pre-actions() {
 
 run-actions() {
     for action in ${@//,/ }; do
-        verbose running $action for ${target}
+        verbose running $action for ${target_name:-$target_path}
         run-action-$action;
     done
 }
@@ -78,6 +78,7 @@ run-action-print-target() { echo $target_path; }
 run-for-all-target-paths() {
     target_func=${target_function[$command]:-run-action-$command}
     for target_path in $target_paths; do
+        local target_name=$target_path
         $target_func $target_path
     done
 }
