@@ -48,9 +48,16 @@ add-command() {
 
 show-commands() {
     local cmd
+    local len=1
     for cmd in $all_commands; do
         if [[ ${show_help_level:-basic} == *${command_level[$cmd]}* || ${show_help_level:-basic} == all ]]; then
-            printf "  %-13s %s\n" $cmd "${command_help[$cmd]}"
+            if (( $len < ${#cmd} )); then len=${#cmd}; fi
+        fi
+    done #|sort -k2 -k1
+
+    for cmd in $all_commands; do
+        if [[ ${show_help_level:-basic} == *${command_level[$cmd]}* || ${show_help_level:-basic} == all ]]; then
+            printf "  %-${len}s %s\n" $cmd "${command_help[$cmd]}"
         fi
     done #|sort -k2 -k1
 }
