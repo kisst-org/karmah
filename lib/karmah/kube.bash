@@ -30,7 +30,7 @@ init_climah_module_kube() {
 
     add-option R replicas nr  "specify number of replicas"
     add-option r resource res "specify a resource"
-    local_vars+=" kube_cluster namespace all_resources"
+    local_vars+=" kube_cluster kube_namespace kube_all_resources"
     local_arrays+=" kube_resource_alias kube_default_replicas"
 }
 
@@ -45,7 +45,7 @@ kubectl_options() {
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
     fi
-    opt+="--context ${kube_context_map[$cl]} -n $namespace"
+    opt+="--context ${kube_context_map[$cl]} -n $kube_namespace"
     echo $opt
 }
 
@@ -145,7 +145,7 @@ run-action-kube-tmp-scale() {
 calc_resource_names() {
     local result=${kube_resource_list:-all}
     if [[ $result == all ]]; then
-        result=${all_resources}
+        result=${kube_all_resources}
     fi
     echo ${result//,/ }
 }
@@ -153,7 +153,7 @@ calc_resource_names() {
 calc_full_resource_names() {
     local r result="" res=${kube_resource_list:-${1:-}}
     if [[ $res == all ]]; then
-        res=${all_resources}
+        res=${kube_all_resources}
     fi
     for r in ${res//,/ }; do
         result+=" ${kube_resource_alias[$r]:-$r}"

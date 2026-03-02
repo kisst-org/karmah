@@ -50,7 +50,7 @@ calc_helm_command() {
         cmd+=" -f ${f}";
     done
     cmd+=" $helm_release"
-    cmd+=" --namespace $namespace"
+    cmd+=" --namespace $kube_namespace"
     cmd+=" $chart"
     if [[ ! -z ${helm_post_renderer:-} ]]; then
         cmd+=" --post-renderer ${helm_post_renderer}"
@@ -106,23 +106,23 @@ run-action-helm-uninstall() {
 
 run-action-helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
-    info getting manifests from helm release ${release} in namespace $namespace to ${output_dir}
+    info getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}
     verbose_cmd rm -rf ${output_dir}
     verbose_cmd mkdir -p ${output_dir}
-    local cmd="helm $(helm_cluster_options) get manifest $release --namespace $namespace"
+    local cmd="helm $(helm_cluster_options) get manifest $release --namespace $kube_namespace"
     verbose_pipe split_into_files $cmd
 }
 
 run-action-helm-get-diff() {
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
-    debug checking for helm release ${release} in namespace $namespace
-    local cmd="helm $(helm_cluster_options) status $release --namespace $namespace"
+    debug checking for helm release ${release} in namespace $kube_namespace
+    local cmd="helm $(helm_cluster_options) status $release --namespace $kube_namespace"
     verbose "   $cmd"
     local tmp_status_failed=false
     $cmd >/dev/null || tmp_status_failed=true
     if $tmp_status_failed ; then
-        info helm release $helm_release does not yet exist in namespace $namespace, skipping helm-get-diff
+        info helm release $helm_release does not yet exist in namespace $kube_namespace, skipping helm-get-diff
         return 0;
     fi
 

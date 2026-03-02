@@ -28,8 +28,8 @@ run-action-kapp-plan() {
 }
 
 run-action-kapp-deploy() {
-    if ! kubectl $(kubectl_options) get ns $namespace >/dev/null 2>&1; then
-        verbose_cmd kubectl $(kubectl_options) create ns $namespace
+    if ! kubectl $(kubectl_options) get ns $kube_namespace >/dev/null 2>&1; then
+        verbose_cmd kubectl $(kubectl_options) create ns $kube_namespace
     fi
     verbose_cmd kapp deploy $(kapp_options)
 }
