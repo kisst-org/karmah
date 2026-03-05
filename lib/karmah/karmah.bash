@@ -50,6 +50,8 @@ run-karmah-file() {
         unset $local_vars $local_arrays
         declare $local_vars
         declare -A $local_arrays
+        karmah_dir=$(dirname $karmah_file)
+        common_dir=$(dirname $karmah_dir)/common
         debug sourcing $karmah_file
         source ${karmah_file}
         common-karmah
@@ -65,8 +67,6 @@ run-karmah-file() {
 }
 
 common-karmah() {
-    karmah_dir=$(dirname $karmah_file)
-    common_dir=$(dirname $karmah_dir)/common
     used_files=${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
