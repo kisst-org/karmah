@@ -129,6 +129,9 @@ show_short_help() {
   echo
   echo Commands:
   show-commands
+  echo
+  echo see additional help topics with
+  echo "   karmah help topics"
 }
 
 show-aliases() {

@@ -17,6 +17,7 @@ climah_init() {
     if [[ $# == 0 ]]; then
         printf "no arguments passed, pass at least one path or command\n\n"
         show_short_help
+        exit 1
     else
         parse-arguments "${@}"
     fi

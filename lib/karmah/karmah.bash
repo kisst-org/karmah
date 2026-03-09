@@ -20,6 +20,11 @@ init_karmah_type_basic() {
 
 add-karmah-action() { add-action run-for-all-karmah-paths "${@}"; }
 run-for-all-karmah-paths() {
+    if [[ -z ${target_paths:-} ]]; then
+        warn "no target paths provided, but needed for command $command"
+        show_short_help
+        return 0
+    fi
     for target_path in $target_paths; do
         run-karmah-path #$target_path
     done
