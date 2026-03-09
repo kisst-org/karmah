@@ -84,7 +84,7 @@ parse-list-option() {
 show-options() {
     local opt
     for opt in $all_options; do
-        if [[ ${show_help_level:-basic} == *${option_level[$opt]}* || ${show_help_level:-basic} == all ]]; then
+        if [[ ${help_show_level:-basic} == *${option_level[$opt]}* || ${help_show_level:-basic} == all ]]; then
             local head="--$opt ${option_arg[$opt]}"
             if [[ ! -z ${option_short[$opt]} ]]; then
                 head="${option_short[$opt]}|$head"

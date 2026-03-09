@@ -11,7 +11,7 @@ init_climah_vars_commands() {
 }
 
 init_climah_module_commands() {
-    add-help-subject ""  commands show-commands "show available commands"
+    add-help-subject cmd commands show-commands "show available commands"
 }
 
 parse-command() {
@@ -46,17 +46,29 @@ add-command() {
     all_commands+=" $name"
 }
 
+help-show-me() {
+    local lvl=$1
+    local mod=$2
+    if [[ ${help_show_module:-$mod} != $mod ]]; then
+        echo false
+    elif [[ ${help_show_level:-basic} == *${lvl}* || ${help_show_level:-basic} == all ]]; then
+        echo true
+    else
+        echo false
+    fi
+}
+
 show-commands() {
     local cmd
     local len=1
     for cmd in $all_commands; do
-        if [[ ${show_help_level:-basic} == *${command_level[$cmd]}* || ${show_help_level:-basic} == all ]]; then
+        if $(help-show-me ${command_level[$cmd]} ${command_module[$cmd]}); then
             if (( $len < ${#cmd} )); then len=${#cmd}; fi
         fi
     done #|sort -k2 -k1
 
     for cmd in $all_commands; do
-        if [[ ${show_help_level:-basic} == *${command_level[$cmd]}* || ${show_help_level:-basic} == all ]]; then
+        if $(help-show-me ${command_level[$cmd]} ${command_module[$cmd]}); then
             printf "  %-${len}s %s\n" $cmd "${command_help[$cmd]}"
         fi
     done #|sort -k2 -k1

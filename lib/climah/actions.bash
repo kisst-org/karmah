@@ -67,7 +67,7 @@ run-actions() {
 show-actions() {
     local act
     for act in $all_actions; do
-        if [[ ${show_help_level:-basic} == *${action_level[$act]}* || ${show_help_level:-basic} == all ]]; then
+        if [[ ${help_show_level:-basic} == *${action_level[$act]}* || ${help_show_level:-basic} == all ]]; then
             printf "  %-13s %s\n" $act "${action_help[$act]:-no help}"
         fi
     done #|sort -k2 -k1

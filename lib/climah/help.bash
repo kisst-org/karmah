@@ -24,7 +24,7 @@ init_climah_module_help() {
 }
 
 parse-option-help() { collect_unknown_args=true;  command=help;  }
-parse-option-extended-help() { show_help_level=all;  }
+parse-option-extended-help() { help_show_level=all;  }
 
 add-help-subject() {
     local short=$1
@@ -64,6 +64,13 @@ add_help_text() {
   help_text[$section,$help_level]+="${@}"
 }
 
+help-show-module() {
+    help_show_module=$1
+    help_show_level=all
+    echo ${module_help[$help_show_module]}
+    show-commands
+}
+
 show-help() {
     local found=false
     for arg in $extra_args; do
@@ -78,7 +85,7 @@ show-help() {
         fi
     done
     if ! $found; then
-        if [[ ${show_help_level:-} == all ]]; then
+        if [[ ${help_show_level:-} == all ]]; then
             show_full_help
         else
             show_short_help

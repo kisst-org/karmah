@@ -32,11 +32,12 @@ init_climah_module_kube() {
     add-option r resource res "specify a resource"
     local_vars+=" kube_cluster kube_namespace kube_all_resources"
     local_arrays+=" kube_resource_alias kube_default_replicas"
+    add-help-subject "" kube kube-show-help
 }
+kube-show-help() { help-show-module kube; }
 
 parse-option-resource()  { kube_resource_list+=" $2"; parse_result=2; }
 parse-option-replicas()  { kube_replicas="$2";  parse_result=2; }
-
 
 kubectl_options() {
     local cl=${kube_cluster}

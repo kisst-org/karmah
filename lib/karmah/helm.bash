@@ -23,7 +23,11 @@ init_climah_module_helm() {
     local_vars+=" helm_wait_timeout"
     local_vars+=" helm_post_renderer"
     local_arrays+=" helm_update_version_path helm_update_replicas_path"
+    add-module-help "actions to work with helm"
+    add-help-subject "" helm helm-show-help
 }
+helm-show-help() { help-show-module helm; }
+
 
 add-optional_helm_values_file() {
     local f=($1)

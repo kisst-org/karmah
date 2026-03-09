@@ -14,7 +14,9 @@ use_module() {
     fi
 }
 
-add-module-help() { module_help[$module]="$@"; }
+add-module-help() {
+    module_help[$module]="$@";
+}
 
 init_all_modules() {
     declare -g modules=""
