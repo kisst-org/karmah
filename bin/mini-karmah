@@ -1,0 +1,57 @@
+#!/bin/env bash
+
+run-update() { echo todo; }
+run-kube-apply() { run-kubectl apply; }
+run-kube-diff()  { run-kubectl diff; }
+run-helm-template() { run-helm-command template; }
+run-helm-upgrade()  { run-helm-command upgrade --install; }
+run-deploy() {
+    run-update
+    run-helm-template
+    run-helm-upgrade
+}
+
+run-kubectl() {
+    local cmd="kubectl ${@}"
+    if [[ ${kube_config:-default} != default ]]; then
+        cmd+=" --kubeconfig $kube_cfg"
+    fi
+    cmd+=" --context ${kube_context} -n $kube_namespace"
+    cmd+=" -f $output_dir"
+    echo $
+    $cmd
+}
+
+add-optional-helm-values-file() {
+    if [[ -f $1 ]]; then
+        helm_value_files+=("$f")
+    fi
+}
+run-helm-command() {
+    local cmd="helm $@"
+    local f
+    for f in ${helm_value_files[@]}; do
+        cmd+=" -f ${f}";
+    done
+    cmd+=" $helm_release"
+    cmd+=" --namespace $kube_namespace"
+    cmd+=" $helm_chart"
+    echo $cmd
+    $cmd
+}
+sort-env-vars() {
+    if [[ $(yq '.spec.template.spec.containers[].env // null' $1) != null ]]; then
+        yq -i '.spec.template.spec.containers[].env |= sort_by(.name)' $1
+    fi
+}
+
+split-into-files() {
+    yq -P 'sort_keys(..)' | yq '... comments=""' | yq '.. style=""' | yq -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
+    if ${sort_env_vars:-true}; then
+        local f
+        for f in ${output_dir}/*.yaml; do
+            sort-env-vars $f
+        done
+    fi
+    rm -f ${output_dir}/_.yaml
+}
