@@ -16,6 +16,9 @@ use_module() {
 
 add-module-help() {
     module_help[$module]="$@";
+    if [[ $(type -t $module-show-help) == function ]]; then
+        add-help-subject "" $module $module-show-help "info about module $module"
+    fi
 }
 
 init_all_modules() {

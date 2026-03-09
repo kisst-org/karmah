@@ -6,7 +6,9 @@ init_climah_module_kapp() {
     add-karmah-action "" kapp-deploy  "deploy the application with kapp"
     add-karmah-action "" kapp-delete  "delete the application with kapp"
     set-pre-actions update,render kapp-plan kapp-diff kapp-deploy kapp-delete
+    add-module-help "actions to work with kapp"
 }
+kapp-show-help() { help-show-module kapp; }
 
 kapp_options() {
     local cl=${kube_cluster}

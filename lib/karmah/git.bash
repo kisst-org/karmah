@@ -16,7 +16,9 @@ init_climah_module_git() {
     add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
     add-flag-option Q quiet-diff "do not show the output of diff"
     local_vars+=" used_files git_commit_message"
+    add-module-help "actions to work with git"
 }
+git-show-help() { help-show-module git; }
 
 parse-option-message()   { fixed_message="$2";   parse_result=2; }
 parse-option-prepend-message()   { prepend_message="$2";   parse_result=2; }

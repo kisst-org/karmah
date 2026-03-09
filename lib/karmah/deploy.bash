@@ -6,7 +6,9 @@ init_climah_module_deploy() {
     add-karmah-action no-cmd ask "ask for confirmation (unless --yes is specified)"
     add-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
+    add-module-help "actions to work with deploy/plan"
 }
+deploy-show-help() { help-show-module deploy; }
 
 parse-option-yes() { yes_arg="--yes"; }
 

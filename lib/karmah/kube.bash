@@ -3,8 +3,6 @@ init_climah_module_kube() {
     declare -Ag kube_context_map
     #declare -g kube_resource_list
 
-    add-module-help "actions to work with kubernetes"
-
     add-karmah-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
     add-karmah-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
     add-karmah-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
@@ -32,7 +30,7 @@ init_climah_module_kube() {
     add-option r resource res "specify a resource"
     local_vars+=" kube_cluster kube_namespace kube_all_resources"
     local_arrays+=" kube_resource_alias kube_default_replicas"
-    add-help-subject "" kube kube-show-help
+    add-module-help "actions to work with kubernetes"
 }
 kube-show-help() { help-show-module kube; }
 
