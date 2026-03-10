@@ -1,13 +1,8 @@
 
 init_climah_vars_commands() {
     declare -g command
-    declare -g all_commands=""
     declare -gA command_function=()
-    declare -gA command_module=()
-    declare -gA command_short=()
-    declare -gA command_level=()
     declare -gA command_alias=()
-    declare -gA command_help=()
 }
 
 init_climah_module_commands() {
@@ -23,11 +18,7 @@ parse-command() {
 }
 
 add-command() {
-    local short=$1
-    local name=$2
-    local func=${3:-run-command-$name}
-    shift 3
-    local help=$@
+    local short=$1 name=$2 func=${3:-run-command-$name} summary=${4:-no summary}
     parse_arg_func[$name]=parse-command
     if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
         local s
@@ -36,42 +27,11 @@ add-command() {
             arg_alias[$s]=$name
             command_alias[$s]=$name
         done
-        help+=" ($short)"
     fi
+    help-add-item command "$short" $name "$summary"
     command_function[$name]=$func
-    command_module[$name]=$module
-    command_help[$name]=$help
-    command_short[$name]=$short
-    command_level[$name]=$help_level
-    all_commands+=" $name"
 }
 
-help-show-me() {
-    local lvl=$1
-    local mod=$2
-    if [[ ${help_show_module:-$mod} != $mod ]]; then
-        echo false
-    elif [[ ${help_show_level:-basic} == *${lvl}* || ${help_show_level:-basic} == all ]]; then
-        echo true
-    else
-        echo false
-    fi
-}
-
-show-commands() {
-    local cmd
-    local len=1
-    for cmd in $all_commands; do
-        if $(help-show-me ${command_level[$cmd]} ${command_module[$cmd]}); then
-            if (( $len < ${#cmd} )); then len=${#cmd}; fi
-        fi
-    done #|sort -k2 -k1
-
-    for cmd in $all_commands; do
-        if $(help-show-me ${command_level[$cmd]} ${command_module[$cmd]}); then
-            printf "  %-${len}s %s\n" $cmd "${command_help[$cmd]}"
-        fi
-    done #|sort -k2 -k1
-}
+show-commands() { help-list-items command; }
 
 run-command() { ${command_function[$command]}; }
