@@ -1,12 +1,7 @@
 init_climah_vars_help() {
     declare -g help_level=basic
-    declare -g all_help_topics=""
     declare -gA help_topic_function=()
-    declare -gA help_topic_module=()
-    declare -gA help_topic_short=()
-    declare -gA help_topic_level=()
     declare -gA help_topic_alias=()
-    declare -gA help_topic_help=()
 
     declare -gA help_item_summary=()
     declare -gA help_item_module=()
@@ -22,11 +17,18 @@ init_climah_module_help() {
     add-option  h  help ""           "show general help information"
     add-option  X  extended-help ""  "show extensive help information"
 
-    add-help-subject al  aliases  show-aliases "show all defined aliases"
-    add-help-subject ver version  show-version "show version of karmah"
-    add-help-subject mod modules  show-modules "show all modules"
-    add-help-subject top topics   show-help-topics "show all help-topics"
+    help-add-topic al  aliases  show-aliases "show all defined aliases"
+    help-add-topic ver version  show-version "show version of karmah"
+    help-add-topic mod modules  show-modules "show all modules"
+    help-add-topic top topics   show-help-topics "show all help-topics"
     parse_arg_func[help]=parse-option-help
+}
+
+help-add-topic() {
+    local short=$1 name=$2 func=${3} summary=${4:-no summary}
+    help_topic_function[$name]=${func:-$name-show-help}
+    if [[ ! -z $short ]]; then  help_topic_alias[$short]=$name; fi
+    help-add-item topic "$short" $name "" "$summary"
 }
 
 help-add-item() {
@@ -75,28 +77,6 @@ help-list-items() {
 parse-option-help() { collect_unknown_args=true;  command=help;  }
 parse-option-extended-help() { help_show_level=all;  }
 
-add-help-subject() {
-    local short=$1
-    local name=$2
-    local func=${3:-show-$name}
-    shift 3
-    local help=$@
-    #parse_arg_func[$name]=parse-command
-    if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
-        local s
-        for s in ${short//,/ }; do
-            #parse_arg_func[$s]=parse-command
-            help_topic_alias[$s]=$name
-        done
-        help+=" ($short)"
-    fi
-    help_topic_function[$name]=$func
-    help_topic_module[$name]=$module
-    help_topic_help[$name]=$help
-    help_topic_short[$name]=$short
-    help_topic_level[$name]=$help_level
-    all_help_topics+=" $name"
-}
 
 add-help() {
   local section=$1
@@ -195,8 +175,10 @@ show-version() {
 }
 
 show-help-topics() {
-    local topic
-    for topic in $all_help_topics; do
-        printf "karmah help %-13s    # %s\n" $topic "${help_topic_help[$topic]}"
-    done #|sort -k2 -k1
+cat <<EOF
+karmah help [<topic>]
+
+topic can be any of:
+EOF
+    help-list-items topic;
 }

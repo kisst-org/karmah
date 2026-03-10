@@ -2,11 +2,10 @@
 init_climah_vars_options() {
     declare -gA option_arg=()
     declare -gA option_var=()
-    declare -g all_options=""
 }
 
 init_climah_module_options() {
-    add-command ""  options show-options "show available options"
+    help-add-topic opt options  show-options "show all options"
 }
 
 
