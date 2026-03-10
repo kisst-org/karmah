@@ -20,7 +20,6 @@ init_climah_module_actions() {
     # TODO: add-command rsa run-single-actions "" "run isolated actions forall targets"
     add-target-action pt print-target "print all target paths"
     help_level=expert
-    add-command ""  actions show-actions "show available actions"
     add-list-option s subdir   dir   "add subdir to list of subdirs (can be comma separated list)"
     add-flag-option T tmp    "render to tmp/manifests (obsolete, tmp is already default), do not commit"
 }
