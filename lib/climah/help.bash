@@ -13,6 +13,7 @@ init_climah_vars_help() {
     declare -gA help_item_level=()
     declare -gA help_item_type=()
     declare -gA help_item_short=()
+    declare -gA help_item_params=()
     declare -gA help_all_items=()
 }
 
@@ -29,12 +30,14 @@ init_climah_module_help() {
 }
 
 help-add-item() {
-    local type=$1 short=$2 name=$3 summary=$4
+    local type=$1 short=$2 name=$3 params=$4 summary=$5
     help_item_module[$name]=$module
     help_item_level[$name]=$help_level
     help_item_short[$name]=$short
+    help_item_params[$name]=$params
     help_item_summary[$name]=$summary
     help_all_items[$type]+=" $name"
+    # TODO local head="--$opt ${option_arg[$opt]}"
 }
 
 help-is-visible() {
@@ -54,15 +57,17 @@ help-list-items() {
     local item len=1 slen=0
     for item in ${help_all_items[$type]}; do
         if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
-            if (( $len < ${#item} )); then len=${#item}; fi
+            local lname="$item ${help_item_params[$item]}"
+            if (( $len < ${#lname} )); then len=${#lname}; fi
             local shortlen=${#help_item_short[$item]}
             if (( $slen < $shortlen)); then slen=$shortlen; fi
         fi
     done
 
     for item in ${help_all_items[$type]}; do
+        local lname="$item ${help_item_params[$item]}"
         if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
-            printf "  %-${slen}s %-${len}s %s\n" "${help_item_short[$item]}" $item "${help_item_summary[$item]}"
+            printf "  %-${slen}s %-${len}s %s\n" "${help_item_short[$item]}" "$lname" "${help_item_summary[$item]}"
         fi
     done
 }

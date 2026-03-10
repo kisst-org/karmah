@@ -28,7 +28,7 @@ add-command() {
             command_alias[$s]=$name
         done
     fi
-    help-add-item command "$short" $name "$summary"
+    help-add-item command "$short" $name "" "$summary"
     command_function[$name]=$func
 }
 
