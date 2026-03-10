@@ -1,6 +1,6 @@
 
 read_config() {
-    : ${RENDER_CONFIG_FILE:=~/.config/karmah/config}
+    : ${RENDER_CONFIG_FILE:=~/.config/${climah_prog}/config}
     if [[ -f ${RENDER_CONFIG_FILE} ]]; then
         source ${RENDER_CONFIG_FILE}
     fi

@@ -16,7 +16,7 @@ climah_init() {
     read_config
     if [[ $# == 0 ]]; then
         printf "no arguments passed, pass at least one path or command\n\n"
-        show_short_help
+        help-show-summary
         exit 1
     else
         parse-arguments "${@}"
@@ -26,6 +26,8 @@ climah_init() {
 
 climah_main() {
     declare -g climah_prog_name=$(basename $0)
+    declare -g climah_prog
+    declare -g climah_help_full_function
     climah_init "${@}"
     run-command
 }

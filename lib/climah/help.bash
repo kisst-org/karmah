@@ -18,7 +18,6 @@ init_climah_module_help() {
     add-option  X  extended-help ""  "show extensive help information"
 
     help-add-topic al  aliases  show-aliases "show all defined aliases"
-    help-add-topic ver version  show-version "show version of karmah"
     help-add-topic mod modules  show-modules "show all modules"
     help-add-topic top topics   show-help-topics "show all help-topics"
     parse_arg_func[help]=parse-option-help
@@ -115,44 +114,16 @@ show-help() {
     done
     if ! $found; then
         if [[ ${help_show_level:-} == all ]]; then
-            show_full_help
+            ${climah_help_full_function:-${climah_prog}-show-full-help}
         else
-            show_short_help
+            help-show-summary
         fi
     fi
 }
 
-show_full_help() {
-cat <<EOF
-karmah: Kubernetes Application Rendered MAnifest Helper (version $karmah_version)
 
-Description:
-  karmah helps to enforce the rendered manifest pattern for targets
-  Each target is defined in a karmah file, which defines various options, like:
-  - rendering method to use (e.g. helm, kustomize)
-  - rendering parameters, e.g. helm charts and value file
-  - deployment method, e.g helm intstall, kapp deploy, kubectl apply
-  - kubernetes info, e.g. kubeconfig, context and namespace
-  - helper info, e.g. how to inspect, scale and change versions
 
-Usage:
-  ${climah_prog_name} [ option | command | target ]...
-
-EOF
-show_short_help
-cat <<EOF
-Targets:
-  Each path defines an application definition, that will be sourced,
-  This can either be a file, or a directory that contains exactly 1 file with a name '*.karmah'.
-  When one or more --subdirs are specfied, these will be append to the path
-
-Note:
-  Options, commands and paths can be mixed freely.
-  If multiple commands are given, only last command will be used.
-EOF
-}
-
-show_short_help() {
+help-show-summary() {
   echo Options:
   show-options
   echo
@@ -168,10 +139,6 @@ show-aliases() {
   for key in $(printf "%s\n" ${!aliases[@]} | sort); do
       printf "  %-14s %s\n" $key "${aliases[$key]}"
   done |sort -k2 -k1
-}
-
-show-version() {
-  echo karmah version: $karmah_version
 }
 
 show-help-topics() {

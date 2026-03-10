@@ -4,9 +4,12 @@ init_climah_vars_karmah() {
     declare -g local_vars="karmah_type target karmah_func"
     declare -g local_arrays=""
     declare -g karmah_paths=""
+    climah_prog=karmah
+    #climah_full_help_function=karmah-show-full-help
     }
 
 init_climah_module_karmah() {
+    help-add-topic ver version  karmah-show-version "show version of karmah"
     command=render
     help_level=expert
     add-value-option K force-karmah-type typ "force to use another karmah_type"
@@ -22,7 +25,7 @@ add-karmah-action() { add-action run-for-all-karmah-paths "${@}"; }
 run-for-all-karmah-paths() {
     if [[ -z ${target_paths:-} ]]; then
         warn "no target paths provided, but needed for command $command"
-        show_short_help
+        help-show-summary
         return 0
     fi
     for target_path in $target_paths; do
@@ -87,3 +90,35 @@ common-karmah() {
         init_karmah_type_${karmah_type}
     fi
 }
+
+karmah-show-full-help() {
+cat <<EOF
+karmah: Kubernetes Application Rendered MAnifest Helper (version $karmah_version)
+
+Description:
+  karmah helps to enforce the rendered manifest pattern for targets
+  Each target is defined in a karmah file, which defines various options, like:
+  - rendering method to use (e.g. helm, kustomize)
+  - rendering parameters, e.g. helm charts and value file
+  - deployment method, e.g helm intstall, kapp deploy, kubectl apply
+  - kubernetes info, e.g. kubeconfig, context and namespace
+  - helper info, e.g. how to inspect, scale and change versions
+
+Usage:
+  ${climah_prog_name} [ option | command | target ]...
+
+EOF
+help-show-summary
+cat <<EOF
+Targets:
+  Each path defines an application definition, that will be sourced,
+  This can either be a file, or a directory that contains exactly 1 file with a name '*.karmah'.
+  When one or more --subdirs are specfied, these will be append to the path
+
+Note:
+  Options, commands and paths can be mixed freely.
+  If multiple commands are given, only last command will be used.
+EOF
+}
+
+karmah-show-version() { echo karmah version: $karmah_version; }
