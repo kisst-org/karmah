@@ -67,4 +67,8 @@ parse-list-option() {
     parse_result=2
 }
 
-show-options() { help-list-items option; }
+show-options() {
+    info All available options:
+    help_show_level=all
+    help-list-items option;
+}
