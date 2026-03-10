@@ -8,6 +8,12 @@ init_climah_vars_help() {
     declare -gA help_topic_alias=()
     declare -gA help_topic_help=()
 
+    declare -gA help_item_summary=()
+    declare -gA help_item_module=()
+    declare -gA help_item_level=()
+    declare -gA help_item_type=()
+    declare -gA help_item_short=()
+    declare -gA help_all_items=()
 }
 
 init_climah_module_help() {
@@ -19,8 +25,46 @@ init_climah_module_help() {
     add-help-subject ver version  show-version "show version of karmah"
     add-help-subject mod modules  show-modules "show all modules"
     add-help-subject top topics   show-help-topics "show all help-topics"
-
     parse_arg_func[help]=parse-option-help
+}
+
+help-add-item() {
+    local type=$1 short=$2 name=$3 summary=$4
+    help_item_module[$name]=$module
+    help_item_level[$name]=$help_level
+    help_item_short[$name]=$short
+    help_item_summary[$name]=$summary
+    help_all_items[$type]+=" $name"
+}
+
+help-is-visible() {
+    local lvl=$1
+    local mod=$2
+    if [[ ${help_show_module:-$mod} != $mod ]]; then
+        echo false
+    elif [[ ${help_show_level:-basic} == *${lvl}* || ${help_show_level:-basic} == all ]]; then
+        echo true
+    else
+        echo false
+    fi
+}
+
+help-list-items() {
+    local type=$1
+    local item len=1 slen=0
+    for item in ${help_all_items[$type]}; do
+        if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
+            if (( $len < ${#item} )); then len=${#item}; fi
+            local shortlen=${#help_item_short[$item]}
+            if (( $slen < $shortlen)); then slen=$shortlen; fi
+        fi
+    done
+
+    for item in ${help_all_items[$type]}; do
+        if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
+            printf "  %-${slen}s %-${len}s %s\n" "${help_item_short[$item]}" $item "${help_item_summary[$item]}"
+        fi
+    done
 }
 
 parse-option-help() { collect_unknown_args=true;  command=help;  }
