@@ -58,7 +58,10 @@ help-list-items() {
     local item len=1 slen=0
     for item in ${help_all_items[$type]}; do
         if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
-            local lname="$item ${help_item_params[$item]}"
+            local lname=$item
+            if [[ ! -z ${help_item_params[$item]} ]]; then
+                lname+=" <${help_item_params[$item]}>"
+            fi
             if (( $len < ${#lname} )); then len=${#lname}; fi
             local shortlen=${#help_item_short[$item]}
             if (( $slen < $shortlen)); then slen=$shortlen; fi
@@ -66,7 +69,10 @@ help-list-items() {
     done
 
     for item in ${help_all_items[$type]}; do
-        local lname="$item ${help_item_params[$item]}"
+        local lname=$item
+        if [[ ! -z ${help_item_params[$item]} ]]; then
+            lname+=" <${help_item_params[$item]}>"
+        fi
         if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
             printf "  %-${slen}s %-${len}s %s\n" "${help_item_short[$item]}" "$lname" "${help_item_summary[$item]}"
         fi
