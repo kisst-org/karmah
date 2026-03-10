@@ -136,7 +136,7 @@ Description:
   - helper info, e.g. how to inspect, scale and change versions
 
 Usage:
-  karmah [ option | command | target ]...
+  ${climah_prog_name} [ option | command | target ]...
 
 EOF
 show_short_help
@@ -160,7 +160,7 @@ show_short_help() {
   show-commands
   echo
   echo see additional help topics with
-  echo "   karmah help topics"
+  echo "   ${climah_prog_name} help topics"
 }
 
 show-aliases() {
@@ -176,7 +176,7 @@ show-version() {
 
 show-help-topics() {
 cat <<EOF
-karmah help [<topic>]
+${climah_prog_name} help [<topic>]
 
 topic can be any of:
 EOF

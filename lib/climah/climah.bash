@@ -25,6 +25,7 @@ climah_init() {
 
 
 climah_main() {
+    declare -g climah_prog_name=$(basename $0)
     climah_init "${@}"
     run-command
 }
