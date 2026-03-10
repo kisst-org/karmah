@@ -1,10 +1,6 @@
 
 init_climah_vars_options() {
-    declare -gA option_short=()
     declare -gA option_arg=()
-    declare -gA option_help=()
-    declare -gA option_module=()
-    declare -gA option_level=()
     declare -gA option_var=()
     declare -g all_options=""
 }
@@ -15,24 +11,16 @@ init_climah_module_options() {
 
 
 add-generic-option() {
-    local short=$1
-    local name=$2
-    local arg=$3
-    local func=$4
-    shift 4
-    local help="$@"
+    local short=$1 name=$2 arg=$3 func=$4 summary="$5"
     parse_arg_func[--$name]=$func
     option_var[--$name]=${name//-/_}
     if [[ ! -z $short ]]; then
-        parse_arg_func[-$short]=$func
-        option_var[-$short]=${name//-/_}
+        short=-$short
+        parse_arg_func[$short]=$func
+        option_var[$short]=${name//-/_}
     fi
-    option_short[$name]=$short
     option_arg[$name]=$arg
-    option_help[$name]="$help"
-    option_module[$name]=$module
-    option_level[$name]=$help_level
-    all_options+=" $name"
+    help-add-item option "$short" "--$name" "$arg" "$summary"
 }
 
 add-option() {
@@ -80,16 +68,4 @@ parse-list-option() {
     parse_result=2
 }
 
-
-show-options() {
-    local opt
-    for opt in $all_options; do
-        if [[ ${help_show_level:-basic} == *${option_level[$opt]}* || ${help_show_level:-basic} == all ]]; then
-            local head="--$opt ${option_arg[$opt]}"
-            if [[ ! -z ${option_short[$opt]} ]]; then
-                head="${option_short[$opt]}|$head"
-            fi
-            printf "  %-25s %s\n" "$head" "${option_help[$opt]}"
-        fi
-    done #|sort -k2 -k1
-}
+show-options() { help-list-items option; }
