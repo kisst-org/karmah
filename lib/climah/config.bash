@@ -11,3 +11,9 @@ read-config() {
     fi
     default_renderer=${RENDER_DEFAULT_RENDERER:-helm}
 }
+
+config-pre-module-init() {
+    if [[ -f config.d/.pre-init-modules ]]; then
+        source config.d/.pre-init-modules
+    fi
+}
