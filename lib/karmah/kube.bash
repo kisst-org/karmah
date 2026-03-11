@@ -1,4 +1,4 @@
-init_climah_module_kube() {
+kube-init-climah-module() {
     add-karmah-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
     add-karmah-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
     add-karmah-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"

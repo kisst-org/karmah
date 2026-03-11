@@ -1,9 +1,9 @@
 
-init_climah_vars_git() {
+git-init-climah-vars() {
     declare -g git_pulled=false
 }
 
-init_climah_module_git() {
+git-init-climah-module() {
     help_level=expert
     add-karmah-action gd git-diff     "shows the changes to source and rendered manifests with git"
     add-karmah-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"

@@ -1,6 +1,6 @@
 # karmah: do stuff based on *.karmah file
 
-init_climah_vars_karmah() {
+karmah-init-climah-vars() {
     declare -g local_vars="karmah_type target karmah_func"
     declare -g local_arrays=""
     declare -g karmah_paths=""
@@ -8,7 +8,7 @@ init_climah_vars_karmah() {
     #climah_full_help_function=karmah-show-full-help
     }
 
-init_climah_module_karmah() {
+karmah-init-climah-module() {
     help-add-topic ver version  karmah-show-version "show version of karmah"
     command=render
     help_level=expert

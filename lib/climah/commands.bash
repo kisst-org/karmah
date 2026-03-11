@@ -1,11 +1,11 @@
 
-init_climah_vars_commands() {
+commands-init-climah-vars() {
     declare -g command
     declare -gA command_function=()
     declare -gA command_alias=()
 }
 
-init_climah_module_commands() {
+commands-init-climah-module() {
     help-add-topic cmd commands show-commands "show available commands"
 }
 

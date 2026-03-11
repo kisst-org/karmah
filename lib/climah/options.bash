@@ -1,10 +1,10 @@
 
-init_climah_vars_options() {
+options-init-climah-vars() {
     declare -gA option_arg=()
     declare -gA option_var=()
 }
 
-init_climah_module_options() {
+options-init-climah-module() {
     help-add-topic opt options  show-options "show all options"
 }
 

@@ -1,5 +1,5 @@
 
-init_climah_module_update() {
+update-init-climah-module() {
     add-karmah-action u update "update source files with expressions from --update"
     add-option V version ver  "specify version (tag) to use for update or scale"
     help_level=expert

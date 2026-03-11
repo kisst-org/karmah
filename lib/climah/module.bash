@@ -1,5 +1,5 @@
 
-init_climah_vars_modules() {
+modules-init-climah-vars() {
     declare -g all_modules=""
     declare -gA module_help=()
 }
@@ -10,7 +10,7 @@ use_module() {
         module_loaded[$module]=true
         all_modules+=" $module"
         debug running init module for "${module}"
-        init_climah_module_${module}
+        ${module}-init-climah-module
     fi
 }
 
@@ -27,13 +27,14 @@ init_all_modules() {
 
     local func m
     # first declare any variables that might be used in other modules
-    local var_funcs=$(set | grep '^init_climah_vars_')
+    local var_funcs=$(set | grep '[-]init-climah-vars')
     for func in $var_funcs; do
         ${func##()}
     done
 
     # Then load modules, that may need variable from other modules
-    local m mod=$(set | grep '^init_climah_module_'| sed -e 's/init_climah_module_//' -e 's/ *()//')
+    local m mod=$(set | grep '[-]init-climah-module ()'| sed -e 's/[-]init-climah-module.*//')
+    echo $mod
     for m in "$@" $mod; do
         help_level=basic
         use_module $m

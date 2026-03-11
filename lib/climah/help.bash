@@ -1,4 +1,4 @@
-init_climah_vars_help() {
+help-init-climah-vars() {
     declare -g help_level=basic
     declare -gA help_topic_function=()
     declare -gA help_topic_alias=()
@@ -12,7 +12,7 @@ init_climah_vars_help() {
     declare -gA help_all_items=()
 }
 
-init_climah_module_help() {
+help-init-climah-module() {
     add-command h  help show-help    "show general help"
     add-option  h  help ""           "show general help information"
     add-option  X  extended-help ""  "show extensive help information"

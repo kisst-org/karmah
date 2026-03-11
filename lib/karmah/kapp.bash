@@ -1,5 +1,5 @@
 
-init_climah_module_kapp() {
+kapp-init-climah-module() {
     help_level=expert
     add-karmah-action "" kapp-plan    "show what resources will be updated"
     add-karmah-action "" kapp-diff    "show what resources will be updated, including detailed diffs"

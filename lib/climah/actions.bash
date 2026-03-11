@@ -1,6 +1,6 @@
 # raftah: run actions for all targets
 
-init_climah_vars_actions() {
+actions-init-climah-vars() {
     declare -g subdir=""
     declare -g flow_name
     declare -g tmp=false
@@ -14,7 +14,7 @@ init_climah_vars_actions() {
     declare -gA target_function=()
 }
 
-init_climah_module_actions() {
+actions-init-climah-module() {
     #add_command "forall" "run actions for all targets"
     command=print-target
     # TODO: add-command rsa run-single-actions "" "run isolated actions forall targets"

@@ -1,5 +1,5 @@
 
-init_climah_module_helm() {
+helm-init-climah-module() {
     help_level=expert
     add-karmah-action hD helm-diff           "run helm diff plugin for target"
     add-karmah-action "" helm-upgrade        "run helm upgrade --install for target"
