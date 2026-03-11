@@ -34,7 +34,7 @@ init_all_modules() {
 
     # Then load modules, that may need variable from other modules
     local m mod=$(set | grep '[-]init-climah-module ()'| sed -e 's/[-]init-climah-module.*//')
-    echo $mod
+    verbose loading modules: $mod
     for m in "$@" $mod; do
         help_level=basic
         use_module $m
