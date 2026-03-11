@@ -48,7 +48,7 @@ parse-arguments() {
         fi
     done
     extra_args+=" $*"
-    extra_args=${extra_args%% }
+    extra_args=$(echo ${extra_args})
     verbose COMMAND $(basename $0) ${args_to_parse[@]}
 }
 
