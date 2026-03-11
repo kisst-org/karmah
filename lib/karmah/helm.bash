@@ -28,7 +28,7 @@ init_climah_module_helm() {
 helm-show-help() { help-show-module helm; }
 
 
-add-optional_helm_values_file() {
+helm-add-optional-values-file() {
     local f=($1)
     if [[ -f $f ]]; then
         debug adding values file $f
@@ -39,8 +39,8 @@ add-optional_helm_values_file() {
 }
 
 init_helm_vars() {
-    add-optional_helm_values_file "$common_dir/values*.yaml"
-    add-optional_helm_values_file "$karmah_dir/values*.yaml"
+    helm-add-optional-values-file "$common_dir/values*.yaml"
+    helm-add-optional-values-file "$karmah_dir/values*.yaml"
 }
 
 calc_helm_command() {
@@ -148,22 +148,23 @@ render_helm() {
     run_helm_forall_charts "verbose_pipe split_into_files" ${helm_template_command:-$default_cmd}
 }
 
-update_helm_value_path() {
-    local path="$1"
-    local value="$2"
-    local val_file=($karmah_dir/values*.yaml)
-    verbose updating $path to \"$value\"
-    verbose_cmd yq -i $path=$value $val_file
+# this function will iterate over all helm_value_files
+# and get the latest of a certain path
+helm-get-path-value() {
+    local path=$1
+    local f result
+    for f in ${helm_value_files[@]}; do
+        local val=$(yq $path $f)
+        if [[ $val != null ]]; then result=$val; fi
+    done
+    echo $result
 }
 
-
-update_version_helm() {
-    local res
-    local val_file=($karmah_dir/values*.yaml)
-    for res in $(calc_resource_names); do
-        verbose updating $res version to $update_version
-        verbose_cmd yq -i "${helm_update_version_path[$res]}=\"$update_version\"" $val_file
-    done
+helm-update-value-path() {
+    local path="$1" value="$2"
+    local val_file=${helm_value_files[@]:(-1)}
+    verbose updating $path to \"$value\"
+    verbose_cmd yq -i $path=$value $val_file
 }
 
 update_replicas_helm() {
