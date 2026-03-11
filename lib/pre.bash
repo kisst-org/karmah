@@ -11,4 +11,4 @@ set -eu
 shopt -s extglob
 script_name="${0}"
 
-main() { climah_main "${@}"; }
+main() { climah-main "${@}"; }

@@ -1,5 +1,5 @@
 
-read_config() {
+read-config() {
     : ${RENDER_CONFIG_FILE:=~/.config/${climah_prog}/config}
     if [[ -f ${RENDER_CONFIG_FILE} ]]; then
         source ${RENDER_CONFIG_FILE}

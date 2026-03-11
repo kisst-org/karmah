@@ -8,7 +8,7 @@ argparse-init-climah-vars() {
     declare -gA collect_unknown_after=()
 }
 
-replace_aliases() {
+replace-aliases() {
     for arg in "${@}"; do
         local al="${aliases[$arg]:-none}"
         if [[ "$al" != none ]]; then
@@ -20,7 +20,7 @@ replace_aliases() {
     done
 }
 
-parse_arg() {
+parse-arg() {
     local name=$1
     local func=${parse_arg_func[$name]:-}
     if [[ ! -z $func ]]; then
@@ -33,7 +33,7 @@ parse-arguments() {
     local replaced=false
     local collect_unknown_args=false
     declare -g extra_args=""
-    replace_aliases "${@}"
+    replace-aliases "${@}"
     set -- "${args_to_parse[@]}"
     parse_arg_func[--]=collect-remaining-arguments
     log_level=$log_level_info
@@ -41,7 +41,7 @@ parse-arguments() {
         arg=${arg_alias[$1]:-$1}
         shift
         parse_result=0
-        parse_arg $arg "$@";
+        parse-arg $arg "$@";
         if [[ "$parse_result" > 0 ]]; then
             shift $(( "$parse_result" - 1))
         else

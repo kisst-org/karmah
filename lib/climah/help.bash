@@ -91,13 +91,6 @@ add-help() {
   help_text[$help_level,$section,$module,$name]+="${@}"
 }
 
-
-add_help_text() {
-  local section=$1
-  shift
-  help_text[$section,$help_level]+="${@}"
-}
-
 help-show-module() {
     help_show_module=$1
     help_show_level=all
@@ -126,8 +119,6 @@ show-help() {
         fi
     fi
 }
-
-
 
 help-show-summary() {
   echo Options:

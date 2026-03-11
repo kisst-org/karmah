@@ -22,7 +22,7 @@ add-module-help() {
     fi
 }
 
-init_all_modules() {
+module-init-all() {
     declare -g modules=""
     declare -gA module_loaded=()
 
