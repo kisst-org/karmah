@@ -104,3 +104,15 @@ run-for-all-target-paths() {
         $target_func $target_path
     done
 }
+
+warn-if-action-args() {
+    if [[ ! -z ${action_args:-} ]]; then
+        warn action got action_args \"$action_args\" that is not supported
+    fi
+}
+error-if-action-args() {
+    if [[ ! -z ${action_args:-} ]]; then
+        error action got action_args \"$action_args\" that is not supported
+        exit 1
+    fi
+}

@@ -19,6 +19,7 @@ parse-option-with()      { with_dir="$2"; parse_result=2; }
 
 run-action-render() {
     info rendering ${target_name} with ${renderer} to ${output_dir}
+    error-if-action-args
     verbose-cmd rm -rf ${output_dir}
     verbose-cmd mkdir -p ${output_dir}
     for r in ${renderer//,/ }; do
@@ -29,6 +30,7 @@ run-action-render() {
 
 run-action-render-rm() {
     info removing  ${target_name} manifests in ${output_dir}
+    warn-if-action-args
     verbose-cmd rm -rf ${output_dir}
 }
 
