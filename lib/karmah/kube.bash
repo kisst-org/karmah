@@ -1,8 +1,4 @@
 init_climah_module_kube() {
-    declare -Ag kube_config_map
-    declare -Ag kube_context_map
-    #declare -g kube_resource_list
-
     add-karmah-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
     add-karmah-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
     add-karmah-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
@@ -28,8 +24,8 @@ init_climah_module_kube() {
 
     add-option R replicas nr  "specify number of replicas"
     add-option r resource res "specify a resource"
-    local_vars+=" kube_cluster kube_namespace kube_all_resources"
-    local_arrays+=" kube_resource_alias kube_default_replicas"
+    local_vars+=" kube_config kube_context kube_namespace"
+    # TODO local_arrays+=" kube_resource_alias kube_default_replicas"
     add-module-help "actions to work with kubernetes"
 }
 kube-show-help() { help-show-module kube; }
@@ -37,15 +33,17 @@ kube-show-help() { help-show-module kube; }
 parse-option-resource()  { kube_resource_list+=" $2"; parse_result=2; }
 parse-option-replicas()  { kube_replicas="$2";  parse_result=2; }
 
-kubectl_options() {
-    local cl=${kube_cluster}
-    local cfg=${kube_config_map[$cl]:-default}
+kubectl-options() {
+    local cfg=${kube_config:-default}
     local opt=""
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
     fi
-    opt+="--context ${kube_context_map[$cl]} -n $kube_namespace"
+    opt+="--context ${kube_context} -n $kube_namespace"
     echo $opt
+}
+kubectl-run() {
+    verbose_cmd kubectl $(kubectl-options) "${@}"
 }
 
 filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation: [0-9]*$'; }
@@ -92,7 +90,7 @@ run-action-kube-get-manifests() {
     info kube get manifests  ${target_name} to ${output_dir}
     verbose_cmd rm -rf ${output_dir}
     verbose_cmd mkdir -p ${output_dir}
-    verbose_pipe split_kubectl_output_into_files kubectl ${kubectl_options[$kube_cluster]} -n "${namespace}" get deploy,svc,sts,cm,ingress -o yaml
+    verbose_pipe split_kubectl_output_into_files kubectl $(kubectl_options) get deploy,svc,sts,cm,ingress -o yaml
     ignore_files=configmap_kube-root-ca.crt.yaml
     ignore_files+=" deployment_ingress-nginx-controller.yaml"
     ignore_files+=" service_ingress-nginx-controller-admission.yaml"

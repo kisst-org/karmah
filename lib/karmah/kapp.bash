@@ -11,13 +11,12 @@ init_climah_module_kapp() {
 kapp-show-help() { help-show-module kapp; }
 
 kapp_options() {
-    local cl=${kube_cluster}
-    local cfg=${kube_config_map[$cl]:-default}
+    local cfg=${kube_config:-default}
     local opt=""
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
     fi
-    opt+=" $yes_arg --kubeconfig-context ${kube_context_map[$cl]} -n ${namespace} -a $(basename $target_name) -f ${output_dir}"
+    opt+=" $yes_arg --kubeconfig-context ${kube_context} -n ${kube_namespace} -a $(basename $target_name) -f ${output_dir}"
     echo $opt
 }
 

@@ -181,12 +181,11 @@ update_replicas_helm() {
 }
 
 helm_cluster_options() {
-    local cl=${kube_cluster}
-    local cfg=${kube_config_map[$cl]:-default}
+    local cfg=${kube_config:-default}
     local opt=""
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
     fi
-    opt+=" --kube-context ${kube_context_map[$cl]}"
+    opt+=" --kube-context ${kube_context}"
     echo $opt
 }
