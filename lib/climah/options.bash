@@ -69,6 +69,6 @@ parse-list-option() {
 
 show-options() {
     info All available options:
-    help_show_level=all
+    #local help_show_level=all
     help-list-items option;
 }

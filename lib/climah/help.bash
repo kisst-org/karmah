@@ -1,5 +1,5 @@
 help-init-climah-vars() {
-    declare -g help_level=basic
+    declare -g help_show_level=basic
     declare -gA help_topic_function=()
     declare -gA help_topic_alias=()
 

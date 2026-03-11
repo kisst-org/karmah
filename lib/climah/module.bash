@@ -4,11 +4,12 @@ modules-init-climah-vars() {
     declare -gA module_help=()
 }
 
-use_module() {
+module-init() {
     local module="$1"
     if [[ ${module_loaded[$module]:-false} == false ]]; then
         module_loaded[$module]=true
         all_modules+=" $module"
+        help_level=basic
         debug running init module for "${module}"
         ${module}-init-climah-module
     fi
@@ -36,8 +37,7 @@ init_all_modules() {
     local m mod=$(set | grep '[-]init-climah-module ()'| sed -e 's/[-]init-climah-module.*//')
     verbose loading modules: $mod
     for m in "$@" $mod; do
-        help_level=basic
-        use_module $m
+        module-init $m
     done
 }
 
