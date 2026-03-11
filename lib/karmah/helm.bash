@@ -160,7 +160,7 @@ helm-update-value-path() {
     local path="$1" value="$2"
     local val_file=${helm_value_files[@]:(-1)}
     verbose updating $path to \"$value\"
-    verbose-cmd yq -i $path=$value $val_file
+    verbose-cmd yq -i $path=\"$value\"   $val_file
 }
 
 helm-update-replicas() {
