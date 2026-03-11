@@ -11,7 +11,7 @@ check_bash_version() {
 
 climah_init() {
     check_bash_version
-    init_logging "${@}"
+    init-logging "${@}"
     init_all_modules help logging options render git
     read_config
     if [[ $# == 0 ]]; then

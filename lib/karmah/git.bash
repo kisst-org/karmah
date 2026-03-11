@@ -36,19 +36,19 @@ add_message() {
 
 run-action-git-pull() {
     info "running git-pull for $target_name"
-    verbose_cmd git pull
+    verbose-cmd git pull
 }
 
 run-action-git-diff() {
     info git-diff ${target_name} to ${output_dir}
     if ${quiet_diff:-false}; then
-        verbose_cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
-    elif $(log_is_debug); then
-        verbose_cmd git diff -- ${used_files} ${output_dir} || true
-    elif $(log_is_verbose); then
-        verbose_cmd git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
+        verbose-cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
+    elif $(log-is-debug); then
+        verbose-cmd git diff -- ${used_files} ${output_dir} || true
+    elif $(log-is-verbose); then
+        verbose-cmd git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
     else
-        verbose_cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
+        verbose-cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
     fi
 }
 
@@ -58,18 +58,18 @@ run-action-git-add() {
         return
     fi
     info git-add ${target_name} to ${output_dir}
-    verbose_cmd git add ${used_files} ${output_dir}
+    verbose-cmd git add ${used_files} ${output_dir}
 }
 run-action-git-restore() {
     # TODO: find better way to determine if path is tracked
     if [[ $output_dir == tmp/* ]]; then
         # git restore gives pathspec error on untracked paths
         info git-restore ${used_files}
-        verbose_cmd git restore ${used_files}
+        verbose-cmd git restore ${used_files}
     else
         info git-restore ${used_files} ${output_dir}
-        verbose_cmd git restore ${used_files} ${output_dir}
-        verbose_cmd git clean --force ${output_dir}  # remove any files that were not there initially
+        verbose-cmd git restore ${used_files} ${output_dir}
+        verbose-cmd git clean --force ${output_dir}  # remove any files that were not there initially
     fi
 }
 
@@ -91,6 +91,6 @@ run-action-git-commit() {
     if git diff-index --quiet HEAD; then
         verbose Nothing added to commit for message: "${git_commit_message}"
     else
-        verbose_cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
+        verbose-cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
     fi
 }

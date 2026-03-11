@@ -19,8 +19,8 @@ parse-option-with()      { with_dir="$2"; parse_result=2; }
 
 run-action-render() {
     info rendering ${target_name} with ${renderer} to ${output_dir}
-    verbose_cmd rm -rf ${output_dir}
-    verbose_cmd mkdir -p ${output_dir}
+    verbose-cmd rm -rf ${output_dir}
+    verbose-cmd mkdir -p ${output_dir}
     for r in ${renderer//,/ }; do
         render_$r
     done
@@ -29,7 +29,7 @@ run-action-render() {
 
 run-action-render-rm() {
     info removing  ${target_name} manifests in ${output_dir}
-    verbose_cmd rm -rf ${output_dir}
+    verbose-cmd rm -rf ${output_dir}
 }
 
 
@@ -37,7 +37,7 @@ run-action-compare() {
     olddir=${output_dir}
     local newdir=${with_dir:-deployed/manifests}/${target_name}
     info comparing ${target_name}: ${output_dir} with ${newdir}
-    verbose_cmd diff -r $newdir $olddir || true
+    verbose-cmd diff -r $newdir $olddir || true
 }
 
 sort-env-vars() {
@@ -67,5 +67,5 @@ split_into_files() {
 
 render_copy-files() {
     files_list="$karmah_dir"/files/*.yaml
-    verbose_cmd cp -f ${files_list} ${output_dir}
+    verbose-cmd cp -f ${files_list} ${output_dir}
 }

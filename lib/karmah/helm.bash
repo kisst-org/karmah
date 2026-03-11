@@ -88,14 +88,14 @@ run_helm_forall_charts() {
 run-action-helm-diff() {
     info "running helm-diff for $target_name"
     local default_cmd="helm diff upgrade $(helm_cluster_options)"
-    run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
+    run_helm_forall_charts "verbose-cmd" ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-upgrade() {
     info "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm_cluster_options)"
-    run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
+    run_helm_forall_charts "verbose-cmd" ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-install() { run-action-helm-upgrade; }
@@ -104,16 +104,16 @@ run-action-helm-uninstall() {
     info "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall ${helm_atomic_wait} $(helm_cluster_options)"
-    run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
+    run_helm_forall_charts "verbose-cmd" ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
     info getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}
-    verbose_cmd rm -rf ${output_dir}
-    verbose_cmd mkdir -p ${output_dir}
+    verbose-cmd rm -rf ${output_dir}
+    verbose-cmd mkdir -p ${output_dir}
     local cmd="helm $(helm_cluster_options) get manifest $release --namespace $kube_namespace"
-    verbose_pipe split_into_files $cmd
+    verbose-pipe split_into_files $cmd
 }
 
 run-action-helm-get-diff() {
@@ -137,7 +137,7 @@ run-action-helm-get-diff() {
     local output_dir=$get_dir
     run-action-helm-get-manifests
     info comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}
-    verbose_cmd diff -r $get_dir $render_dir || true
+    verbose-cmd diff -r $get_dir $render_dir || true
 }
 
 
@@ -145,7 +145,7 @@ render_helm() {
     local default_cmd="helm template"
     local f
     used_files+=" ${helm_value_files[@]}"
-    run_helm_forall_charts "verbose_pipe split_into_files" ${helm_template_command:-$default_cmd}
+    run_helm_forall_charts "verbose-pipe split_into_files" ${helm_template_command:-$default_cmd}
 }
 
 # this function will iterate over all helm_value_files
@@ -164,7 +164,7 @@ helm-update-value-path() {
     local path="$1" value="$2"
     local val_file=${helm_value_files[@]:(-1)}
     verbose updating $path to \"$value\"
-    verbose_cmd yq -i $path=$value $val_file
+    verbose-cmd yq -i $path=$value $val_file
 }
 
 update_replicas_helm() {
@@ -176,7 +176,7 @@ update_replicas_helm() {
             repl=${kube_default_replicas[$res]}
         fi
         verbose updating $res replicas to $repl
-        verbose_cmd yq -i "${helm_update_replicas_path[$res]}=\"$repl\"" $val_file
+        verbose-cmd yq -i "${helm_update_replicas_path[$res]}=\"$repl\"" $val_file
     done
 }
 

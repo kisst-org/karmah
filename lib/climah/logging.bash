@@ -1,6 +1,6 @@
 
 # This function is called before anything else, to immediately make logging work
-init_logging() {
+init-logging() {
     declare -gi log_level_fatal=0
     declare -gi log_level_error=10
     declare -gi log_level_warn=20
@@ -9,7 +9,7 @@ init_logging() {
     declare -gi log_level_debug=50
     declare -gi log_level=$log_level_info
     declare -g  log_cmds=false
-    parse_loglevel "$@"
+    parse-loglevel "$@"
 }
 
 init_climah_module_logging() {
@@ -41,19 +41,19 @@ parse-option-show-script() {
 }
 
 
-log_is_error()   { (( ${log_level} >= ${log_level_error} )) }
-log_is_warn()    { (( ${log_level} >= ${log_level_warn} )) }
-log_is_info()    { (( ${log_level} >= ${log_level_info} )) }
-log_is_verbose() { (( ${log_level} >= ${log_level_verbose} )) }
-log_is_debug()   { (( ${log_level} >= ${log_level_debug} )) }
+log-is-error()   { (( ${log_level} >= ${log_level_error} )) }
+log-is-warn()    { (( ${log_level} >= ${log_level_warn} )) }
+log-is-info()    { (( ${log_level} >= ${log_level_info} )) }
+log-is-verbose() { (( ${log_level} >= ${log_level_verbose} )) }
+log-is-debug()   { (( ${log_level} >= ${log_level_debug} )) }
 
-error()   { if $(log_is_error);   then printf "ERROR %s \n" "${*}";  fi }
-warn()    { if $(log_is_warn);    then printf "WARN %s \n" "${*}";  fi }
-info()    { if $(log_is_info);    then printf "# %s \n" "${*}";  fi }
-verbose() { if $(log_is_verbose); then printf "## %s \n" "${*}";  fi }
-debug()   { if $(log_is_debug);   then printf "### %s \n" "${*}";  fi }
+error()   { if $(log-is-error);   then printf "ERROR %s \n" "${*}";  fi }
+warn()    { if $(log-is-warn);    then printf "WARN %s \n" "${*}";  fi }
+info()    { if $(log-is-info);    then printf "# %s \n" "${*}";  fi }
+verbose() { if $(log-is-verbose); then printf "## %s \n" "${*}";  fi }
+debug()   { if $(log-is-debug);   then printf "### %s \n" "${*}";  fi }
 
-verbose_cmd() {
+verbose-cmd() {
     if (( $log_level >= $log_level_verbose )); then
         printf "    "; echo "${@}";
     elif $log_cmds; then
@@ -65,7 +65,7 @@ verbose_cmd() {
     fi
 }
 
-verbose_pipe() {
+verbose-pipe() {
     pipe=$1
     shift
     if (( $log_level >= $log_level_verbose )); then
@@ -80,7 +80,7 @@ verbose_pipe() {
 }
 
 
-parse_loglevel() {
+parse-loglevel() {
     for arg in "$@"; do
         if [[ $arg == -v ]]; then log_level+=10; fi
     done
