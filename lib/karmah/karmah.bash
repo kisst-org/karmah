@@ -17,9 +17,7 @@ init_climah_module_karmah() {
     local_var+=" run_pre_flow"
 }
 
-init_karmah_type_basic() {
-    verbose using empty karmah_type initializer
-}
+empty-karmah-init-target() { verbose using empty karmah_type initializer; }
 
 add-karmah-action() { add-action run-for-all-karmah-paths "${@}"; }
 run-for-all-karmah-paths() {
@@ -86,8 +84,8 @@ common-karmah() {
         $karmah_func
     elif [[ ! -z ${karmah_type:-} ]]; then
         #warn karmah_type is deprecated, use karmah_func instead
-        karmah_type=${force_karmah_type:-${karmah_type:-basic}}
-        init_karmah_type_${karmah_type}
+        karmah_type=${force_karmah_type:-${karmah_type:-empty}}
+        ${karmah_type}-karmah-init-target
     fi
 }
 
