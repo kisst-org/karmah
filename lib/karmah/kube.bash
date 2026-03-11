@@ -81,8 +81,9 @@ run-action-kubectl() {
     verbose-cmd kubectl $(kubectl_options) $extra_args
 }
 
-
-split_kubectl_output_into_files() {
+# TODO: This is slightly different form render split-into-files
+# because it is a yaml list, not separate yaml documents
+kubectl-split-into-files() {
     yq  '.items.[]' -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
 }
 
@@ -90,7 +91,7 @@ run-action-kube-get-manifests() {
     info kube get manifests  ${target_name} to ${output_dir}
     verbose-cmd rm -rf ${output_dir}
     verbose-cmd mkdir -p ${output_dir}
-    verbose-pipe split_kubectl_output_into_files kubectl $(kubectl_options) get deploy,svc,sts,cm,ingress -o yaml
+    verbose-pipe kubectl-split-into-files kubectl $(kubectl_options) get deploy,svc,sts,cm,ingress -o yaml
     ignore_files=configmap_kube-root-ca.crt.yaml
     ignore_files+=" deployment_ingress-nginx-controller.yaml"
     ignore_files+=" service_ingress-nginx-controller-admission.yaml"
@@ -113,13 +114,13 @@ run-action-kube-watch() {
     verbose-cmd watch kubectl $(kubectl_options) get ${extra_args:-pods,deploy,sts,cm,svc,ingress,pdb}
 }
 run-action-kube-exec() {
-    verbose-cmd kubectl $(kubectl_options) exec $(calc_full_resource_names) ${extra_args:--- sh}
+    verbose-cmd kubectl $(kubectl_options) exec $(kube-calc-full-resource-names) ${extra_args:--- sh}
 }
 run-action-kube-exec-it() {
-    verbose-cmd kubectl $(kubectl_options) exec -it $(calc_full_resource_names) ${extra_args:--- sh}
+    verbose-cmd kubectl $(kubectl_options) exec -it $(kube-calc-full-resource-names) ${extra_args:--- sh}
 }
 run-action-kube-log() {
-    verbose-cmd kubectl $(kubectl_options) logs $(calc_full_resource_names) ${extra_args:-}
+    verbose-cmd kubectl $(kubectl_options) logs $(kube-calc-full-resource-names) ${extra_args:-}
 }
 
 
@@ -132,14 +133,14 @@ run-action-kube-restart() {
 }
 run-action-kube-tmp-scale() {
     local res
-    for res in $(calc_resource_names all); do
-        local repl=$(calc_kube_replicas $res)
+    for res in $(kube-calc-resource-names all); do
+        local repl=$(kube-calc-replicas $res)
         res=${kube_resource_alias[$res]:-$res}
         verbose-cmd kubectl $(kubectl_options) scale $res --replicas ${repl}
     done
 }
 
-calc_resource_names() {
+kube-calc-resource-names() {
     local result=${kube_resource_list:-all}
     if [[ $result == all ]]; then
         result=${kube_all_resources}
@@ -147,7 +148,7 @@ calc_resource_names() {
     echo ${result//,/ }
 }
 
-calc_full_resource_names() {
+kube-calc-full-resource-names() {
     local r result="" res=${kube_resource_list:-${1:-}}
     if [[ $res == all ]]; then
         res=${kube_all_resources}
@@ -159,7 +160,7 @@ calc_full_resource_names() {
 }
 
 
-calc_kube_replicas() {
+kube-calc-replicas() {
     local repl=${kube_replicas:-default}
     if [[  $repl == default ]]; then
         repl=${kube_default_replicas[$1]}
@@ -167,8 +168,8 @@ calc_kube_replicas() {
     echo $repl
 }
 
-render_kustomize() {
+render-kustomize() {
     local command="kubectl kustomize --enable-helm"
     #used_files+=" $helm_chart_dir/$ch"
-    verbose-pipe split_into_files "$command ${karmah_dir}"
+    verbose-pipe split-into-files "$command ${karmah_dir}"
 }

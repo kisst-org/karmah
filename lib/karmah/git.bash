@@ -22,7 +22,7 @@ git-show-help() { help-show-module git; }
 
 parse-option-message()   { fixed_message="$2";   parse_result=2; }
 parse-option-prepend-message()   { prepend_message="$2";   parse_result=2; }
-add_message() {
+git-add-message() {
     if [[ -z ${git_commit_message:-} ]] then
         git_commit_message="${prepend_message:-}"
     fi

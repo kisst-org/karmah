@@ -21,19 +21,19 @@ run-action-update() {
         #info update $target_name version to $update_version
         ${karmah_type}-update-target-version ${update_version}
         any_updates=true
-        add_message "version ${update_version}"
+        git-add-message "version ${update_version}"
     fi
     if [[ ! -z ${kube_replicas:-} ]]; then
         #info update $target_name replicas to $kube_replicas
         ${karmah_type}-update-target-replicas $kube_replicas
         any_updates=true
-        add_message "replicas ${kube_replicas}"
+        git-add-message "replicas ${kube_replicas}"
     fi
     local u
     for u in "${updates[@]}"; do
         verbose custom update function $custom_update_function
         ${karmah_type}-update-target "$u"
-        add_message "update ${u}"
+        git-add-message "update ${u}"
     done
     $any_updates || verbose no updates specified
 }

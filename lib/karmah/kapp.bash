@@ -10,7 +10,7 @@ kapp-init-climah-module() {
 }
 kapp-show-help() { help-show-module kapp; }
 
-kapp_options() {
+kapp-options() {
     local cfg=${kube_config:-default}
     local opt=""
     if [[ $cfg != default ]]; then
@@ -21,20 +21,20 @@ kapp_options() {
 }
 
 run-action-kapp-diff() {
-    verbose-cmd kapp deploy $(kapp_options) --diff-run --diff-changes
+    verbose-cmd kapp deploy $(kapp-options) --diff-run --diff-changes
 }
 
 run-action-kapp-plan() {
-    verbose-cmd kapp deploy $(kapp_options) --diff-run
+    verbose-cmd kapp deploy $(kapp-options) --diff-run
 }
 
 run-action-kapp-deploy() {
     if ! kubectl $(kubectl_options) get ns $kube_namespace >/dev/null 2>&1; then
         verbose-cmd kubectl $(kubectl_options) create ns $kube_namespace
     fi
-    verbose-cmd kapp deploy $(kapp_options)
+    verbose-cmd kapp deploy $(kapp-options)
 }
 
 run-action-kapp-delete() {
-    verbose-cmd kapp delete $(kapp_options)
+    verbose-cmd kapp delete $(kapp-options)
 }

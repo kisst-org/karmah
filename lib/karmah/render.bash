@@ -22,7 +22,7 @@ run-action-render() {
     verbose-cmd rm -rf ${output_dir}
     verbose-cmd mkdir -p ${output_dir}
     for r in ${renderer//,/ }; do
-        render_$r
+        render-$r
     done
     already_rendered=true
 }
@@ -47,7 +47,7 @@ sort-env-vars() {
     fi
 }
 
-split_into_files() {
+split-into-files() {
     # Cleans the stdin yaml to a normalized format
     # - pretty print with normalized indents
     # - sort all the keys
@@ -64,8 +64,7 @@ split_into_files() {
     rm -f ${output_dir}/_.yaml
 }
 
-
-render_copy-files() {
+render-copy-files() {
     files_list="$karmah_dir"/files/*.yaml
     verbose-cmd cp -f ${files_list} ${output_dir}
 }
