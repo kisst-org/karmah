@@ -63,6 +63,22 @@ run-actions() {
     done
 }
 
+run-action-flow() {
+    local flow=$1
+    local actions=$(add-commas ${action_flow[$flow]:-$flow})
+    info "running actions $actions for ${target_name:-$target_path} $extra_args"
+    for action in ${@//,/ }; do
+        local extra_args=""
+        if [[ $action == $flow ]]; then
+            # Only the action with  should get extra_args
+            action_args=$extra_args
+        fi
+        verbose running $action for ${target_name:-$target_path} $action_args
+        run-action-$action
+        action-args=""
+    done
+}
+
 show-actions() {
     local act
     for act in $all_actions; do

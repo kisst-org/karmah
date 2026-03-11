@@ -78,7 +78,7 @@ run-action-kube-delete() {
 
 run-action-kubectl() {
     info kubectl $output_dir
-    verbose-cmd kubectl $(kubectl_options) $extra_args
+    verbose-cmd kubectl $(kubectl_options) $action_args
 }
 
 # TODO: This is slightly different form render split-into-files
@@ -108,19 +108,19 @@ run-action-kube-get-manifests() {
 }
 
 run-action-kube-get() {
-    verbose-cmd kubectl $(kubectl_options) get ${extra_args:-pods,deploy,sts,cm}
+    verbose-cmd kubectl $(kubectl_options) get ${action_args:-pods,deploy,sts,cm}
 }
 run-action-kube-watch() {
-    verbose-cmd watch kubectl $(kubectl_options) get ${extra_args:-pods,deploy,sts,cm,svc,ingress,pdb}
+    verbose-cmd watch kubectl $(kubectl_options) get ${action_args:-pods,deploy,sts,cm,svc,ingress,pdb}
 }
 run-action-kube-exec() {
-    verbose-cmd kubectl $(kubectl_options) exec $(kube-calc-full-resource-names) ${extra_args:--- sh}
+    verbose-cmd kubectl $(kubectl_options) exec $(kube-calc-full-resource-names) ${action_args:--- sh}
 }
 run-action-kube-exec-it() {
-    verbose-cmd kubectl $(kubectl_options) exec -it $(kube-calc-full-resource-names) ${extra_args:--- sh}
+    verbose-cmd kubectl $(kubectl_options) exec -it $(kube-calc-full-resource-names) ${action_args:--- sh}
 }
 run-action-kube-log() {
-    verbose-cmd kubectl $(kubectl_options) logs $(kube-calc-full-resource-names) ${extra_args:-}
+    verbose-cmd kubectl $(kubectl_options) logs $(kube-calc-full-resource-names) ${action_args:-}
 }
 
 
