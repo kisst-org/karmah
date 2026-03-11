@@ -17,6 +17,7 @@ helm-init-climah-module() {
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
     local_vars+=" helm_chart"
+    local_vars+=" helm_chart_values_file"
     local_vars+=" helm_install_command"
     local_vars+=" helm_atomic_wait"
     local_vars+=" helm_release"
@@ -148,7 +149,7 @@ render-helm() {
 helm-get-path-value() {
     local path=$1
     local f result
-    for f in ${helm_value_files[@]}; do
+    for f in ${helm_chart_values_file:-} ${helm_value_files[@]}; do
         local val=$(yq $path $f)
         if [[ $val != null ]]; then result=$val; fi
     done
