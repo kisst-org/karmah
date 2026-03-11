@@ -1,9 +1,10 @@
 # karmah: do stuff based on *.karmah file
 
 karmah-init-climah-vars() {
-    declare -g local_vars="karmah_type target karmah_func"
+    declare -g local_vars="karmah_type target_name"
     declare -g local_arrays=""
     declare -g karmah_paths=""
+    declare -g default_karmah_type=empty
     climah_prog=karmah
     #climah_full_help_function=karmah-show-full-help
     }
@@ -14,7 +15,7 @@ karmah-init-climah-module() {
     help_level=expert
     add-value-option K force-karmah-type typ "force to use another karmah_type"
     local_arrays+=" custom_flow"
-    local_var+=" run_pre_flow"
+    local_vars+=" run_pre_flow"
 }
 
 empty-karmah-init-target() { verbose using empty karmah_type initializer; }
@@ -79,14 +80,8 @@ common-karmah() {
         debug sourcing $common_karmah_file
         source $common_karmah_file
     fi
-    if [[ ! -z ${karmah_func:-} ]]; then
-        # TODO: force-karmah-func?
-        $karmah_func
-    elif [[ ! -z ${karmah_type:-} ]]; then
-        #warn karmah_type is deprecated, use karmah_func instead
-        karmah_type=${force_karmah_type:-${karmah_type:-empty}}
-        ${karmah_type}-karmah-init-target
-    fi
+    karmah_type=${force_karmah_type:-${karmah_type:-$default_karmah_type}}
+    ${karmah_type}-karmah-init-target
 }
 
 karmah-show-full-help() {
