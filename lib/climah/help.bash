@@ -79,7 +79,7 @@ help-list-items() {
     done
 }
 
-parse-option-help() { collect_unknown_args=true;  command=help;  }
+parse-option-help() { command=help;  }
 parse-option-extended-help() { help_show_level=all;  }
 
 

@@ -19,8 +19,6 @@ kube-init-climah-module() {
     set-pre-actions update,render,kube-diff,ask         kube-apply
     set-pre-actions update,render,kube-diff-delete,ask  kube-delete
     set-pre-actions render                              kube-diff-del
-    collect-unknown-after  kube-exec kube-exec-it kube-log
-    collect-remaining-after kubectl
 
     add-option R replicas nr  "specify number of replicas"
     add-option r resource res "specify a resource"
