@@ -52,17 +52,8 @@ argparse-parse-arguments() {
     verbose COMMAND $(basename $0) ${args_to_parse[@]}
 }
 
-add-commas() {
-    local args="$*"
-    args=${args// /,}
-    echo ${args%%,}
-}
-
-add-spaces() {
-    local args="$*"
-    args=${args//,/ }
-    echo ${args%% }
-}
+add-commas() { local args="${*// /,}"; echo ${args%%,}; }
+add-spaces() { local args="${*//,/ }"; echo ${args%% }; }
 
 argparse-show-aliases() {
   echo Aliases:
