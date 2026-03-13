@@ -26,11 +26,11 @@ add-action() {
     for act in $name $short; do
         argparse_parse_func[$act]=parse-action
         argparse_parse_params[$act]=$name
-        action_target_func[$name]=$cmd_func
-        help-add-item action "$short" $name "" "$summary"
-        help-add-item flow   "$short" $name "" "just the single action $name"
-        action_flow[$name]=$name  # default flow is just the action
+        action_target_func[$act]=$cmd_func
+        : ${action_flow[$act]:=$name}  # default flow is just the action
     done
+    help-add-item action "$short" $name "" "$summary"
+    help-add-item flow   "$short" $name "" "run actions ${action_flow[$name]}"
 }
 
 parse-action() {
@@ -44,7 +44,6 @@ set-action-pre-flow() {
     shift
     for name in "${@//,/ }"; do
         action_flow[$name]=$actions,$name
-        help-add-item flow "" $name "" "perform the actions ${action_flow[$name]}"
     done
 }
 
