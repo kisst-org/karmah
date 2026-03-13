@@ -24,7 +24,7 @@ add-action() {
     fi
     commands-register-func "$short" "$name" $cmd_func
     help-add-item action "$short" $name "" "$summary"
-    help-add-item flow   "$short" $name "" "just the single action $name"
+    #help-add-item flow   "$short" $name "" "just the single action $name"
     action_flow[$name]=$name  # default flow is just the action
 }
 
