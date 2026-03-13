@@ -1,5 +1,4 @@
 
-
 check-bash-version() {
     if [[ ${BASH_VERSINFO:-0} -lt 4 ]]; then
         echo "bash version too old (3.x or older), please use a newer version"
@@ -19,10 +18,9 @@ climah-init() {
         help-show-summary
         exit 1
     else
-        parse-arguments "${@}"
+        argparse-parse-arguments "${@}"
     fi
 }
-
 
 climah-main() {
     declare -g climah_prog_name=$(basename $0)

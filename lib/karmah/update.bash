@@ -6,10 +6,10 @@ update-init-climah-module() {
     add-option u update expr  "apply a custom update"
 
     declare -ga updates=()
-    aliases[tmp-stop]="kube-tmp-scale --replicas 0"
-    aliases[tmp-start]="kube-tmp-scale --replicas default"
-    aliases[stop]="deploy --replicas 0"
-    aliases[start]="deploy --replicas default"
+    argparse_aliases[tmp-start]="kube-tmp-scale --replicas default"
+    argparse_aliases[stop]="deploy --replicas 0"
+    argparse_aliases[tmp-stop]="kube-tmp-scale --replicas 0"
+    argparse_aliases[start]="deploy --replicas default"
 }
 
 parse-option-version()  { update_version="$2"; parse_result=2; }

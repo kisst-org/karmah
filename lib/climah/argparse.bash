@@ -1,14 +1,14 @@
 
 argparse-init-climah-vars() {
-    declare -gA aliases=()
+    declare -gA argparse_aliases=()
     declare -ga args_to_parse=()
     declare -gA arg_alias=()
     declare -gA parse_arg_func=()
 }
 
-replace-aliases() {
+argparse-replace-aliases() {
     for arg in "${@}"; do
-        local al="${aliases[$arg]:-none}"
+        local al="${argparse_aliases[$arg]:-none}"
         if [[ "$al" != none ]]; then
             replaced=true
             args_to_parse+=($al)
@@ -18,7 +18,7 @@ replace-aliases() {
     done
 }
 
-parse-arg() {
+argparse-parse-arg() {
     local name=$1
     local func=${parse_arg_func[$name]:-}
     if [[ ! -z $func ]]; then
@@ -27,17 +27,17 @@ parse-arg() {
     fi
 }
 
-parse-arguments() {
+argparse-parse-arguments() {
     local replaced=false
     declare -g extra_args=""
-    replace-aliases "${@}"
+    argparse-replace-aliases "${@}"
     set -- "${args_to_parse[@]}"
     log_level=$log_level_info
     while [[ $# > 0 ]]; do
         arg=${arg_alias[$1]:-$1}
         shift
         parse_result=0
-        parse-arg $arg "$@";
+        argparse-parse-arg $arg "$@";
         if [[ "$parse_result" > 0 ]]; then
             shift $(( "$parse_result" - 1))
         elif [[ -f ${arg} ]]; then target_paths+=" ${arg}"
@@ -62,4 +62,11 @@ add-spaces() {
     local args="$*"
     args=${args//,/ }
     echo ${args%% }
+}
+
+argparse-show-aliases() {
+  echo Aliases:
+  for key in $(printf "%s\n" ${!argparse_aliases[@]} | sort); do
+      printf "  %-14s %s\n" $key "${argparse_aliases[$key]}"
+  done |sort -k2 -k1
 }

@@ -17,7 +17,7 @@ help-init-climah-module() {
     add-option  h  help ""           "show general help information"
     add-option  X  extended-help ""  "show extensive help information"
 
-    help-add-topic al  aliases  show-aliases "show all defined aliases"
+    help-add-topic al  aliases  argparse-show-aliases "show all defined aliases"
     help-add-topic mod modules  show-modules "show all modules"
     help-add-topic top topics   show-help-topics "show all help-topics"
     parse_arg_func[help]=parse-option-help
@@ -129,13 +129,6 @@ help-show-summary() {
   echo
   echo see additional help topics with
   echo "   ${climah_prog_name} help topics"
-}
-
-show-aliases() {
-  echo Aliases:
-  for key in $(printf "%s\n" ${!aliases[@]} | sort); do
-      printf "  %-14s %s\n" $key "${aliases[$key]}"
-  done |sort -k2 -k1
 }
 
 show-help-topics() {
