@@ -16,8 +16,10 @@ options-add-generic() {
     if [[ ! -z $short ]]; then
         argparse_arg_func[-$short]=$func
         argparse_arg_params[-$short]=${name}
+        help-add-item option "-$short" "--$name" "$arg" "$summary"
+    else
+        help-add-item option "" "--$name" "$arg" "$summary"
     fi
-    help-add-item option "$short" "--$name" "$arg" "$summary"
 }
 
 options-add()           { options-add-generic "$1" $2 "$3" parse-option-$2 "$4"; }

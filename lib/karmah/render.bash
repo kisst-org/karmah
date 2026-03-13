@@ -10,8 +10,10 @@ render-init-climah-module() {
     set-pre-actions update        render
     set-pre-actions update,render compare
 
-    options-add t to       path  "other path to render to (default is tmp/manifests)"
-    options-add w with     path  used for comparison between two manifest trees
+    options-add "" to       path  "other path to render to (default is tmp/manifests)"
+    options-add "" with     path  used for comparison between two manifest trees
+    options-add-flag "" tmp  "render to tmp/manifests (already default), do not commit"
+
 }
 
 parse-option-to()        { to_dir="$2"; argparse_parse_count=2; }

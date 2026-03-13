@@ -17,7 +17,6 @@ actions-init-climah-module() {
     add-target-action pt print-target "print all target paths"
     help_level=expert
     options-add s subdir dir  "add subdir to list of subdirs (can be comma separated list)"
-    options-add-flag T tmp    "render to tmp/manifests (obsolete, tmp is already default), do not commit"
 }
 
 parse-option-subdir() { subdir+=" $2"; argparse_parse_count=2; }
