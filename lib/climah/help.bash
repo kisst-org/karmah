@@ -35,17 +35,19 @@ help-add-topic() {
 
 help-add-item() {
     local type=$1 short=$2 name=$3 params=$4 summary=$5
-    help_item_module[$name]=$module
-    help_item_level[$name]=$help_level
-    help_item_short[$name]=$short
-    help_item_params[$name]=$params
-    help_item_summary[$name]=$summary
+    local key=$type:$name
+    help_item_module[$key]=$module
+    help_item_level[$key]=$help_level
+    help_item_short[$key]=$short
+    help_item_params[$key]=$params
+    help_item_summary[$key]=$summary
     help_all_items[$type]+=" $name"
 }
 
 help-is-visible() {
-    local lvl=$1
-    local mod=$2
+    local item=$1
+    local lvl=${help_item_level[$item]}
+    local mod=${help_item_module[$item]}
     if [[ ${help_show_module:-$mod} != $mod ]]; then
         echo false
     elif [[ ${help_show_level:-basic} == *${lvl}* || ${help_show_level:-basic} == all ]]; then
@@ -59,24 +61,26 @@ help-list-items() {
     local type=$1
     local item len=1 slen=0
     for item in ${help_all_items[$type]}; do
-        if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
-            local lname=$item
-            if [[ ! -z ${help_item_params[$item]} ]]; then
-                lname+=" <${help_item_params[$item]}>"
+        local key=$type:$item
+        if $(help-is-visible $key); then
+            local lname=$key
+            if [[ ! -z ${help_item_params[$key]} ]]; then
+                lname+=" <${help_item_params[$key]}>"
             fi
             if (( $len < ${#lname} )); then len=${#lname}; fi
-            local shortlen=${#help_item_short[$item]}
+            local shortlen=${#help_item_short[$key]}
             if (( $slen < $shortlen)); then slen=$shortlen; fi
         fi
     done
 
     for item in ${help_all_items[$type]}; do
         local lname=$item
-        if [[ ! -z ${help_item_params[$item]} ]]; then
-            lname+=" <${help_item_params[$item]}>"
+        local key=$type:$item
+        if [[ ! -z ${help_item_params[$key]} ]]; then
+            lname+=" <${help_item_params[$key]}>"
         fi
-        if $(help-is-visible ${help_item_level[$item]} ${help_item_module[$item]}); then
-            printf "  %-${slen}s %-${len}s %s\n" "${help_item_short[$item]}" "$lname" "${help_item_summary[$item]}"
+        if $(help-is-visible $key); then
+            printf "  %-${slen}s %-${len}s %s\n" "${help_item_short[$key]}" "$lname" "${help_item_summary[$key]}"
         fi
     done
 }

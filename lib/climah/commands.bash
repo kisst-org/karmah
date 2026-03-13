@@ -8,6 +8,7 @@ commands-init-climah-vars() {
 commands-init-climah-module() {
     help-add-topic cmd commands "" "show available commands"
 }
+commands-show-help() { help-list-items command; }
 
 parse-command() {
     local name=$argparse_params
@@ -26,7 +27,5 @@ add-command() {
     help-add-item command "$short" $name "" "$summary"
     command_function[$name]=$func
 }
-
-show-commands() { help-list-items command; }
 
 run-command() { ${command_function[$command]}; }

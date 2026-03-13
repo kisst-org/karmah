@@ -7,7 +7,7 @@ options-init-climah-module() {
     help-add-topic opt options "" "show available commands"
 }
 
-options-show() { help-list-items option; }
+options-show-help() { help-list-items option; }
 
 options-add-generic() {
     local short=$1 name=$2 arg=$3 func=$4 summary="$5"

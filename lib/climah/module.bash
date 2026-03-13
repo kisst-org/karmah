@@ -7,7 +7,14 @@ modules-init-climah-vars() {
 modules-init-climah-module() {
     help-add-topic mod modules  modules-show "show all modules"
 }
-modules-show() { help-list-items module; }
+modules-show() {
+    cat <<EOF
+karmah-develop help [<module>]
+
+module can be any of:
+EOF
+    help-list-items module;
+}
 
 module-init() {
     local module="$1"
@@ -23,15 +30,17 @@ module-init() {
 }
 
 module-add-help() {
-    local short=$1 summary="${2:-info about module $module}"
+    local short=$1 summary="${2:-info about module $module}" key
     module_summary[$module]=$summary
     help-add-item module "$short" $module "" "$summary"
     local help_func=modules-show-help-about-module
     #if [[ $(type -t $modules-show-help-about-module) == function ]]; then
     #    help_func=$modules-show-help-about-module
     #fi
-    help_topic_function[$module]=$help_func
-    help_topic_params[$module]=$module;
+    for key in $module module:$module; do
+        help_topic_function[$key]=$help_func
+        help_topic_params[$key]=$module;
+    done
 }
 
 modules-show-help-about-module() {
