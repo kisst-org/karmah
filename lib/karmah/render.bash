@@ -4,11 +4,12 @@ render-init-climah-module() {
     local_vars+=" renderer output_dir already_rendered sort_env_vars"
     declare -g to_dir
     add-karmah-action r render update "render manifests to --to <path> (default tmp/manifests)"
+    set-action-pre-flow update        render
+    set-action-pre-flow update,render compare
+
     help_level=expert
     add-karmah-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
     add-karmah-action rm render-rm "remove all rendered manifests"
-    set-pre-actions update        render
-    set-pre-actions update,render compare
 
     options-add "" to       path  "other path to render to (default is tmp/manifests)"
     options-add "" with     path  used for comparison between two manifest trees

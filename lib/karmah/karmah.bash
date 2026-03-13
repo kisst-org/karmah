@@ -24,7 +24,7 @@ add-karmah-action() {
     local short=$1 name=$2 summary="$3"
     commands-register-func "$short" "$name" run-for-all-karmah-paths $name
     help-add-item action "$short" $name "" "$summary"
-    #help-add-item flow   "$short" $name "" "just the single action $name"
+    help-add-item flow   "$short" $name "" "just the single action $name"
 }
 # run-karmah-flow-for-all-target-paths
 # run-karmah-action-for-all-target-paths

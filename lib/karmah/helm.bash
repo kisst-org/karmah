@@ -1,6 +1,11 @@
 
 helm-init-climah-module() {
     module-add-help "" "actions to work with helm"
+    set-action-pre-flow update,render                       helm-diff
+    set-action-pre-flow update,render,kube-diff,ask         helm-install
+    set-action-pre-flow update,render,kube-diff,ask         helm-upgrade
+    set-action-pre-flow update,render,kube-diff-delete,ask  helm-uninstall
+
     help_level=expert
     add-karmah-action hD helm-diff           "run helm diff plugin for target"
     add-karmah-action "" helm-upgrade        "run helm upgrade --install for target"
@@ -9,11 +14,6 @@ helm-init-climah-module() {
     add-karmah-action "" helm-get-manifests  "download helm manifests from cluster"
     add-karmah-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
     options-add-value-opt H force-helm-chart  chrt  "force to use a specific helm chart"
-
-    set-pre-actions update,render                       helm-diff
-    set-pre-actions update,render,kube-diff,ask         helm-install
-    set-pre-actions update,render,kube-diff,ask         helm-upgrade
-    set-pre-actions update,render,kube-diff-delete,ask  helm-uninstall
 
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"

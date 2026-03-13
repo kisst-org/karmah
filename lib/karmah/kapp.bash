@@ -1,12 +1,12 @@
 
 kapp-init-climah-module() {
     module-add-help "" "actions to work with kapp"
+    set-action-pre-flow update,render kapp-plan kapp-diff kapp-deploy kapp-delete
     help_level=expert
     add-karmah-action "" kapp-plan    "show what resources will be updated"
     add-karmah-action "" kapp-diff    "show what resources will be updated, including detailed diffs"
     add-karmah-action "" kapp-deploy  "deploy the application with kapp"
     add-karmah-action "" kapp-delete  "delete the application with kapp"
-    set-pre-actions update,render kapp-plan kapp-diff kapp-deploy kapp-delete
 }
 
 kapp-options() {

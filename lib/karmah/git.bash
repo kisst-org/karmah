@@ -5,13 +5,13 @@ git-init-climah-vars() {
 
 git-init-climah-module() {
     module-add-help "" "actions to work with git"
+    set-action-pre-flow update,render           git-diff git-add
+    set-action-pre-flow update,render,git-add   git-commit
     help_level=expert
     add-karmah-action gd git-diff     "shows the changes to source and rendered manifests with git"
     add-karmah-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
     add-karmah-action gc git-commit   "commits the changes to source and rendered manifests to git"
     add-karmah-action gr git-restore  "restores the changed files (source and rendered manifests)"
-    set-pre-actions update,render           git-diff git-add
-    set-pre-actions update,render,git-add   git-commit
     options-add-value-opt m   message        msg   "set message to use with git commit"
     options-add-value-opt "" fixed-message   msg   "set fixed message to use with git commit"
     options-add-value-opt M prepend-message  msg   "prepend commit message before auto generated message"

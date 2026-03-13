@@ -5,6 +5,11 @@ kube-init-climah-module() {
     add-karmah-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
     add-karmah-action kw kube-watch   "watch target resources every 2 seconds"
 
+    set-action-pre-flow update,render                       kube-diff
+    set-action-pre-flow update,render,kube-diff,ask         kube-apply
+    set-action-pre-flow update,render,kube-diff-delete,ask  kube-delete
+    set-action-pre-flow render                              kube-diff-del
+
     help_level=expert
     add-karmah-action ""  kube-get       "get current manifests from cluster to --to <path> (default) deployed/manifests"
     add-karmah-action ""  kube-diff-del  "show resources that will be deleted with kube-delete"
@@ -15,11 +20,6 @@ kube-init-climah-module() {
     add-karmah-action ke  kube-exec      "execute a command on a pod of a resource"
     add-karmah-action kei kube-exec-it   "execute interactive command on a pod of a resource"
     add-karmah-action kl  kube-log       "show logging of a resource"
-
-    set-pre-actions update,render                       kube-diff
-    set-pre-actions update,render,kube-diff,ask         kube-apply
-    set-pre-actions update,render,kube-diff-delete,ask  kube-delete
-    set-pre-actions render                              kube-diff-del
 
     options-add R replicas nr  "specify number of replicas"
     options-add r resource res "specify a resource"
