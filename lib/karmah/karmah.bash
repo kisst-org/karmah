@@ -44,11 +44,11 @@ run-karmah-path() {
     if [[ -f $target_path ]]; then
         karmah_file=$target_path
         run-karmah-file
-    elif [[ -z ${subdir:-} ]]; then
+    elif [[ -z ${target_subdirs:-} ]]; then
         karmah_file=($target_path/*.karmah) # use array for globbing
         run-karmah-file
     else
-        for sd in ${subdir//,/ }; do
+        for sd in ${target_subdirs//,/ }; do
             karmah_file=($target_path/$sd/*.karmah)  # use array for globbing
             run-karmah-file
         done
@@ -111,7 +111,7 @@ $(help-show-summary)
 Targets:
   Each path defines an application definition, that will be sourced,
   This can either be a file, or a directory that contains exactly 1 file with a name '*.karmah'.
-  When one or more --subdirs are specfied, these will be append to the path
+  When one or more --subdir's are specfied, these will be appended to the path.
 
 Note:
   Options, commands/actions and paths can be mixed freely.

@@ -1,7 +1,6 @@
 # raftah: run actions for all targets
 
 actions-init-climah-vars() {
-    declare -g subdir=""
     declare -g flow_name
     declare -g tmp=false
     declare -g action_list=""
