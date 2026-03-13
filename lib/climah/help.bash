@@ -14,8 +14,8 @@ help-init-climah-vars() {
 
 help-init-climah-module() {
     add-command h  help show-help    "show general help"
-    add-option  h  help ""           "show general help information"
-    add-option  X  extended-help ""  "show extensive help information"
+    options-add  h  help ""           "show general help information"
+    options-add  X  extended-help ""  "show extensive help information"
 
     help-add-topic al  aliases  argparse-show-aliases "show all defined aliases"
     help-add-topic mod modules  show-modules "show all modules"
@@ -121,7 +121,7 @@ show-help() {
 
 help-show-summary() {
   echo Options:
-  show-options
+  options-show
   echo
   echo Commands:
   show-commands

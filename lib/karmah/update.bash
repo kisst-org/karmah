@@ -1,9 +1,9 @@
 
 update-init-climah-module() {
     add-karmah-action u update "update source files with expressions from --update"
-    add-option V version ver  "specify version (tag) to use for update or scale"
+    options-add V version ver  "specify version (tag) to use for update or scale"
     help_level=expert
-    add-option u update expr  "apply a custom update"
+    options-add u update expr  "apply a custom update"
 
     declare -ga updates=()
     argparse_aliases[tmp-start]="kube-tmp-scale --replicas default"

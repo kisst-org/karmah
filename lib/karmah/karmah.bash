@@ -13,7 +13,7 @@ karmah-init-climah-module() {
     help-add-topic ver version  karmah-show-version "show version of karmah"
     command=render
     help_level=expert
-    add-value-option K force-karmah-type typ "force to use another karmah_type"
+    options-add-value-opt K force-karmah-type typ "force to use another karmah_type"
     local_arrays+=" custom_flow"
     local_vars+=" run_pre_flow"
 }

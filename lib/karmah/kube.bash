@@ -20,8 +20,8 @@ kube-init-climah-module() {
     set-pre-actions update,render,kube-diff-delete,ask  kube-delete
     set-pre-actions render                              kube-diff-del
 
-    add-option R replicas nr  "specify number of replicas"
-    add-option r resource res "specify a resource"
+    options-add R replicas nr  "specify number of replicas"
+    options-add r resource res "specify a resource"
     local_vars+=" kube_config kube_context kube_namespace"
     # TODO local_arrays+=" kube_resource_alias kube_default_replicas"
     add-module-help "actions to work with kubernetes"

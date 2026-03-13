@@ -7,7 +7,7 @@ helm-init-climah-module() {
     add-karmah-action "" helm-uninstall      "run helm uninstall for target"
     add-karmah-action "" helm-get-manifests  "download helm manifests from cluster"
     add-karmah-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
-    add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
+    options-add-value-opt H force-helm-chart  chrt  "force to use a specific helm chart"
 
     set-pre-actions update,render                       helm-diff
     set-pre-actions update,render,kube-diff,ask         helm-install

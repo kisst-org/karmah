@@ -11,10 +11,10 @@ git-init-climah-module() {
     add-karmah-action gr git-restore  "restores the changed files (source and rendered manifests)"
     set-pre-actions update,render           git-diff git-add
     set-pre-actions update,render,git-add   git-commit
-    add-value-option m   message        msg   "set message to use with git commit"
-    add-value-option "" fixed-message   msg   "set fixed message to use with git commit"
-    add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
-    add-flag-option Q quiet-diff "do not show the output of diff"
+    options-add-value-opt m   message        msg   "set message to use with git commit"
+    options-add-value-opt "" fixed-message   msg   "set fixed message to use with git commit"
+    options-add-value-opt M prepend-message  msg   "prepend commit message before auto generated message"
+    options-add-flag Q quiet-diff "do not show the output of diff"
     local_vars+=" used_files git_commit_message"
     add-module-help "actions to work with git"
 }
