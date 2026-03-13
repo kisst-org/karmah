@@ -17,8 +17,8 @@ logging-init-climah-module() {
     options-add "" quiet    ""    "show no output"
     options-add S  show-script "" "show all commands without doing much"
     # TODO: parse multiple short options
-    argparse_arg_func[-vv]=parse-option-verbose2
-    argparse_arg_func[-vvv]=parse-option-verbose3
+    argparse_parse_func[-vv]=parse-option-verbose2
+    argparse_parse_func[-vvv]=parse-option-verbose3
 
     options-add-flag C  log-cmds  "show the commands being executed"
     options-add-flag "" dry-run   "do not execute the actual commands"

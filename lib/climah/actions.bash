@@ -1,30 +1,42 @@
 # raftah: run actions for all targets
 
 actions-init-climah-vars() {
-    declare -g flow_name
+    declare -g run_single_action=false
+
+    declare -g action_to_run
     declare -g tmp=false
     declare -g action_list=""
-    declare -gA action_alias=()
     declare -gA action_flow=()
+    declare -gA action_target_func=()
 }
 
 actions-init-climah-module() {
     help-add-topic act actions "" "show available actions"
     help-add-topic flw flows actions-show-flows "show available flows"
+    help_level=expert
+    options-add-flag "" run-single-action  "run just the action, not the (pre)flow"
+
 }
 actions-show-help() { help-list-items action; }
 actions-show-flows() { help-list-items flow; }
 
 add-action() {
-    local cmd_func=$1 short=$2 name=$3 summary="$4"
+    local cmd_func=$1 short=$2 name=$3 summary="$4" act
     debug adding action: "${@}"
-    if [[ ! -z $short ]]; then
-        action_alias[$short]=$name
-    fi
-    commands-register-func "$short" "$name" $cmd_func
-    help-add-item action "$short" $name "" "$summary"
-    help-add-item flow   "$short" $name "" "just the single action $name"
-    action_flow[$name]=$name  # default flow is just the action
+    for act in $name $short; do
+        argparse_parse_func[$act]=parse-action
+        argparse_parse_params[$act]=$name
+        action_target_func[$name]=$cmd_func
+        help-add-item action "$short" $name "" "$summary"
+        help-add-item flow   "$short" $name "" "just the single action $name"
+        action_flow[$name]=$name  # default flow is just the action
+    done
+}
+
+parse-action() {
+    command_to_run=run-flow
+    action_to_run=${argparse_param_list[0]}
+    target_func=run-karmah-path #${action_target_func[$action_to_run]}
 }
 
 set-action-pre-flow() {
@@ -34,41 +46,31 @@ set-action-pre-flow() {
         action_flow[$name]=$actions,$name
         help-add-item flow "" $name "" "perform the actions ${action_flow[$name]}"
     done
-
 }
 
 run-actions() {
+    local action
     for action in ${@//,/ }; do
-        action=${action_alias[$action]:-$action}
-        verbose running $action for ${target_name:-$target_path}
-        run-action-$action;
+        local action_args=""
+        if [[ $action == $action_to_run ]]; then
+            # Only the action with  should get argparse_extra_args
+            action_args="$argparse_extra_args"
+        fi
+        verbose running $action\($action_args\) for ${target_name:-$target_path}
+        run-action-$action
     done
 }
 
 run-action-flow() {
-    local flow=$1
-    local actions=$(add-commas ${action_flow[$flow]:-$flow})
-    if ${action_run_single_action:-false}; then
-        actions=$flow
-    fi
+    local flow=${action_flow[$action_to_run]}
+    if ${run_single_action}; then flow=$action_to_run; fi
+    local actions=$(add-commas $flow)
     if [[ -z $argparse_extra_args ]]; then
         info "running actions $actions for ${target_name:-$target_path}"
     else
-        info "running actions $actions for ${target_name:-$target_path} with extra arg(s)$argparse_extra_args"
+        info "running actions $actions for ${target_name:-$target_path} with extra arg(s) ${argparse_extra_args% }"
     fi
-    for action in ${actions//,/ }; do
-        local action_args=""
-        if [[ $action == $flow ]]; then
-            # Only the action with  should get argparse_extra_args
-            action_args="$argparse_extra_args"
-        fi
-        if [[ -z $action_args ]]; then
-            verbose running $action for ${target_name:-$target_path}
-        else
-            verbose running \"$action $action_args\" for ${target_name:-$target_path}
-        fi
-        run-action-$action
-    done
+    run-actions ${actions}
 }
 
 show-actions() { help-list-items action; }

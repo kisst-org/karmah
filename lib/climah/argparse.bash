@@ -1,8 +1,8 @@
 
 argparse-init-climah-vars() {
     declare -gA argparse_aliases=()
-    declare -gA argparse_arg_func=()
-    declare -gA argparse_arg_params=()
+    declare -gA argparse_parse_func=()
+    declare -gA argparse_parse_params=()
     declare -ga argparse_replaced_aliases=()   # remember for help function
     declare -ga argparse_original_args="${@}"  # remember for help function and others
     declare -g  argparse_extra_args=""
@@ -22,10 +22,10 @@ argparse-replace-aliases() {
 
 argparse-parse-arg() {
     local name=$1
-    local func=${argparse_arg_func[$name]:-}
+    local func=${argparse_parse_func[$name]:-}
     if [[ ! -z $func ]]; then
         argparse_parse_count=1
-        local argparse_params="${argparse_arg_params[$name]:-}"
+        local argparse_param_list=("${argparse_parse_params[$name]:-}")
         $func "$@"
     fi
 }

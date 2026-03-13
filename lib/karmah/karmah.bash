@@ -11,7 +11,9 @@ karmah-init-climah-vars() {
 
 karmah-init-climah-module() {
     help-add-topic ver version  karmah-show-version "show version of karmah"
-    command=render
+    default_command_to_run=run-func-for-targets
+    target_func=run-karmah-path
+    default_action_to_run=render
     help_level=expert
     options-add-value-opt K force-karmah-type typ "force to use another karmah_type"
     local_arrays+=" custom_flow"
@@ -20,38 +22,17 @@ karmah-init-climah-module() {
 
 empty-karmah-init-target() { verbose using empty karmah_type initializer; }
 
-add-karmah-action() {
-    local short=$1 name=$2 summary="$3"
-    commands-register-func "$short" "$name" run-for-all-karmah-paths $name
-    help-add-item action "$short" $name "" "$summary"
-    help-add-item flow   "$short" $name "" "just the single action $name"
-}
-# run-karmah-flow-for-all-target-paths
-# run-karmah-action-for-all-target-paths
-run-for-all-karmah-paths() {
-    local action_flow=$1
-    if [[ -z ${target_paths:-} ]]; then
-        warn "no target paths provided, but needed for action $action_flow"
-        help-show-summary
-        return 0
-    fi
-    for target_path in $target_paths; do
-        run-karmah-path $action_flow  #$target_path
-    done
-}
+add-karmah-action() { add-action run-karmah-path "${@}"; }
 
 run-karmah-path() {
     if [[ -f $target_path ]]; then
         karmah_file=$target_path
         run-karmah-file
-    elif [[ -z ${target_subdirs:-} ]]; then
+    elif [[ -d ${target_path:-} ]]; then
         karmah_file=($target_path/*.karmah) # use array for globbing
         run-karmah-file
     else
-        for sd in ${target_subdirs//,/ }; do
-            karmah_file=($target_path/$sd/*.karmah)  # use array for globbing
-            run-karmah-file
-        done
+        info "skipping $target_path"
     fi
 }
 
@@ -73,7 +54,7 @@ run-karmah-file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target_name}"
         fi
-        run-action-flow $action_flow
+        run-action-flow
     else
         info skipping $karmah_file
     fi

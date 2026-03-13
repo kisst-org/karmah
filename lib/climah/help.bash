@@ -19,7 +19,7 @@ help-init-climah-module() {
 
     help-add-topic al  aliases  argparse-show-aliases "show all defined aliases"
     help-add-topic top topics   show-help-topics "show all help-topics"
-    argparse_arg_func[help]=parse-option-help
+    argparse_parse_func[help]=parse-option-help
 }
 
 help-add-topic() {
@@ -85,7 +85,7 @@ help-list-items() {
     done
 }
 
-parse-option-help() { command=help;  }
+parse-option-help() { command_to_run=help;  }
 parse-option-extended-help() { help_show_level=all;  }
 
 

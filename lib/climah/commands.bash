@@ -1,7 +1,7 @@
 
 commands-init-climah-vars() {
-    declare -g command
-    declare -g default_command
+    declare -g command_to_run=""
+    declare -g default_command_to_run
     declare -gA command_function=()
     declare -gA command_params=()
     declare -gA command_alias=()
@@ -13,29 +13,25 @@ commands-init-climah-module() {
 commands-show-help() { help-list-items command; }
 
 commands-parse() {
-    local name=$argparse_params
-    if [[ ! -z ${command:-} ]]; then
-        debug overriding current command $command with $name
+    local name=${argparse_param_list[0]}
+    if [[ ! -z ${command_to_run:-} ]]; then
+        debug overriding current command $command_to_run with $name
     fi
-    command=$name
+    command_to_run=$name
 }
 
-commands-register-func() {
-    local short=$1 name=$2 func=${3:-run-command-$name} params=${4:-} cmd
-    for cmd in $name $short; do
-        argparse_arg_func[$cmd]=commands-parse
-        argparse_arg_params[$cmd]=$params
-    done
-    command_function[$name]=$func
-    command_params[$name]=$params
-}
 commands-add() {
     local short=$1 name=$2 func=${3:-run-command-$name} summary=${4:-no summary}
-    commands-register-func $short $name $func $name
+    for cmd in $name $short; do
+        argparse_parse_func[$cmd]=commands-parse
+        argparse_parse_params[$cmd]=$name
+    done
+    command_function[$name]=$func
+    command_params[$name]=$name
     help-add-item command "$short" $name "" "$summary"
 }
 
 commands-run() {
-    : ${command:=$default_command}
+    local command=${command_to_run:-$default_command_to_run}
     ${command_function[$command]} ${command_params[$command]}
 }
