@@ -13,7 +13,7 @@ actions-init-climah-vars() {
 actions-init-climah-module() {
     #add_command "forall" "run actions for all targets"
     command=print-target
-    # TODO: add-command rsa run-single-actions "" "run isolated actions forall targets"
+    # TODO: commands-add rsa run-single-actions "" "run isolated actions forall targets"
     add-target-action pt print-target "print all target paths"
     help_level=expert
     options-add s subdir dir  "add subdir to list of subdirs (can be comma separated list)"
@@ -29,7 +29,7 @@ add-action() {
     if [[ ! -z $short ]]; then
         action_alias[$short]=$name
     fi
-    add-command "$short" "$name" $cmd_func "$summary"
+    commands-add "$short" "$name" $cmd_func "$summary"
     help-add-item action "$short" $name "" "$summary"
 }
 

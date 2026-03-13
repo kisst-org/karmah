@@ -27,5 +27,5 @@ climah-main() {
     declare -g climah_prog
     declare -g climah_help_full_function
     climah-init "${@}"
-    run-command
+    commands-run
 }

@@ -13,7 +13,7 @@ help-init-climah-vars() {
 }
 
 help-init-climah-module() {
-    add-command h  help show-help    "show general help"
+    commands-add h  help show-help    "show general help"
     options-add  h  help ""           "show general help information"
     options-add  X  extended-help ""  "show extensive help information"
 
@@ -101,10 +101,10 @@ help-show-module() {
     echo help_show_module=$1
     help_show_level=all
     echo ${module_summary[$help_show_module]}
-    show-commands
+    commands-show-help
     echo
     echo "Options:"
-    options-show
+    options-show-help
 }
 
 show-help() {
@@ -130,10 +130,10 @@ show-help() {
 
 help-show-summary() {
   echo Options:
-  options-show
+  options-show-help
   echo
   echo Commands:
-  show-commands
+  commands-show-help
   echo
   echo see additional help topics with
   echo "   ${climah_prog_name} help topics"
