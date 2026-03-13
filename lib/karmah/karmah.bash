@@ -20,7 +20,11 @@ karmah-init-climah-module() {
 
 empty-karmah-init-target() { verbose using empty karmah_type initializer; }
 
-add-karmah-action() { add-action run-for-all-karmah-paths "${@}"; }
+add-karmah-action() {
+    local short=$1 name=$2 summary="$3"
+    commands-register-func "$short" "$name" run-for-all-karmah-paths $name
+    help-add-item action "$short" "$name" "" "$summary"
+}
 run-for-all-karmah-paths() {
     if [[ -z ${target_paths:-} ]]; then
         warn "no target paths provided, but needed for command $command"

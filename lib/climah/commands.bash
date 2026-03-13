@@ -2,6 +2,7 @@
 commands-init-climah-vars() {
     declare -g command
     declare -gA command_function=()
+    declare -gA command_params=()
     declare -gA command_alias=()
 }
 
@@ -18,14 +19,19 @@ commands-parse() {
     command=$name
 }
 
-commands-add() {
-    local short=$1 name=$2 func=${3:-run-command-$name} summary=${4:-no summary} cmd
+commands-register-func() {
+    local short=$1 name=$2 func=${3:-run-command-$name} params=${4:-} cmd
     for cmd in $name $short; do
         argparse_arg_func[$cmd]=commands-parse
-        argparse_arg_params[$cmd]=$name
+        argparse_arg_params[$cmd]=$params
     done
-    help-add-item command "$short" $name "" "$summary"
     command_function[$name]=$func
+    command_params[$name]=$params
+}
+commands-add() {
+    local short=$1 name=$2 func=${3:-run-command-$name} summary=${4:-no summary}
+    commands-register-func $short $name $func $name
+    help-add-item command "$short" $name "" "$summary"
 }
 
-commands-run() { ${command_function[$command]}; }
+commands-run() { ${command_function[$command]} ${command_params[$command]}; }

@@ -49,6 +49,9 @@ modules-show-help-about-module() {
     echo "commands:"
     help-list-items command
     echo
+    echo "actions:"
+    help-list-items action
+    echo
     echo "options:"
     help-list-items option
 }
