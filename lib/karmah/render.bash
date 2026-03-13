@@ -17,8 +17,8 @@ render-init-climah-module() {
 
 }
 
-parse-option-to()        { to_dir="$2"; argparse_parse_count=2; }
-parse-option-with()      { with_dir="$2"; argparse_parse_count=2; }
+parse-option-to()        { to_dir="${2%%/}"; argparse_parse_count=2; }
+parse-option-with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
 
 
 run-action-render() {
