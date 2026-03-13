@@ -27,10 +27,10 @@ add-action() {
         argparse_parse_func[$act]=parse-action
         argparse_parse_params[$act]=$name
         action_target_func[$act]=$cmd_func
-        : ${action_flow[$act]:=$name}  # default flow is just the action
     done
+    : ${action_flow[$name]:=$name}  # default flow is just the action
     help-add-item action "$short" $name "" "$summary"
-    help-add-item flow   "$short" $name "" "run actions ${action_flow[$name]}"
+    help-add-item flow   "$short" $name "" "run actions ${action_flow[$name]:-$name}"
 }
 
 parse-action() {
