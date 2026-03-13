@@ -4,7 +4,7 @@ options-init-climah-vars() {
 }
 
 options-init-climah-module() {
-    help-add-topic opt options  options-show "show all options"
+    help-add-topic opt options "" "show available commands"
 }
 
 options-show() { help-list-items option; }

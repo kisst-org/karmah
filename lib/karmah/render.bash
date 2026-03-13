@@ -1,5 +1,6 @@
 
 render-init-climah-module() {
+    #TODO: clasg with action, module-add-help "" "actions to render manifests"
     local_vars+=" renderer output_dir already_rendered sort_env_vars"
     declare -g to_dir
     add-karmah-action r render update "render manifests to --to <path> (default tmp/manifests)"

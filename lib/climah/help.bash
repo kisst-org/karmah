@@ -1,7 +1,7 @@
 help-init-climah-vars() {
     declare -g help_show_level=basic
     declare -gA help_topic_function=()
-    declare -gA help_topic_alias=()
+    declare -gA help_topic_params=()
 
     declare -gA help_item_summary=()
     declare -gA help_item_module=()
@@ -18,7 +18,6 @@ help-init-climah-module() {
     options-add  X  extended-help ""  "show extensive help information"
 
     help-add-topic al  aliases  argparse-show-aliases "show all defined aliases"
-    help-add-topic mod modules  show-modules "show all modules"
     help-add-topic top topics   show-help-topics "show all help-topics"
     argparse_arg_func[help]=parse-option-help
 }
@@ -26,7 +25,11 @@ help-init-climah-module() {
 help-add-topic() {
     local short=$1 name=$2 func=${3} summary=${4:-no summary}
     help_topic_function[$name]=${func:-$name-show-help}
-    if [[ ! -z $short ]]; then  help_topic_alias[$short]=$name; fi
+    help_topic_params[$name]=$name;
+    if [[ ! -z $short ]]; then
+        help_topic_function[$short]=${func:-$name-show-help}
+        help_topic_params[$short]=$name;
+    fi
     help-add-item topic "$short" $name "" "$summary"
 }
 
@@ -91,18 +94,20 @@ add-help() {
 }
 
 help-show-module() {
-    help_show_module=$1
+    echo help_show_module=$1
     help_show_level=all
-    echo ${module_help[$help_show_module]}
+    echo ${module_summary[$help_show_module]}
     show-commands
+    echo
+    echo "Options:"
+    options-show
 }
 
 show-help() {
     local found=false
     for arg in $argparse_extra_args; do
-        arg=${help_topic_alias[$arg]:-$arg}
         if [[ ! -z ${help_topic_function[$arg]:-} ]] ; then
-            ${help_topic_function[$arg]}
+            ${help_topic_function[$arg]} "${help_topic_params[$arg]}"
             found=true
         else
           warn unknown help topic $arg

@@ -6,7 +6,7 @@ commands-init-climah-vars() {
 }
 
 commands-init-climah-module() {
-    help-add-topic cmd commands show-commands "show available commands"
+    help-add-topic cmd commands "" "show available commands"
 }
 
 parse-command() {

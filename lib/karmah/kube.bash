@@ -1,4 +1,5 @@
 kube-init-climah-module() {
+    module-add-help "" "actions to work with kubernetes"
     add-karmah-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
     add-karmah-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
     add-karmah-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
@@ -24,9 +25,7 @@ kube-init-climah-module() {
     options-add r resource res "specify a resource"
     local_vars+=" kube_config kube_context kube_namespace"
     # TODO local_arrays+=" kube_resource_alias kube_default_replicas"
-    add-module-help "actions to work with kubernetes"
 }
-kube-show-help() { help-show-module kube; }
 
 parse-option-resource()  { kube_resource_list+=" $2"; argparse_parse_count=2; }
 parse-option-replicas()  { kube_replicas="$2";  argparse_parse_count=2; }

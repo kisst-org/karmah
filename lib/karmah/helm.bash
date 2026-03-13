@@ -1,5 +1,6 @@
 
 helm-init-climah-module() {
+    module-add-help "" "actions to work with helm"
     help_level=expert
     add-karmah-action hD helm-diff           "run helm diff plugin for target"
     add-karmah-action "" helm-upgrade        "run helm upgrade --install for target"
@@ -23,10 +24,7 @@ helm-init-climah-module() {
     local_vars+=" helm_wait_timeout"
     local_vars+=" helm_post_renderer"
     local_arrays+=" helm_update_version_path helm_update_replicas_path"
-    add-module-help "actions to work with helm"
 }
-helm-show-help() { help-show-module helm; }
-
 
 helm-add-optional-values-file() {
     local f=($1)

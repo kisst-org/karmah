@@ -1,14 +1,13 @@
 
 deploy-init-climah-module() {
+    module-add-help "" "actions to work with deploy/plan"
     add-karmah-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
     add-karmah-action "" plan   "show what deploy action would do"
     help_level=expert
     add-karmah-action "" ask "ask for confirmation (unless --yes is specified)"
     options-add y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
-    add-module-help "actions to work with deploy/plan"
 }
-deploy-show-help() { help-show-module deploy; }
 
 parse-option-yes() { yes_arg="--yes"; }
 

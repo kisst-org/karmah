@@ -1,8 +1,13 @@
 
 modules-init-climah-vars() {
     declare -g all_modules=""
-    declare -gA module_help=()
+    declare -gA module_summary=()
 }
+
+modules-init-climah-module() {
+    help-add-topic mod modules  modules-show "show all modules"
+}
+modules-show() { help-list-items module; }
 
 module-init() {
     local module="$1"
@@ -17,11 +22,26 @@ module-init() {
     fi
 }
 
-add-module-help() {
-    module_help[$module]="$@";
-    if [[ $(type -t $module-show-help) == function ]]; then
-        help-add-topic "" $module $module-show-help "info about module $module"
-    fi
+module-add-help() {
+    local short=$1 summary="${2:-info about module $module}"
+    module_summary[$module]=$summary
+    help-add-item module "$short" $module "" "$summary"
+    local help_func=modules-show-help-about-module
+    #if [[ $(type -t $modules-show-help-about-module) == function ]]; then
+    #    help_func=$modules-show-help-about-module
+    #fi
+    help_topic_function[$module]=$help_func
+    help_topic_params[$module]=$module;
+}
+
+modules-show-help-about-module() {
+    help_show_level=expert;
+    help_show_module=$1
+    echo "commands:"
+    help-list-items command
+    echo
+    echo "options:"
+    help-list-items option
 }
 
 module-init-all() {
@@ -43,13 +63,6 @@ module-init-all() {
     verbose loading modules: $mod
     for m in "$@" $mod; do
         module-init $m
-    done
-}
-
-show-modules() {
-    local mod
-    for mod in $all_modules; do
-        printf "  %-13s %s\n" $mod "${module_help[$mod]:-no help}"
     done
 }
 

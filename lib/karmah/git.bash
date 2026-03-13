@@ -4,6 +4,7 @@ git-init-climah-vars() {
 }
 
 git-init-climah-module() {
+    module-add-help "" "actions to work with git"
     help_level=expert
     add-karmah-action gd git-diff     "shows the changes to source and rendered manifests with git"
     add-karmah-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
@@ -16,9 +17,7 @@ git-init-climah-module() {
     options-add-value-opt M prepend-message  msg   "prepend commit message before auto generated message"
     options-add-flag Q quiet-diff "do not show the output of diff"
     local_vars+=" used_files git_commit_message"
-    add-module-help "actions to work with git"
 }
-git-show-help() { help-show-module git; }
 
 parse-option-message()   { fixed_message="$2";   argparse_parse_count=2; }
 parse-option-prepend-message()   { prepend_message="$2";   argparse_parse_count=2; }
