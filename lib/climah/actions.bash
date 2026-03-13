@@ -11,8 +11,10 @@ actions-init-climah-vars() {
 
 actions-init-climah-module() {
     help-add-topic act actions "" "show available actions"
+    help-add-topic flw flows actions-show-flows "show available flows"
 }
 actions-show-help() { help-list-items action; }
+actions-show-flows() { help-list-items flow; }
 
 add-action() {
     local cmd_func=$1 short=$2 name=$3 summary="$4"
@@ -22,6 +24,8 @@ add-action() {
     fi
     commands-register-func "$short" "$name" $cmd_func
     help-add-item action "$short" $name "" "$summary"
+    help-add-item flow   "$short" $name "" "just the single action $name"
+    action_flow[$name]=$name  # default flow is just the action
 }
 
 set-pre-actions() {
@@ -29,6 +33,7 @@ set-pre-actions() {
     shift
     for name in "${@//,/ }"; do
         action_flow[$name]=$actions,$name
+        help-add-item flow "" $name "" "perform the actions ${action_flow[$name]}"
     done
 
 }
@@ -44,6 +49,9 @@ run-actions() {
 run-action-flow() {
     local flow=$1
     local actions=$(add-commas ${action_flow[$flow]:-$flow})
+    if ${action_run_single_action:-false}; then
+        actions=$flow
+    fi
     if [[ -z $argparse_extra_args ]]; then
         info "running actions $actions for ${target_name:-$target_path}"
     else

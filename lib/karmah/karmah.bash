@@ -35,7 +35,7 @@ run-for-all-karmah-paths() {
         return 0
     fi
     for target_path in $target_paths; do
-        run-karmah-path #$target_path
+        run-karmah-path $action_flow  #$target_path
     done
 }
 

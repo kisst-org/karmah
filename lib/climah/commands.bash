@@ -1,6 +1,7 @@
 
 commands-init-climah-vars() {
     declare -g command
+    declare -g default_command
     declare -gA command_function=()
     declare -gA command_params=()
     declare -gA command_alias=()
@@ -34,4 +35,7 @@ commands-add() {
     help-add-item command "$short" $name "" "$summary"
 }
 
-commands-run() { ${command_function[$command]} ${command_params[$command]}; }
+commands-run() {
+    : ${command:=$default_command}
+    ${command_function[$command]} ${command_params[$command]}
+}
