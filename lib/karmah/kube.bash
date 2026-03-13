@@ -28,8 +28,8 @@ kube-init-climah-module() {
 }
 kube-show-help() { help-show-module kube; }
 
-parse-option-resource()  { kube_resource_list+=" $2"; parse_result=2; }
-parse-option-replicas()  { kube_replicas="$2";  parse_result=2; }
+parse-option-resource()  { kube_resource_list+=" $2"; argparse_parse_count=2; }
+parse-option-replicas()  { kube_replicas="$2";  argparse_parse_count=2; }
 
 kubectl-options() {
     local cfg=${kube_config:-default}

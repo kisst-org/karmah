@@ -20,7 +20,7 @@ help-init-climah-module() {
     help-add-topic al  aliases  argparse-show-aliases "show all defined aliases"
     help-add-topic mod modules  show-modules "show all modules"
     help-add-topic top topics   show-help-topics "show all help-topics"
-    parse_arg_func[help]=parse-option-help
+    argparse_arg_func[help]=parse-option-help
 }
 
 help-add-topic() {
@@ -38,7 +38,6 @@ help-add-item() {
     help_item_params[$name]=$params
     help_item_summary[$name]=$summary
     help_all_items[$type]+=" $name"
-    # TODO local head="--$opt ${option_arg[$opt]}"
 }
 
 help-is-visible() {
@@ -100,7 +99,7 @@ help-show-module() {
 
 show-help() {
     local found=false
-    for arg in $extra_args; do
+    for arg in $argparse_extra_args; do
         arg=${help_topic_alias[$arg]:-$arg}
         if [[ ! -z ${help_topic_function[$arg]:-} ]] ; then
             ${help_topic_function[$arg]}

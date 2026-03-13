@@ -5,12 +5,8 @@ actions-init-climah-vars() {
     declare -g flow_name
     declare -g tmp=false
     declare -g action_list=""
-    declare -g all_actions=""
-    declare -gA action_module=()
-    declare -gA action_level=()
-    declare -gA action_help=()
-    declare -gA action_flow=()
     declare -gA action_alias=()
+    declare -gA action_flow=()
     declare -gA target_function=()
 }
 
@@ -26,25 +22,13 @@ actions-init-climah-module() {
 
 add-target-action() { add-action run-for-all-target-paths "${@}"; }
 add-action() {
+    local cmd_func=$1 short=$2 name=$3 summary="$4"
     debug adding action: "${@}"
-    local cmd_func=$1
-    local short=$2
-    local name=$3
-    shift 3
-    local help="$*"
-    if [[ ${enable_short_commands:-true} && ! -z $short ]]; then
-        local s
-        for s in ${short//,/ }; do
-            arg_alias[$s]=$name
-            action_alias[$s]=$name
-        done
-        #help+=" ($short)"
+    if [[ ! -z $short ]]; then
+        action_alias[$short]=$name
     fi
-    add-command "$short" "$name" $cmd_func "$help"
-    action_help[$name]="$help"
-    action_level[$name]=$help_level
-    action_module[$name]=$module
-    all_actions+=" $name"
+    add-command "$short" "$name" $cmd_func "$summary"
+    help-add-item action "$short" $name "" "$summary"
 }
 
 set-pre-actions() {
@@ -58,6 +42,7 @@ set-pre-actions() {
 
 run-actions() {
     for action in ${@//,/ }; do
+        action=${action_alias[$action]:-$action}
         verbose running $action for ${target_name:-$target_path}
         run-action-$action;
     done
@@ -66,16 +51,16 @@ run-actions() {
 run-action-flow() {
     local flow=$1
     local actions=$(add-commas ${action_flow[$flow]:-$flow})
-    if [[ -z $extra_args ]]; then
+    if [[ -z $argparse_extra_args ]]; then
         info "running actions $actions for ${target_name:-$target_path}"
     else
-        info "running actions $actions for ${target_name:-$target_path} with extra arg(s)$extra_args"
+        info "running actions $actions for ${target_name:-$target_path} with extra arg(s)$argparse_extra_args"
     fi
     for action in ${actions//,/ }; do
         local action_args=""
         if [[ $action == $flow ]]; then
-            # Only the action with  should get extra_args
-            action_args="$extra_args"
+            # Only the action with  should get argparse_extra_args
+            action_args="$argparse_extra_args"
         fi
         if [[ -z $action_args ]]; then
             verbose running $action for ${target_name:-$target_path}
@@ -86,14 +71,7 @@ run-action-flow() {
     done
 }
 
-show-actions() {
-    local act
-    for act in $all_actions; do
-        if [[ ${help_show_level:-basic} == *${action_level[$act]}* || ${help_show_level:-basic} == all ]]; then
-            printf "  %-13s %s\n" $act "${action_help[$act]:-no help}"
-        fi
-    done #|sort -k2 -k1
-}
+show-actions() { help-list-items action; }
 
 run-action-print-target() { echo $target_path; }
 

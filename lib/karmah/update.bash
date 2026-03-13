@@ -12,8 +12,8 @@ update-init-climah-module() {
     argparse_aliases[start]="deploy --replicas default"
 }
 
-parse-option-version()  { update_version="$2"; parse_result=2; }
-parse-option-update()   { updates+=("$2"); parse_result=2; }
+parse-option-version()  { update_version="$2"; argparse_parse_count=2; }
+parse-option-update()   { updates+=("$2"); argparse_parse_count=2; }
 
 run-action-update() {
     local any_updates=false

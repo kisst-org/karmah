@@ -1,55 +1,59 @@
 
 argparse-init-climah-vars() {
     declare -gA argparse_aliases=()
-    declare -ga args_to_parse=()
-    declare -gA arg_alias=()
-    declare -gA parse_arg_func=()
+    declare -gA argparse_arg_func=()
+    declare -gA argparse_arg_params=()
+    declare -ga argparse_replaced_aliases=()   # remember for help function
+    declare -ga argparse_original_args="${@}"  # remember for help function and others
+    declare -g  argparse_extra_args=""
 }
 
 argparse-replace-aliases() {
     for arg in "${@}"; do
         local al="${argparse_aliases[$arg]:-none}"
         if [[ "$al" != none ]]; then
-            replaced=true
-            args_to_parse+=($al)
+            argparse_replaced_aliases+=($al)
+            argparse_to_parse+=($al)
         else
-            args_to_parse+=("$arg")
+            argparse_to_parse+=("$arg")
         fi
     done
 }
 
 argparse-parse-arg() {
     local name=$1
-    local func=${parse_arg_func[$name]:-}
+    local func=${argparse_arg_func[$name]:-}
     if [[ ! -z $func ]]; then
-        parse_result=1
+        argparse_parse_count=1
+        local argparse_params="${argparse_arg_params[$name]:-}"
         $func "$@"
     fi
 }
 
 argparse-parse-arguments() {
-    local replaced=false
-    declare -g extra_args=""
+    declare -a argparse_to_parse=()            # after alias subsitution is done
     argparse-replace-aliases "${@}"
-    set -- "${args_to_parse[@]}"
+    set -- "${argparse_to_parse[@]}"
     log_level=$log_level_info
     while [[ $# > 0 ]]; do
-        arg=${arg_alias[$1]:-$1}
+        arg=$1
         shift
-        parse_result=0
+        argparse_parse_count=0
         argparse-parse-arg $arg "$@";
-        if [[ "$parse_result" > 0 ]]; then
-            shift $(( "$parse_result" - 1))
+        if [[ "$argparse_parse_count" > 0 ]]; then
+            shift $(( "$argparse_parse_count" - 1))
         elif [[ -f ${arg} ]]; then target_paths+=" ${arg}"
         elif [[ -d ${arg} ]]; then target_paths+=" ${arg%%/}" # remove a possible trailing /
         elif [[ $arg == "--" ]]; then break
         else
-            extra_args+=" $arg"
+            argparse_extra_args+=" $arg"
         fi
     done
-    extra_args+=" $*"
-    extra_args=$(echo ${extra_args})
-    verbose COMMAND $(basename $0) ${args_to_parse[@]}
+    argparse_extra_args+=" $*"
+    argparse_extra_args=$(echo ${argparse_extra_args}) # trim spaces
+    if [[ ! -z ${argparse_replaced_aliases:-} ]]; then # TODO: why is default needed, it should be declared anyway
+        verbose COMMAND $(basename $0) ${argparse_to_parse[@]}
+    fi
 }
 
 add-commas() { local args="${*// /,}"; echo ${args%%,}; }
