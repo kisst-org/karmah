@@ -19,6 +19,8 @@ add-target-action() { add-action run-for-all-target-paths "${@}"; }
 
 run-action-print-target() { echo $target_path; }
 
+# run-flow-for-all-target-paths
+# run-action-for-all-target-paths
 run-for-all-target-paths() {
     target_func=${target_function[$command]:-run-action-$command}
     for target_path in $target_paths; do

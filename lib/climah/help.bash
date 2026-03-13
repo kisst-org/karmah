@@ -132,8 +132,10 @@ help-show-summary() {
   echo Options:
   options-show-help
   echo
-  echo Commands:
+  echo Commands/actions:
   commands-show-help
+  help-list-items command
+  help-list-items action
   echo
   echo see additional help topics with
   echo "   ${climah_prog_name} help topics"

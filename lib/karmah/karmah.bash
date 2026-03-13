@@ -25,9 +25,12 @@ add-karmah-action() {
     commands-register-func "$short" "$name" run-for-all-karmah-paths $name
     help-add-item action "$short" "$name" "" "$summary"
 }
+# run-karmah-flow-for-all-target-paths
+# run-karmah-action-for-all-target-paths
 run-for-all-karmah-paths() {
+    local action_flow=$1
     if [[ -z ${target_paths:-} ]]; then
-        warn "no target paths provided, but needed for command $command"
+        warn "no target paths provided, but needed for action $action_flow"
         help-show-summary
         return 0
     fi
@@ -69,7 +72,7 @@ run-karmah-file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target_name}"
         fi
-        run-action-flow $command
+        run-action-flow $action_flow
     else
         info skipping $karmah_file
     fi
@@ -100,18 +103,17 @@ Description:
   - helper info, e.g. how to inspect, scale and change versions
 
 Usage:
-  ${climah_prog_name} [ option | command | target ]...
+  ${climah_prog_name} [ option | command/flow | target ]...
 
-EOF
-help-show-summary
-cat <<EOF
+$(help-show-summary)
+
 Targets:
   Each path defines an application definition, that will be sourced,
   This can either be a file, or a directory that contains exactly 1 file with a name '*.karmah'.
   When one or more --subdirs are specfied, these will be append to the path
 
 Note:
-  Options, commands and paths can be mixed freely.
+  Options, commands/actions and paths can be mixed freely.
   If multiple commands are given, only last command will be used.
 EOF
 }
