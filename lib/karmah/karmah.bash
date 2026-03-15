@@ -1,15 +1,15 @@
 # karmah: do stuff based on *.karmah file
 
-karmah::init-climah-vars() {
+karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
     declare -g local_arrays=""
     declare -g karmah_paths=""
     declare -g default_karmah_type=empty
-    climah_prog=karmah
-    #climah_full_help_function=karmah-show-full-help
     }
 
 karmah::init-climah-module() {
+    climah_prog=karmah
+    #climah_full_help_function=karmah-show-full-help
     help-add-topic ver version  karmah-show-version "show version of karmah"
     default_command_to_run=run-func-for-targets
     target_func=run-karmah-path

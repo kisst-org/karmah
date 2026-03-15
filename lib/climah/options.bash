@@ -1,5 +1,5 @@
 
-options::init-climah-vars() {
+options::declare-vars() {
     declare -gA option_var=()
 }
 

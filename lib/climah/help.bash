@@ -1,4 +1,4 @@
-help::init-climah-vars() {
+help::declare-vars() {
     declare -g help_show_level=basic
     declare -gA help_topic_function=()
     declare -gA help_topic_params=()

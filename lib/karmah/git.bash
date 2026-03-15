@@ -1,5 +1,5 @@
 
-git::init-climah-vars() {
+git::declare-vars() {
     declare -g git_pulled=false
 }
 

@@ -1,6 +1,6 @@
 # raftah: run actions for all targets
 
-actions::init-climah-vars() {
+actions::declare-vars() {
     declare -g run_single_action=false
 
     declare -g action_to_run

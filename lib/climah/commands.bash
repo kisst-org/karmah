@@ -1,5 +1,5 @@
 
-commands::init-climah-vars() {
+commands::declare-vars() {
     declare -g command_to_run=""
     declare -g default_command_to_run
     declare -gA command_function=()

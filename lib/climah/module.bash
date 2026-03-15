@@ -1,5 +1,5 @@
 
-modules::init-climah-vars() {
+modules::declare-vars() {
     declare -g all_modules=""
     declare -gA module_summary=()
 }
@@ -63,10 +63,10 @@ module-init-all() {
 
     local func m
     # first declare any variables that might be used in other modules
-    local var_modules=$(set | grep -E '^[A-Za-z-]*::init-climah-vars'| sed -e 's/::init-climah-vars.*//')
+    local var_modules=$(set | grep -E '^[A-Za-z-]*::declare-vars'| sed -e 's/::declare-vars.*//')
     debug init-vars: $var_modules
     for m in $var_modules; do
-        ${m}::init-climah-vars
+        ${m}::declare-vars
     done
 
     config-pre-module-init

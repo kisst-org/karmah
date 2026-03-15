@@ -1,6 +1,6 @@
 # target: run function for all targets
 
-targets::init-climah-vars() {
+targets::declare-vars() {
     declare -gA target_func
     declare -g target_subdirs=""
 }
