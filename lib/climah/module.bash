@@ -30,9 +30,9 @@ module-init() {
 }
 
 module-add-help() {
-    local short=$1 summary="${2:-info about module $module}" key
+    local summary="${1:-info about module $module}" key
     module_summary[$module]=$summary
-    help-add-item module "$short" $module "" "$summary"
+    help-add-item module $module "" "$summary"
     local help_func=modules-show-help-about-module
     #if [[ $(type -t $modules-show-help-about-module) == function ]]; then
     #    help_func=$modules-show-help-about-module

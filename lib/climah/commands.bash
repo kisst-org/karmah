@@ -22,13 +22,12 @@ commands-parse() {
 
 commands-add() {
     local short=$1 name=$2 func=${3:-run-command-$name} summary=${4:-no summary}
-    for cmd in $name $short; do
-        argparse_parse_func[$cmd]=commands-parse
-        argparse_parse_params[$cmd]=$name
-    done
+    argparse_parse_func[$name]=commands-parse
+    argparse_parse_params[$name]=$name
+    if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     command_function[$name]=$func
     command_params[$name]=$name
-    help-add-item command "$short" $name "" "$summary"
+    help-add-item command $name "" "$summary"
 }
 
 commands-run() {

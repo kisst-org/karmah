@@ -1,6 +1,6 @@
 
 kapp-init-climah-module() {
-    module-add-help "" "actions to work with kapp"
+    module-add-help "actions to work with kapp"
     set-action-pre-flow update,render kapp-plan kapp-diff kapp-deploy kapp-delete
     help_level=expert
     add-karmah-action "" kapp-plan    "show what resources will be updated"

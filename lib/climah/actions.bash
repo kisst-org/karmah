@@ -21,16 +21,14 @@ actions-show-help() { help-list-items action; }
 actions-show-flows() { help-list-items flow; }
 
 add-action() {
-    local cmd_func=$1 short=$2 name=$3 summary="$4" act
+    local cmd_func=$1 short=$2 name=$3 summary="$4"
     debug adding action: "${@}"
-    for act in $name $short; do
-        argparse_parse_func[$act]=parse-action
-        argparse_parse_params[$act]=$name
-        action_target_func[$act]=$cmd_func
-    done
+    argparse_parse_func[$name]=parse-action
+    argparse_parse_params[$name]=$name
+    action_target_func[$name]=$cmd_func
+    if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     : ${action_flow[$name]:=$name}  # default flow is just the action
-    help-add-item action "$short" $name "" "$summary"
-    help-add-item flow   "$short" $name "" "run actions ${action_flow[$name]:-$name}"
+    help-add-item action $name "" "$summary"
 }
 
 parse-action() {
@@ -44,6 +42,7 @@ set-action-pre-flow() {
     shift
     for name in "${@//,/ }"; do
         action_flow[$name]=$actions,$name
+        help-add-item flow $name "" "run actions ${action_flow[$name]:-$name}"
     done
 }
 

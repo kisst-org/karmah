@@ -4,6 +4,8 @@ argparse-init-climah-vars() {
     declare -gA argparse_parse_func=()
     declare -gA argparse_parse_params=()
     declare -ga argparse_replaced_aliases=()   # remember for help function
+    declare -gA argparse_short_map=()
+    declare -gA argparse_short_lookup=()
     declare -ga argparse_original_args="${@}"  # remember for help function and others
     declare -g  argparse_extra_args=""
 }
@@ -36,7 +38,7 @@ argparse-parse-arguments() {
     set -- "${argparse_to_parse[@]}"
     log_level=$log_level_info
     while [[ $# > 0 ]]; do
-        arg=$1
+        arg=${argparse_short_map[$1]:-$1}
         shift
         argparse_parse_count=0
         argparse-parse-arg $arg "$@";
@@ -64,4 +66,32 @@ argparse-show-aliases() {
   for key in $(printf "%s\n" ${!argparse_aliases[@]} | sort); do
       printf "  %-14s %s\n" $key "${argparse_aliases[$key]}"
   done |sort -k2 -k1
+}
+
+argparse-redefine-short() {
+    local short=$1 long=$2
+    argparse_short_map[$short]=$long
+    argparse_short_lookup[$long]=$short
+}
+argparse-add-short() {
+    local short=$1 long=$2
+    if [[ $long == ${argparse_short_map[$short]:-} ]]; then
+        verbose WARN "redefining short $short ==> $long"
+    elif [[ ! -z ${argparse_short_map[$short]:-} ]]; then
+        warn "short $short ==> $long already defined to ${argparse_short_map[$short]}"
+    elif [[ ! -z ${argparse_short_lookup[$long]:-} ]]; then
+        warn "short $short ==> $long clashes with existing short ${argparse_short_lookup[$long]}"
+    else
+        argparse-redefine-short $short $long
+    fi
+}
+argparse-clear-short() {
+    local short=$1
+    local long=${argparse_short_map[$short]:-}
+    if [[ -z $long ]]; then
+        warn attempting to clearing unset short $short
+    else
+        unset argparse_short_map[$short]
+        unset argparse_short_lookup[$long]
+    fi
 }

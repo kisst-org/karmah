@@ -13,13 +13,8 @@ options-add-generic() {
     local short=$1 name=$2 arg=$3 func=$4 summary="$5"
     argparse_parse_func[--$name]=$func
     argparse_parse_params[--$name]=$name
-    if [[ ! -z $short ]]; then
-        argparse_parse_func[-$short]=$func
-        argparse_parse_params[-$short]=${name}
-        help-add-item option "-$short" "--$name" "$arg" "$summary"
-    else
-        help-add-item option "" "--$name" "$arg" "$summary"
-    fi
+    if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
+    help-add-item option "--$name" "$arg" "$summary"
 }
 
 options-add()           { options-add-generic "$1" $2 "$3" parse-option-$2 "$4"; }

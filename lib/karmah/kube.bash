@@ -1,5 +1,5 @@
 kube-init-climah-module() {
-    module-add-help "" "actions to work with kubernetes"
+    module-add-help "actions to work with kubernetes"
     add-karmah-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
     add-karmah-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
     add-karmah-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"

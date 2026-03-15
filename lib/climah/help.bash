@@ -7,7 +7,6 @@ help-init-climah-vars() {
     declare -gA help_item_module=()
     declare -gA help_item_level=()
     declare -gA help_item_type=()
-    declare -gA help_item_short=()
     declare -gA help_item_params=()
     declare -gA help_all_items=()
 }
@@ -29,16 +28,16 @@ help-add-topic() {
     if [[ ! -z $short ]]; then
         help_topic_function[$short]=${func:-$name-show-help}
         help_topic_params[$short]=$name;
+        argparse-add-short $short $name
     fi
-    help-add-item topic "$short" $name "" "$summary"
+    help-add-item topic $name "" "$summary"
 }
 
 help-add-item() {
-    local type=$1 short=$2 name=$3 params=$4 summary=$5
+    local type=$1 name=$2 params=$3 summary=$4
     local key=$type:$name
     help_item_module[$key]=$module
     help_item_level[$key]=$help_level
-    help_item_short[$key]=$short
     help_item_params[$key]=$params
     help_item_summary[$key]=$summary
     help_all_items[$type]+=" $name"
@@ -68,11 +67,11 @@ help-list-items() {
                 lname+=" <${help_item_params[$key]}>"
             fi
             if (( $len < ${#lname} )); then len=${#lname}; fi
-            local shortlen=${#help_item_short[$key]}
+            local short=${argparse_short_lookup[$item]:-}
+            local shortlen=${#short}
             if (( $slen < $shortlen)); then slen=$shortlen; fi
         fi
     done
-
     for item in ${help_all_items[$type]}; do
         local lname=$item
         local key=$type:$item
@@ -80,7 +79,7 @@ help-list-items() {
             lname+=" <${help_item_params[$key]}>"
         fi
         if $(help-is-visible $key); then
-            printf "  %-${slen}s %-${len}s %s\n" "${help_item_short[$key]}" "$lname" "${help_item_summary[$key]}"
+            printf "  %-${slen}s %-${len}s %s\n" "${argparse_short_lookup[$item]:-}" "$lname" "${help_item_summary[$key]}"
         fi
     done
 }
