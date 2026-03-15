@@ -12,7 +12,7 @@ init-logging() {
     parse-loglevel "$@"
 }
 
-logging-init-climah-module() {
+logging::init-climah-module() {
     options-add v  verbose  ""    "give more output"
     options-add "" quiet    ""    "show no output"
     options-add S  show-script "" "show all commands without doing much"

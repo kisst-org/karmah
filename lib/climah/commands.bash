@@ -1,5 +1,5 @@
 
-commands-init-climah-vars() {
+commands::init-climah-vars() {
     declare -g command_to_run=""
     declare -g default_command_to_run
     declare -gA command_function=()
@@ -7,7 +7,7 @@ commands-init-climah-vars() {
     declare -gA command_alias=()
 }
 
-commands-init-climah-module() {
+commands::init-climah-module() {
     help-add-topic cmd commands "" "show available commands"
 }
 commands-show-help() { help-list-items command; }

@@ -1,5 +1,5 @@
 
-deploy-init-climah-module() {
+deploy::init-climah-module() {
     module-add-help "actions to work with deploy/plan"
     add-karmah-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
     add-karmah-action "" plan   "show what deploy action would do"

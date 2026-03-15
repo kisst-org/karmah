@@ -1,5 +1,5 @@
 
-helm-init-climah-module() {
+helm::init-climah-module() {
     module-add-help "actions to work with helm"
     set-action-pre-flow update,render                       helm-diff
     set-action-pre-flow update,render,kube-diff,ask         helm-install

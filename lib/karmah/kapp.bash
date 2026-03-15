@@ -1,5 +1,5 @@
 
-kapp-init-climah-module() {
+kapp::init-climah-module() {
     module-add-help "actions to work with kapp"
     set-action-pre-flow update,render kapp-plan kapp-diff kapp-deploy kapp-delete
     help_level=expert

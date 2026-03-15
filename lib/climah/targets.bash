@@ -1,11 +1,11 @@
 # target: run function for all targets
 
-targets-init-climah-vars() {
+targets::init-climah-vars() {
     declare -gA target_func
     declare -g target_subdirs=""
 }
 
-targets-init-climah-module() {
+targets::init-climah-module() {
     # TODO: commands-add rsa run-single-actions "" "run isolated actions forall targets"
     add-target-action pt print-target "print all target paths"
     help_level=expert

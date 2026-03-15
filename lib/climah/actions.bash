@@ -1,6 +1,6 @@
 # raftah: run actions for all targets
 
-actions-init-climah-vars() {
+actions::init-climah-vars() {
     declare -g run_single_action=false
 
     declare -g action_to_run
@@ -10,7 +10,7 @@ actions-init-climah-vars() {
     declare -gA action_target_func=()
 }
 
-actions-init-climah-module() {
+actions::init-climah-module() {
     help-add-topic act actions "" "show available actions"
     help-add-topic flw flows actions-show-flows "show available flows"
     help_level=expert

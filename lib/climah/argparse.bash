@@ -1,5 +1,5 @@
 
-argparse-init-climah-vars() {
+argparse::init-climah-vars() {
     declare -gA argparse_aliases=()
     declare -gA argparse_parse_func=()
     declare -gA argparse_parse_params=()

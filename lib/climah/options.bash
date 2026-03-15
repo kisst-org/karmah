@@ -1,9 +1,9 @@
 
-options-init-climah-vars() {
+options::init-climah-vars() {
     declare -gA option_var=()
 }
 
-options-init-climah-module() {
+options::init-climah-module() {
     help-add-topic opt options "" "show available commands"
 }
 

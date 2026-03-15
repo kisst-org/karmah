@@ -1,9 +1,9 @@
 
-git-init-climah-vars() {
+git::init-climah-vars() {
     declare -g git_pulled=false
 }
 
-git-init-climah-module() {
+git::init-climah-module() {
     module-add-help "actions to work with git"
     set-action-pre-flow update,render           git-diff git-add
     set-action-pre-flow update,render,git-add   git-commit

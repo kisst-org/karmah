@@ -1,10 +1,10 @@
 
-modules-init-climah-vars() {
+modules::init-climah-vars() {
     declare -g all_modules=""
     declare -gA module_summary=()
 }
 
-modules-init-climah-module() {
+modules::init-climah-module() {
     help-add-topic mod modules  modules-show "show all modules"
 }
 modules-show() {
@@ -25,7 +25,7 @@ module-init() {
         all_modules+=" $module"
         help_level=basic
         debug running init module for "${module}"
-        ${module}-init-climah-module
+        ${module}::init-climah-module
     fi
 }
 
@@ -63,16 +63,17 @@ module-init-all() {
 
     local func m
     # first declare any variables that might be used in other modules
-    local var_funcs=$(set | grep '[-]init-climah-vars')
-    for func in $var_funcs; do
-        ${func##()}
+    local var_modules=$(set | grep -E '^[A-Za-z-]*::init-climah-vars'| sed -e 's/::init-climah-vars.*//')
+    debug init-vars: $var_modules
+    for m in $var_modules; do
+        ${m}::init-climah-vars
     done
 
     config-pre-module-init
 
     # Then load modules, that may need variable from other modules
-    local m mod=$(set | grep '[-]init-climah-module ()'| sed -e 's/[-]init-climah-module.*//')
-    verbose loading modules: $mod
+    local m mod=$(set | grep -E '^[A-Za-z-]*::init-climah-module ()'| sed -e 's/::init-climah-module.*//')
+    debug loading modules: $mod
     for m in "$@" $mod; do
         module-init $m
     done
