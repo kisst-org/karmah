@@ -68,7 +68,7 @@ common-karmah() {
         source $common_karmah_file
     fi
     karmah_type=${force_karmah_type:-${karmah_type:-$default_karmah_type}}
-    ${karmah_type}-karmah-init-target
+    ${karmah_type}::init-target
 }
 
 karmah-show-full-help() {
