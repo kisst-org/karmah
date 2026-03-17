@@ -8,6 +8,7 @@ init_climah_vars_argparse() {
     declare -gA collect_unknown_after=()
 }
 
+add-argparse-alias() { aliases[$1]="$2"; }
 replace_aliases() {
     for arg in "${@}"; do
         local al="${aliases[$arg]:-none}"
