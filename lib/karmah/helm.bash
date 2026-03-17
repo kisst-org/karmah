@@ -10,9 +10,9 @@ init_climah_module_helm() {
     add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
 
     set-pre-actions update,render                       helm-diff
-    set-pre-actions update,render,kube-diff,ask         helm-install
-    set-pre-actions update,render,kube-diff,ask         helm-upgrade
-    set-pre-actions update,render,kube-diff-delete,ask  helm-uninstall
+    set-pre-actions update,render,helm-get-diff,ask         helm-install
+    set-pre-actions update,render,helm-get-diff,ask         helm-upgrade
+    set-pre-actions update,render,helm-get-diff-delete,ask  helm-uninstall
 
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
