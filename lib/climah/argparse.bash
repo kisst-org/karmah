@@ -10,6 +10,8 @@ argparse::declare-vars() {
     declare -g  argparse_extra_args=""
 }
 
+add-argparse-alias() { argparse_aliases[$1]="$2"; }
+
 argparse-replace-aliases() {
     for arg in "${@}"; do
         local al="${argparse_aliases[$arg]:-none}"
