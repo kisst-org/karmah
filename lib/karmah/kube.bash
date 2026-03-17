@@ -108,16 +108,16 @@ run-action-kube-get() {
     verbose-cmd kubectl $(kubectl-options) get ${action_args:-pods,deploy,sts,cm}
 }
 run-action-kube-watch() {
-    verbose-cmd watch kubectl $(kubectl-options) get ${action_args:-pods,deploy,sts,cm,svc,ingress,pdb}
+    verbose-cmd watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
 }
 run-action-kube-exec() {
-    verbose-cmd kubectl $(kubectl-options) exec $(kube-calc-full-resource-names) ${action_args:--- sh}
+    verbose-cmd kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
 }
 run-action-kube-exec-it() {
-    verbose-cmd kubectl $(kubectl-options) exec -it $(kube-calc-full-resource-names) ${action_args:--- sh}
+    verbose-cmd kubectl $(kubectl-options) exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
 }
 run-action-kube-log() {
-    verbose-cmd kubectl $(kubectl-options) logs $(kube-calc-full-resource-names) ${action_args:-}
+    verbose-cmd kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-}
 }
 
 
@@ -169,4 +169,15 @@ render-kustomize() {
     local command="kubectl kustomize --enable-helm"
     #used_files+=" $helm_chart_dir/$ch"
     verbose-pipe split-into-files "$command ${karmah_dir}"
+}
+
+kube-calc-resource() {
+    local action=$1 defaults="${2:-}"
+    if  [[ $(type -t ${karmah_type}::$action-resource) == function ]]; then
+        ${karmah_type}::$action-resource
+    elif [[ $(type -t ${karmah_type}::calc-kube-resource) == function ]]; then
+        ${karmah_type}-calc-kube-resource
+    else
+        echo $defaults
+    fi
 }
