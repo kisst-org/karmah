@@ -22,8 +22,7 @@ run-action-print-target() { echo $target_path; }
 
 run-func-for-targets() {
     if [[ -z ${target_paths:-} ]]; then
-        warn "no target paths provided, but needed for action $action_flow"
-        help-show-summary
+        warn "no target paths provided, but needed for action $action_to_run"
         return 0
     fi
     local path
