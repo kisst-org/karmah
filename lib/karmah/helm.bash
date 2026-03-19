@@ -96,7 +96,7 @@ run-action-helm-install() { run-action-helm-upgrade; }
 run-action-helm-uninstall() {
     info "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
-    local default_cmd="helm uninstall ${helm_atomic_wait} $(helm-cluster-options)"
+    local default_cmd="helm $(helm-cluster-options) uninstall"
     helm-run "verbose-cmd" ${helm_install_command:-$default_cmd}
 }
 
