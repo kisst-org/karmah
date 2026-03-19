@@ -99,8 +99,9 @@ run-action-helm-install() { run-action-helm-upgrade; }
 
 run-action-helm-uninstall() {
     info "running helm-uninstall for $target"
-    : ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
-    local default_cmd="helm uninstall ${helm_atomic_wait} $(helm_cluster_options)"
+    #: ${helm_atomic_wait:=--wait --atomic --timeout ${helm_wait_timeout:-4m}}
+    helm_value_files="" # not needed for uninstall
+    local default_cmd="helm uninstall $(helm_cluster_options)"
     run_helm_forall_charts "verbose_cmd" ${helm_install_command:-$default_cmd}
 }
 
