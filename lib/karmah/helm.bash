@@ -26,7 +26,7 @@ helm::init-climah-module() {
     local_arrays+=" helm_update_version_path helm_update_replicas_path"
 }
 
-helm-add-optional-values-file() {
+add-optional-helm-values-file() {
     local f=($1)
     if [[ -f $f ]]; then
         debug adding values file $f

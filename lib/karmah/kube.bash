@@ -24,7 +24,6 @@ kube::init-climah-module() {
     options-add R replicas nr  "specify number of replicas"
     options-add r resource res "specify a resource"
     local_vars+=" kube_config kube_context kube_namespace"
-    # TODO local_arrays+=" kube_resource_alias kube_default_replicas"
 }
 
 parse-option-resource()  { kube_resource_list+=" $2"; argparse_parse_count=2; }
@@ -136,6 +135,14 @@ run-action-kube-tmp-scale() {
         verbose-cmd kubectl $(kubectl-options) scale $res --replicas ${repl}
     done
 }
+kube-calc-replicas() {
+    local repl=${kube_replicas:-default}
+    if [[  $repl == default ]]; then
+        ${karmah_type}::kube-default-replicas $1
+    else
+        echo $repl
+    fi
+}
 
 kube-calc-resource-names() {
     local result=${kube_resource_list:-all}
@@ -156,14 +163,6 @@ kube-calc-full-resource-names() {
     echo ${result//,/ }
 }
 
-
-kube-calc-replicas() {
-    local repl=${kube_replicas:-default}
-    if [[  $repl == default ]]; then
-        repl=${kube_default_replicas[$1]}
-    fi
-    echo $repl
-}
 
 render-kustomize() {
     local command="kubectl kustomize --enable-helm"
