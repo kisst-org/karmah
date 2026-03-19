@@ -42,17 +42,15 @@ add-optional-helm-values-file() {
 }
 
 helm-calc-command() {
-    local chart=$1
-    shift
-    local cmd=$@
+    local cmd="$*"
+    local chart=$(calc-helm-chart-options)
     local f
     : ${helm_release:=$(basename $target_name)}
+    cmd+=" $helm_release"
+    cmd+=" $chart"
     for f in ${helm_value_files[@]}; do
         cmd+=" -f ${f}";
     done
-    cmd+=" $helm_release"
-    cmd+=" --namespace $kube_namespace"
-    cmd+=" $chart"
     if [[ ! -z ${helm_post_renderer:-} ]]; then
         cmd+=" --post-renderer ${helm_post_renderer}"
     fi
@@ -60,27 +58,27 @@ helm-calc-command() {
 }
 
 calc-helm-chart-options() {
-    case ${helm_chart_location:-localdir} in
+    case ${helm_chart_location:-local} in
         local)   echo $helm_chart;;
         remote)  echo "$helm_chart_name --repo $helm_chart_repo  --version helm_chart_version";;
-        pulled)  echo helm/charts/$helm_chart_name-$helm_chart_version/$helm_chart}
+        pulled)  echo helm/charts/$helm_chart_name-$helm_chart_version ;;
+        *) error "unknow helm_chart_location $helm_chart_location"; exit 1;;
     esac
 }
 
 helm-run() {
-    run_cmd=$1
-    shift
+    local verbose_runner_cmd=$1; shift
     local base_cmd=${@}
     if [[ ! -z ${force_helm_chart:-} ]]; then
         verbose overriding original helm chart $helm_chart with ${force_helm_chart}
         helm_chart=${force_helm_chart}
         helm_chart_location=local # TODO: other locatiom,repo,version?
     fi
-    local helm_cmd="helm $(helm-calc-command $(calc-helm-chart-options) ${base_cmd})"
+    local helm_cmd="$(helm-calc-command ${base_cmd})"
     # TODO: used_files+=" $ch"
     # This does not work nicely with git-restore, when testing a template
     # better issur a warning if a helm chart is modified when commiting
-    $run_cmd "$helm_cmd"
+    $verbose_runner_cmd "$helm_cmd"
 }
 
 run-action-helm-pull() {
@@ -111,23 +109,27 @@ run-action-helm-pull() {
 run-action-helm-diff() {
     info "running helm-diff for $target_name"
     local default_cmd="helm diff upgrade $(helm-cluster-options)"
-    helm-run "verbose-cmd" ${helm_install_command:-$default_cmd}
+    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-upgrade() {
     info "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm-cluster-options)"
-    helm-run "verbose-cmd" ${helm_install_command:-$default_cmd}
+    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
 }
 
-run-action-helm-install() { run-action-helm-upgrade; }
+run-action-helm-install() {
+    info "running helm-install for $target_name"
+    local default_cmd="helm install --create-namespace $(helm-cluster-options)"
+    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
+}
 
 run-action-helm-uninstall() {
     info "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm $(helm-cluster-options) uninstall"
-    helm-run "verbose-cmd" ${helm_install_command:-$default_cmd}
+    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-get-manifests() {
@@ -214,5 +216,6 @@ helm-cluster-options() {
         opt="--kubeconfig $cfg " # extra space at end
     fi
     opt+=" --kube-context ${kube_context}"
+    opt+=" --namespace $kube_namespace"
     echo $opt
 }
