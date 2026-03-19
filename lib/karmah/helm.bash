@@ -11,13 +11,18 @@ helm::init-climah-module() {
     add-karmah-action "" helm-upgrade        "run helm upgrade --install for target"
     add-karmah-action "" helm-install        "deprecated: run helm upgrade --install for target"
     add-karmah-action "" helm-uninstall      "run helm uninstall for target"
+    add-karmah-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
     add-karmah-action "" helm-get-manifests  "download helm manifests from cluster"
     add-karmah-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
     options-add-value-opt H force-helm-chart  chrt  "force to use a specific helm chart"
+    options-add-flag "" force-pull "force pulling a helm chart if already exists" # TODO:
 
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
     local_vars+=" helm_chart"
+    local_vars+=" helm_chart_repo"
+    local_vars+=" helm_chart_version"
+    local_vars+=" helm_chart_location"
     local_vars+=" helm_install_command"
     local_vars+=" helm_atomic_wait"
     local_vars+=" helm_release"
@@ -54,6 +59,14 @@ helm-calc-command() {
     echo $cmd
 }
 
+calc-helm-chart-options() {
+    case ${helm_chart_location:-localdir} in
+        local)   echo $helm_chart;;
+        remote)  echo "$helm_chart_name --repo $helm_chart_repo  --version helm_chart_version";;
+        pulled)  echo helm/charts/$helm_chart_name-$helm_chart_version/$helm_chart}
+    esac
+}
+
 helm-run() {
     run_cmd=$1
     shift
@@ -61,22 +74,39 @@ helm-run() {
     if [[ ! -z ${force_helm_chart:-} ]]; then
         verbose overriding original helm chart $helm_chart with ${force_helm_chart}
         helm_chart=${force_helm_chart}
+        helm_chart_location=local # TODO: other locatiom,repo,version?
     fi
-    for ch in ${helm_chart//,/ }; do
-        local chart=${ch//@*}
-        if [[ $ch == $chart ]]; then
-            local helm_cmd=$(helm-calc-command $chart ${base_cmd})
-            # TODO: used_files+=" $ch"
-            # This does not work nicely with git-restore, when testing a template
-            # better issur a warning if a helm chart is modified when commiting
-            $run_cmd "$helm_cmd"
-        else
-            local helm_cmd=$(helm-calc-command $chart $base_cmd})
-            local repo=${ch//*@}
-            $run_cmd "$helm_cmd --repo $repo --version $chart_version"
-        fi
-    done
+    local helm_cmd="helm $(helm-calc-command $(calc-helm-chart-options) ${base_cmd})"
+    # TODO: used_files+=" $ch"
+    # This does not work nicely with git-restore, when testing a template
+    # better issur a warning if a helm chart is modified when commiting
+    $run_cmd "$helm_cmd"
 }
+
+run-action-helm-pull() {
+    local dir=helm/charts/$helm_chart_name-$helm_chart_version
+    info "running helm-pull for $helm_chart_name $helm_chart_version to $dir"
+    if [[ -d $dir ]]; then
+        if ${force_pull:-false}; then
+            verbose $dir already exists, removing it
+            verbose-cmd rm -rf $dir
+        else
+            verbose "$dir already exists, skipping helm-pull (use --force-pull to override)"
+            return 0
+        fi
+    fi
+    local tarfile=tmp/helm-charts/$helm_chart_name-$helm_chart_version.tgz
+    if [[ -f $tarfile && ${force_pull:-false} == false ]]; then
+        verbose "$tarfile already exists, skipping helm-pull (use --force-pull to override)"
+    else
+        verbose-cmd "mkdir -p $(dirname $tarfile)"
+        local cmd="helm pull --repo ${helm_chart_repo} ${helm_chart_name} --version ${helm_chart_version} --destination $(dirname $tarfile)"
+        verbose-cmd ${cmd}
+    fi
+    verbose-cmd "mkdir -p $dir"
+    verbose-cmd "tar xfz $tarfile --dir $dir --strip-components 1"
+}
+
 
 run-action-helm-diff() {
     info "running helm-diff for $target_name"
