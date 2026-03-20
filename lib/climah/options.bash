@@ -25,5 +25,5 @@ options-parse-value-opt() { options-set-value "$2"; argparse_parse_count=2; }
 
 options-set-value() {
     local var_name=${argparse_param_list[0]//-/_}
-    eval $var_name="$1"
+    eval "$var_name=\"$1\""
 }
