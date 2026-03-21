@@ -60,9 +60,6 @@ argparse-parse-arguments() {
     fi
 }
 
-add-commas() { local args="${*// /,}"; echo ${args%%,}; }
-add-spaces() { local args="${*//,/ }"; echo ${args%% }; }
-
 argparse-show-aliases() {
   echo Aliases:
   for key in $(printf "%s\n" ${!argparse_aliases[@]} | sort); do

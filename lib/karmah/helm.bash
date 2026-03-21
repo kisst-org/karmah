@@ -137,7 +137,7 @@ run-action-helm-get-manifests() {
     verbose-cmd rm -rf ${output_dir}
     verbose-cmd mkdir -p ${output_dir}
     local cmd="helm $(helm-cluster-options) get manifest $release --namespace $kube_namespace"
-    verbose-pipe split-into-files $cmd
+    verbose-pipe split-yaml-docs-into-files $cmd
 }
 
 run-action-helm-get-diff() {
@@ -169,7 +169,7 @@ render-helm() {
     local default_cmd="helm template"
     local f
     used_files+=" ${helm_value_files[@]}"
-    helm-run "verbose-pipe split-into-files" ${helm_template_command:-$default_cmd}
+    helm-run "verbose-pipe split-yaml-docs-into-files" ${helm_template_command:-$default_cmd}
 }
 
 # this function will iterate over all helm_value_files

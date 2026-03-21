@@ -77,17 +77,12 @@ run-action-kubectl() {
     verbose-cmd kubectl $(kubectl-options) $action_args
 }
 
-# TODO: This is slightly different form render split-into-files
-# because it is a yaml list, not separate yaml documents
-kubectl-split-into-files() {
-    yq  '.items.[]' -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
-}
 
 run-action-kube-get-manifests() {
     info kube get manifests  ${target_name} to ${output_dir}
     verbose-cmd rm -rf ${output_dir}
     verbose-cmd mkdir -p ${output_dir}
-    verbose-pipe kubectl-split-into-files kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml
+    verbose-pipe split-yaml-items-into-files kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml
     ignore_files=configmap_kube-root-ca.crt.yaml
     ignore_files+=" deployment_ingress-nginx-controller.yaml"
     ignore_files+=" service_ingress-nginx-controller-admission.yaml"
@@ -167,7 +162,7 @@ kube-calc-full-resource-names() {
 render-kustomize() {
     local command="kubectl kustomize --enable-helm"
     #used_files+=" $helm_chart_dir/$ch"
-    verbose-pipe split-into-files "$command ${karmah_dir}"
+    verbose-pipe split-yaml-docs-into-files "$command ${karmah_dir}"
 }
 
 kube-calc-resource() {

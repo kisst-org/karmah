@@ -53,23 +53,6 @@ sort-env-vars() {
     fi
 }
 
-split-into-files() {
-    # Cleans the stdin yaml to a normalized format
-    # - pretty print with normalized indents
-    # - sort all the keys
-    # - remove comments
-    # - apply a style with no quotes if not needed
-    # Then it will split all documents in files named <kind>_<metadata.name>.yaml
-    yq -P 'sort_keys(..)' | yq '... comments=""' | yq '.. style=""' | yq -s \"$output_dir/\"'+ (.kind | downcase) + "_" + .metadata.name + ".yaml"'
-    if ${sort_env_vars:-true}; then
-        local f
-        for f in ${output_dir}/*.yaml; do
-            sort-env-vars $f
-        done
-    fi
-    rm -f ${output_dir}/_.yaml
-}
-
 render-copy-files() {
     files_list="$karmah_dir"/files/*.yaml
     verbose-cmd cp -f ${files_list} ${output_dir}
