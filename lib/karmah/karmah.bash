@@ -70,6 +70,7 @@ common-karmah() {
     karmah_type=${force_karmah_type:-${karmah_type:-$default_karmah_type}}
     ${karmah_type}::init-target
 }
+empty::init-target() { verbose "using empty karmah_type"; }
 
 karmah-show-full-help() {
 cat <<EOF
