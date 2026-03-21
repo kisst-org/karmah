@@ -2,7 +2,6 @@
 
 karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
-    declare -g local_arrays=""
     declare -g karmah_paths=""
     declare -g default_karmah_type=empty
     }
@@ -39,10 +38,9 @@ run-karmah-file() {
     #local target_name=$(dirname $karmah_file)
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
-        debug clearing $local_vars $local_arrays
-        unset $local_vars $local_arrays
+        debug clearing $local_vars
+        unset $local_vars
         declare $local_vars
-        declare -A $local_arrays
         karmah_dir=$(dirname $karmah_file)
         common_dir=$(dirname $karmah_dir)/common
         debug sourcing $karmah_file
