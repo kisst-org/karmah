@@ -28,7 +28,6 @@ helm::init-climah-module() {
     local_vars+=" helm_release"
     local_vars+=" helm_wait_timeout"
     local_vars+=" helm_post_renderer"
-    local_arrays+=" helm_update_version_path helm_update_replicas_path"
 }
 
 add-optional-helm-values-file() {
@@ -194,19 +193,6 @@ helm-update-value-path() {
     local val_file=${helm_value_files[@]:(-1)}
     verbose updating $path to \"$value\"
     verbose-cmd yq -i $path=\"$value\"   $val_file
-}
-
-helm-update-replicas() {
-    local res
-    local val_file=($karmah_dir/values*.yaml)
-    for res in $(calc_resource_names); do
-        local repl=${kube_replicas:-default}
-        if [[ $repl == default ]]; then
-            repl=${kube_default_replicas[$res]}
-        fi
-        verbose updating $res replicas to $repl
-        verbose-cmd yq -i "${helm_update_replicas_path[$res]}=\"$repl\"" $val_file
-    done
 }
 
 helm-cluster-options() {
