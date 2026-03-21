@@ -13,7 +13,7 @@ karmah::init-climah-module() {
     target_func=run-karmah-path
     default_action_to_run=render
     help_level=expert
-    options-add-value-opt K force-karmah-type typ "force to use another karmah_type"
+    add-value-option K force-karmah-type typ "force to use another karmah_type"
 }
 
 empty-karmah-init-target() { verbose using empty karmah_type initializer; }

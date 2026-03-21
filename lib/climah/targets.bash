@@ -9,7 +9,7 @@ targets::init-climah-module() {
     # TODO: commands-add rsa run-single-actions "" "run isolated actions forall targets"
     add-target-action pt print-target "print all target paths"
     help_level=expert
-    options-add s subdir dir "add subdir to list of subdirs (can be comma separated list)"
+    add-parse-option s subdir dir "add subdir to list of subdirs (can be comma separated list)"
     commands-add rf run-flow run-func-for-targets "run flow of one or more actions for all targets"
     #commands-add rsa run-single-action run-single-action-for-all-targets "run isolated actions for all targets"
 }

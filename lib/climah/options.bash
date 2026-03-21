@@ -9,7 +9,7 @@ options::init-climah-module() {
 
 options-show-help() { help-list-items option; }
 
-options-add-generic() {
+add-func-option() {
     local short=$1 name=$2 arg=$3 func=$4 summary="$5"
     argparse_parse_func[--$name]=$func
     argparse_parse_params[--$name]=$name
@@ -17,11 +17,11 @@ options-add-generic() {
     help-add-item option "--$name" "$arg" "$summary"
 }
 
-options-add()           { options-add-generic "$1" $2 "$3" parse-option-$2 "$4"; }
-options-add-flag()      { options-add-generic "$1" $2 ""   options-parse-flag "$3"; }
-options-add-value-opt() { options-add-generic "$1" $2 "$3" options-parse-value-opt "$4"; }
-options-parse-flag()      { options-set-value true; }
-options-parse-value-opt() { options-set-value "$2"; argparse_parse_count=2; }
+add-parse-option()  { add-func-option "$1" $2 "$3" parse-option-$2 "$4"; }
+add-flag-option()   { add-func-option "$1" $2 ""   parse-flag-option "$3"; }
+add-value-option()  { add-func-option "$1" $2 "$3" parse-value-option "$4"; }
+parse-flag-option()  { options-set-value true; }
+parse-value-option() { options-set-value "$2"; argparse_parse_count=2; }
 
 options-set-value() {
     local var_name=${argparse_param_list[0]//-/_}

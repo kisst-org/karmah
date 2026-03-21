@@ -13,8 +13,8 @@ help::declare-vars() {
 
 help::init-climah-module() {
     commands-add h  help show-help    "show general help"
-    options-add  h  help ""           "show general help information"
-    options-add  X  extended-help ""  "show extensive help information"
+    add-parse-option  h  help ""           "show general help information"
+    add-parse-option  X  extended-help ""  "show extensive help information"
 
     help-add-topic al  aliases  argparse-show-aliases "show all defined aliases"
     help-add-topic top topics   show-help-topics "show all help-topics"

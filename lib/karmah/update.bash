@@ -2,9 +2,9 @@
 update::init-climah-module() {
     module-add-help "actions to update source files for rendering e.g. (helm values)"
     add-karmah-action u update "update source files with expressions from --update"
-    options-add V version ver  "specify version (tag) to use for update or scale"
+    add-parse-option V version ver  "specify version (tag) to use for update or scale"
     help_level=expert
-    options-add u update expr  "apply a custom update"
+    add-parse-option u update expr  "apply a custom update"
 
     declare -ga updates=()
     argparse_aliases[tmp-start]="kube-tmp-scale --replicas default"

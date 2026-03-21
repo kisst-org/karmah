@@ -21,8 +21,8 @@ kube::init-climah-module() {
     add-karmah-action kei kube-exec-it   "execute interactive command on a pod of a resource"
     add-karmah-action kl  kube-log       "show logging of a resource"
 
-    options-add R replicas nr  "specify number of replicas"
-    options-add r resource res "specify a resource"
+    add-parse-option R replicas nr  "specify number of replicas"
+    add-parse-option r resource res "specify a resource"
     local_vars+=" kube_config kube_context kube_namespace"
 }
 

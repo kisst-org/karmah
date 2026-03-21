@@ -14,7 +14,7 @@ actions::init-climah-module() {
     help-add-topic act actions "" "show available actions"
     help-add-topic flw flows actions-show-flows "show available flows"
     help_level=expert
-    options-add-flag "" run-single-action  "run just the action, not the (pre)flow"
+    add-flag-option "" run-single-action  "run just the action, not the (pre)flow"
 
 }
 actions-show-help() { help-list-items action; }

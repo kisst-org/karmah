@@ -11,9 +11,9 @@ render::init-climah-module() {
     add-karmah-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
     add-karmah-action rm render-rm "remove all rendered manifests"
 
-    options-add "" to       path  "other path to render to (default is tmp/manifests)"
-    options-add "" with     path  used for comparison between two manifest trees
-    options-add-flag "" tmp  "render to tmp/manifests (already default), do not commit"
+    add-parse-option "" to       path  "other path to render to (default is tmp/manifests)"
+    add-parse-option "" with     path  used for comparison between two manifest trees
+    add-flag-option "" tmp  "render to tmp/manifests (already default), do not commit"
 
 }
 

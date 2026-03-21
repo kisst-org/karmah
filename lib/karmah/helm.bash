@@ -14,8 +14,8 @@ helm::init-climah-module() {
     add-karmah-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
     add-karmah-action "" helm-get-manifests  "download helm manifests from cluster"
     add-karmah-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
-    options-add-value-opt H force-helm-chart  chrt  "force to use a specific helm chart"
-    options-add-flag "" force-pull "force pulling a helm chart if already exists" # TODO:
+    add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
+    add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
 
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
