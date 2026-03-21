@@ -2,9 +2,8 @@
 
 karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
-    declare -g karmah_paths=""
     declare -g default_karmah_type=empty
-    }
+}
 
 karmah::init-climah-module() {
     climah_prog=karmah
