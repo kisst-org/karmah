@@ -13,13 +13,11 @@ git::init-climah-module() {
     add-karmah-action gc git-commit   "commits the changes to source and rendered manifests to git"
     add-karmah-action gr git-restore  "restores the changed files (source and rendered manifests)"
     add-value-option m   message        msg   "set message to use with git commit"
-    add-value-option "" fixed-message   msg   "set fixed message to use with git commit"
     add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
     add-flag-option Q quiet-diff "do not show the output of diff"
     local_vars+=" used_files git_commit_message"
 }
 
-parse-option-message()   { fixed_message="$2";   argparse_parse_count=2; }
 parse-option-prepend-message()   { prepend_message="$2";   argparse_parse_count=2; }
 git-add-message() {
     if [[ -z ${git_commit_message:-} ]] then
@@ -83,9 +81,6 @@ run-action-git-commit() {
         return
     fi
     info "running git-commit for $target_name"
-    if [[ ! -z ${fixed_message:-} ]]; then
-        git_commit_message=$fixed_message
-    fi
     : ${git_commit_message:=${action} of ${target_name}}
     if git diff-index --quiet HEAD; then
         verbose Nothing added to commit for message: "${git_commit_message}"
