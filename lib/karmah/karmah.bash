@@ -16,8 +16,6 @@ karmah::init-climah-module() {
     default_action_to_run=render
     help_level=expert
     options-add-value-opt K force-karmah-type typ "force to use another karmah_type"
-    local_arrays+=" custom_flow"
-    local_vars+=" run_pre_flow"
 }
 
 empty-karmah-init-target() { verbose using empty karmah_type initializer; }
