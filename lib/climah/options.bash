@@ -20,10 +20,10 @@ add-func-option() {
 add-parse-option()  { add-func-option "$1" $2 "$3" parse-option-$2 "$4"; }
 add-flag-option()   { add-func-option "$1" $2 ""   parse-flag-option "$3"; }
 add-value-option()  { add-func-option "$1" $2 "$3" parse-value-option "$4"; }
-parse-flag-option()  { options-set-value true; }
-parse-value-option() { options-set-value "$2"; argparse_parse_count=2; }
+parse-flag-option()  { set-option-value true; }
+parse-value-option() { set-option-value "$2"; argparse_parse_count=2; }
 
-options-set-value() {
+set-option-value() {
     local var_name=${argparse_param_list[0]//-/_}
     eval "$var_name=\"$1\""
 }
