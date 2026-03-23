@@ -16,7 +16,7 @@ karmah::init-climah-module() {
     add-value-option K force-karmah-type typ "force to use another karmah_type"
 }
 
-empty-karmah-init-target() { verbose using empty karmah_type initializer; }
+empty::init-target() { verbose using empty karmah_type initializer; }
 
 add-karmah-action() { add-action run-karmah-path "${@}"; }
 
@@ -65,7 +65,6 @@ common-karmah() {
     karmah_type=${force_karmah_type:-${karmah_type:-$default_karmah_type}}
     ${karmah_type}::init-target
 }
-empty::init-target() { verbose "using empty karmah_type"; }
 
 karmah-show-full-help() {
 cat <<EOF

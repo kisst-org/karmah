@@ -170,8 +170,9 @@ kube-calc-resource() {
     if  [[ $(type -t ${karmah_type}::$action-resource) == function ]]; then
         ${karmah_type}::$action-resource
     elif [[ $(type -t ${karmah_type}::calc-kube-resource) == function ]]; then
-        ${karmah_type}-calc-kube-resource
+        ${karmah_type}::calc-kube-resource
     else
         echo $defaults
     fi
 }
+empty::calc-kube-resource() { echo ${kube_resource:-deployment}; }
