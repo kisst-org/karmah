@@ -161,7 +161,8 @@ run-action-helm-get-diff() {
     local output_dir=$get_dir
     run-action-helm-get-manifests
     info comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}
-    verbose-cmd diff -r $get_dir $render_dir || true
+    # The sed script is to make missing or added manifests stand out more clearly
+    verbose-cmd diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }
 
 
