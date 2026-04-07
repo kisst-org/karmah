@@ -1,10 +1,11 @@
 
 helm::init-climah-module() {
     module-add-help "actions to work with helm"
-    set-action-pre-flow update,render                       helm-diff
-    set-action-pre-flow update,render,kube-diff,ask         helm-install
-    set-action-pre-flow update,render,kube-diff,ask         helm-upgrade
-    set-action-pre-flow update,render,kube-diff-delete,ask  helm-uninstall
+    set-action-pre-flow update,render                           helm-diff
+    set-action-pre-flow update,render                           helm-get-diff
+    set-action-pre-flow update,render,helm-get-diff,ask         helm-install
+    set-action-pre-flow update,render,helm-get-diff,ask         helm-upgrade
+    set-action-pre-flow update,render,helm-get-diff-delete,ask  helm-uninstall
 
     help_level=expert
     add-karmah-action hD helm-diff           "run helm diff plugin for target"
