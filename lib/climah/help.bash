@@ -108,7 +108,7 @@ help-show-module() {
 
 show-help() {
     local found=false
-    for arg in $argparse_extra_args; do
+    for arg in $argparse_unknown_args; do
         if [[ ! -z ${help_topic_function[$arg]:-} ]] ; then
             ${help_topic_function[$arg]} "${help_topic_params[$arg]}"
             found=true
