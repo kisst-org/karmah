@@ -157,8 +157,8 @@ run-action-helm-get-diff() {
     local render_dir=tmp/manifests/${target_name}
     local get_dir=${with_dir:-tmp/get}/${target_name}
     local output_dir=$render_dir
-    run-action-update
-    run-action-render
+    #run-action-update
+    #run-action-render
     local output_dir=$get_dir
     run-action-helm-get-manifests
     info comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}

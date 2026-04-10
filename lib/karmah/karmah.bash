@@ -9,14 +9,26 @@ karmah::init-climah-module() {
     climah_prog=karmah
     #climah_full_help_function=karmah-show-full-help
     help-add-topic ver version  karmah-show-version "show version of karmah"
-    default_command_to_run=run-func-for-targets
     target_func=run-karmah-path
-    default_action_to_run=render
+    default_command=run-flow-actions
+    default_action=render
+    commands-add rsa run-single-actions "" "run one or more actions for all targets"
+    commands-add run run-flow-actions   "" "run one or more (flow) actions for all targets"
     help_level=expert
     add-value-option K force-karmah-type typ "force to use another karmah_type"
 }
 
 empty::init-target() { verbose using empty karmah_type initializer; }
+
+run-command-run-single-actions() {
+    local karmah_run_actions_func=run-single-actions
+    run-func-for-targets run-karmah-path
+}
+run-command-run-flow-actions()   {
+    local karmah_run_actions_func=run-flow-actions
+    run-func-for-targets run-karmah-path
+}
+
 
 add-karmah-action() { add-action run-karmah-path "${@}"; }
 
@@ -49,7 +61,7 @@ run-karmah-file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target_name}"
         fi
-        run-action-flow
+        $karmah_run_actions_func
     else
         info skipping $karmah_file
     fi
