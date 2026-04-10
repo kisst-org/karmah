@@ -58,7 +58,7 @@ argparse-parse-arguments() {
         show-help
         return 1
     fi
-    #argparse_extra_args+=" $*"
+    argparse_extra_args+=" $*"
     argparse_extra_args=$(echo ${argparse_extra_args}) # trim spaces
     if [[ ! -z ${argparse_replaced_aliases:-} ]]; then # TODO: why is default needed, it should be declared anyway
         verbose COMMAND $(basename $0) ${argparse_to_parse[@]}
