@@ -3,6 +3,10 @@ bao::init-climah-module() {
     # see https://openbao.org/docs/concepts/duration-format/
     local_vars+=" ttl"
 
+    add-karmah-action bli bao-login  "login and store the token in a file"
+    add-karmah-action blo bao-logout "remove the file with the login token"
+
+
     add-karmah-action bti bao-token-info   "lookup the details of a token"
     add-karmah-action btr bao-token-update "create a new token"
 
@@ -19,6 +23,29 @@ bao::init-climah-module() {
     add-karmah-action bpc  bao-policy-create  "create a bao policy"
 }
 
+run-action-bao-login() {
+    if [[ -f $bao_token_file ]]; then
+        local answer
+        read -p "token file $bao_token_file already exist, do you want to login anyway [Y/n]? " answer
+        if [[ "${answer}" == n ]] ;then
+            info "Stopping bao login"
+            exit 1
+        fi
+    fi
+    local token=$(bao login $bao_options $bao_login_options  -no-store -field token  $bao_login_params )
+    mkdir -p $(dirname ${bao_token_file})
+    echo $token >${bao_token_file}
+    chmod 600 ${bao_token_file}
+}
+run-action-bao-logout() { rm -f $bao_token_file; }
+export-bao-login-token() { export VAULT_TOKEN=$(<$bao_token_file); }
+run-bao() {
+    local cmd=$1; shift
+    export-bao-login-token
+    info bao $cmd $bao_options "${@}"
+    bao $cmd $bao_options "${@}"
+}
+
 #######################
 # tokens
 run-action-bao-token-info() {
@@ -26,7 +53,7 @@ run-action-bao-token-info() {
     local token=$secret_value
     exitcode=0
     if $(log-is-warn); then
-        bao token lookup $token || exitcode=$?
+        run-bao "token lookup" $token || exitcode=$?
         if [[ $exitcode == 2 ]]; then
             warn bao token lookup exitcode 2: invalid token $token, probably expired token stored in secret
         elif [[ $exitcode != 0 ]]; then
@@ -34,13 +61,13 @@ run-action-bao-token-info() {
         fi
     else
         # same command, but no errors printed
-        bao token lookup $token 2>/dev/null || exitcode=$?
+        run-bao "token lookup" $token 2>/dev/null || exitcode=$?
     fi
 }
 
 run-action-bao-token-create() {
     : ${ttl:=${default_ttl:=30m}}
-    secret_value=$(bao token create  -ttl=$ttl -format=yaml | yq .auth.client_token)
+    secret_value=$(run-bao "token create"  -ttl=$ttl -format=yaml | yq .auth.client_token)
 }
 
 run-action-bao-token-update() {
@@ -59,7 +86,7 @@ run-action-bao-token-update() {
 #######################
 # secret-id's
 run-action-bao-secret-id-create() {
-    secret_value=$(bao write -force -format=yaml auth/approle/role/$(bao-role-name)/secret-id | yq .data.secret_id)
+    secret_value=$(run-bao write -force -format=yaml auth/approle/role/$(bao-role-name)/secret-id | yq .data.secret_id)
     info created secret-id $secret_value
 }
 run-action-bao-secret-id-info() {
@@ -71,7 +98,7 @@ run-action-bao-secret-id-info() {
     info lookup secret-id: $secret_value # TODO log-sensitive-info
     if $(log-is-warn); then
         verbose bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value
-        bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value || exitcode=$?
+        run-bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value || exitcode=$?
         if [[ $exitcode == 2 ]]; then
             warn bao token lookup exitcode 2: invalid secret-id $secret_value, probably expired token stored in secret
         elif [[ $exitcode != 0 ]]; then
@@ -79,11 +106,11 @@ run-action-bao-secret-id-info() {
         fi
     else
         # same command, but no errors printed
-        bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_value=$secret_value 2>/dev/null || exitcode=$?
+        run-bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_value=$secret_value 2>/dev/null || exitcode=$?
     fi
 }
 run-action-bao-secret-id-list()   {
-    bao list auth/approle/role/$(bao-role-name)/secret-id
+    run-bao list auth/approle/role/$(bao-role-name)/secret-id
     if $(log-is-verbose); then
         for id in $(bao list auth/approle/role/$(bao-role-name)/secret-id| tail -n +3); do
             echo ======= $id
@@ -119,17 +146,17 @@ run-action-bao-secret-id-create() {
 # roles
 
 bao-role-name()     { echo -n external-secret-$postfix; }
-bao-role-id()       { bao read -format=yaml auth/approle/role/$(bao-role-name)/role-id | yq .data.role_id; }
-bao-role-policies() { bao read -format=yaml auth/approle/role/$(bao-role-name) | yq '.data.token_policies[]'; }
+bao-role-id()       { run-bao read -format=yaml auth/approle/role/$(bao-role-name)/role-id | yq .data.role_id; }
+bao-role-policies() { run-bao read -format=yaml auth/approle/role/$(bao-role-name) | yq '.data.token_policies[]'; }
 
-run-action-bao-role-list() { verbose-cmd bao list auth/approle/role; }
+run-action-bao-role-list() { run-bao list auth/approle/role; }
 run-action-bao-role-info() {
     echo "role-name: $(bao-role-name)"
     echo "role-id:   $(bao-role-id)"
-    verbose-cmd bao read auth/approle/role/$(bao-role-name)
+    run-bao read auth/approle/role/$(bao-role-name)
 }
 run-action-bao-role-create() {
-    bao write auth/approle/role/external-secret-$postfix  token_policies="$bao_token_policies"
+    run-bao write auth/approle/role/external-secret-$postfix  token_policies="$bao_token_policies"
 }
 
 #######################
