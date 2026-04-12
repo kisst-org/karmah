@@ -32,18 +32,18 @@ run-action-deploy() {
     # TODO: output_dir is different for actions before this action
     # should be first (only) action
     info "deploying $target_name with actions ${actions// /,}"
-    run-actions $actions
+    run-single-actions $actions
 }
 
 run-action-plan() {
     local actions=$(add-commas ${plan_actions:-render,git-diff})
     info "planning deploy $target_name with actions: ${actions// /,}"
-    run-actions $actions
+    run-single-actions $actions
 }
 
 run-command-undeploy() {
     output_dir="${to_dir:-deployed/manifests}/${target_name}"
     local actions=$(add-commas ${undeploy_actions:-render-rm,git-diff,ask,git-commit})
     info "undeploying ${target_name} with actions: ${actions}"
-    run-actions $actions
+    run-single-actions $actions
 }
