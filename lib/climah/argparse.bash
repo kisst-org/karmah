@@ -8,6 +8,7 @@ argparse::declare-vars() {
     declare -gA argparse_short_lookup=()
     declare -ga argparse_original_args="${@}"  # remember for help function and others
     declare -g  argparse_extra_args=""
+    declare -g  argparse_unknown_args=""
 }
 
 add-argparse-alias() { argparse_aliases[$1]="$2"; }
@@ -50,9 +51,13 @@ argparse-parse-arguments() {
         elif [[ -d ${arg} ]]; then target_paths+=" ${arg%%/}" # remove a possible trailing /
         elif [[ $arg == "--" ]]; then break
         else
-            argparse_extra_args+=" $arg"
+            argparse_unknown_args+=" $arg"
         fi
     done
+    if [[ ! -z $argparse_unknown_args ]]; then
+        show-help
+        return 1
+    fi
     argparse_extra_args+=" $*"
     argparse_extra_args=$(echo ${argparse_extra_args}) # trim spaces
     if [[ ! -z ${argparse_replaced_aliases:-} ]]; then # TODO: why is default needed, it should be declared anyway

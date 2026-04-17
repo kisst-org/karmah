@@ -1,10 +1,11 @@
 
 helm::init-climah-module() {
     module-add-help "actions to work with helm"
-    set-action-pre-flow update,render                       helm-diff
-    set-action-pre-flow update,render,kube-diff,ask         helm-install
-    set-action-pre-flow update,render,kube-diff,ask         helm-upgrade
-    set-action-pre-flow update,render,kube-diff-delete,ask  helm-uninstall
+    set-action-pre-flow update,render                           helm-diff
+    set-action-pre-flow update,render                           helm-get-diff
+    set-action-pre-flow update,render,helm-get-diff,ask         helm-install
+    set-action-pre-flow update,render,helm-get-diff,ask         helm-upgrade
+    set-action-pre-flow update,render,helm-get-diff-delete,ask  helm-uninstall
 
     help_level=expert
     add-karmah-action hD helm-diff           "run helm diff plugin for target"
@@ -156,8 +157,8 @@ run-action-helm-get-diff() {
     local render_dir=tmp/manifests/${target_name}
     local get_dir=${with_dir:-tmp/get}/${target_name}
     local output_dir=$render_dir
-    run-action-update
-    run-action-render
+    #run-action-update
+    #run-action-render
     local output_dir=$get_dir
     run-action-helm-get-manifests
     info comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}

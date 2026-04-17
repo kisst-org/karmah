@@ -1,7 +1,7 @@
 
 commands::declare-vars() {
     declare -g command_to_run=""
-    declare -g default_command_to_run
+    declare -g default_command
     declare -gA command_function=()
     declare -gA command_params=()
     declare -gA command_alias=()
@@ -21,7 +21,8 @@ commands-parse() {
 }
 
 commands-add() {
-    local short=$1 name=$2 func=${3:-run-command-$name} summary=${4:-no summary}
+    local short=$1 name=$2
+    local func=${3:-run-command-$name} summary=${4:-no summary}
     argparse_parse_func[$name]=commands-parse
     argparse_parse_params[$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
@@ -31,6 +32,6 @@ commands-add() {
 }
 
 commands-run() {
-    local command=${command_to_run:-$default_command_to_run}
+    local command=${command_to_run:-$default_command}
     ${command_function[$command]} ${command_params[$command]}
 }
