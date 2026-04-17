@@ -9,7 +9,6 @@ check-bash-version() {
 }
 
 climah-init() {
-    check-bash-version
     init-logging "${@}"
     module-init-all # TODO: ordering: help logging options render git
     read-config
@@ -23,6 +22,7 @@ climah-init() {
 }
 
 climah-main() {
+    check-bash-version
     declare -g climah_prog_name=$(basename $0)
     declare -g climah_prog
     declare -g climah_help_full_function
