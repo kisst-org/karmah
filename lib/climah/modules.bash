@@ -16,7 +16,7 @@ EOF
     help-list-items module;
 }
 
-module-init() {
+init-module() {
     local module="$1"
     if ${module_disabled[$module]:-false}; then
         debug skipping module $module because it is disabled
@@ -29,21 +29,18 @@ module-init() {
     fi
 }
 
-module-add-help() {
+add-module-help() {
     local summary="${1:-info about module $module}" key
     module_summary[$module]=$summary
     help-add-item module $module "" "$summary"
-    local help_func=modules-show-help-about-module
-    #if [[ $(type -t $modules-show-help-about-module) == function ]]; then
-    #    help_func=$modules-show-help-about-module
-    #fi
+    local help_func=show-help-about-module
     for key in $module module:$module; do
         help_topic_function[$key]=$help_func
         help_topic_params[$key]=$module;
     done
 }
 
-modules-show-help-about-module() {
+show-help-about-module() {
     help_show_level=expert;
     help_show_module=$1
     echo "commands:"
@@ -56,7 +53,7 @@ modules-show-help-about-module() {
     help-list-items option
 }
 
-module-init-all() {
+init-all-modules() {
     declare -g modules=""
     declare -gA module_loaded=()
     declare -gA module_disabled=()
@@ -75,7 +72,7 @@ module-init-all() {
     local m mod=$(set | grep -E '^[A-Za-z-]*::init-climah-module ()'| sed -e 's/::init-climah-module.*//')
     debug loading modules: $mod
     for m in "$@" $mod; do
-        module-init $m
+        init-module $m
     done
 }
 

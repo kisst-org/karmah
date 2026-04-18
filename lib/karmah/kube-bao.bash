@@ -1,5 +1,5 @@
 kube-bao::init-climah-module() {
-    module-add-help "actions to work with kubernetes secrets from bao"
+    add-module-help "actions to work with kubernetes secrets from bao"
     #add-karmah-action kbsd kube-bao-secret-diff     "prints the changes to a kubernetes secret"
     #add-karmah-action kbsm kube-bao-secret-manifest "prints the manifest of the secret to be created"
 

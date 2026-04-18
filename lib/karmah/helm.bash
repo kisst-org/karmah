@@ -1,6 +1,6 @@
 
 helm::init-climah-module() {
-    module-add-help "actions to work with helm"
+    add-module-help "actions to work with helm"
     help_level=expert
     add-render-action hD helm-diff           "run helm diff plugin for target"
     add-render-action "" helm-upgrade        "run helm upgrade --install for target"

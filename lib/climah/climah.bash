@@ -10,7 +10,7 @@ check-bash-version() {
 
 climah-init() {
     init-logging "${@}"
-    module-init-all # TODO: ordering: help logging options render git
+    init-all-modules # TODO: ordering: help logging options render git
     read-config
     if [[ $# == 0 ]]; then
         printf "no arguments passed, pass at least one path or command\n\n"
