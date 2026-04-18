@@ -7,16 +7,16 @@ targets::declare-vars() {
 
 targets::init-climah-module() {
     # TODO: commands-add rsa run-single-actions "" "run isolated actions forall targets"
-    add-target-action pt print-target "print all target paths"
+    add-action pt print-target "print all target paths"
+    commands-add run run-flows "" "run one or more (flow) actions for all targets"
     help_level=expert
     add-parse-option s subdir dir "add subdir to list of subdirs (can be comma separated list)"
+    default_command=run-flows
 }
 
 parse-option-subdir() { target_subdirs+=" $2"; argparse_parse_count=2; }
-
-add-target-action() { add-action run-for-all-target-paths "${@}"; }
-
 run-action-print-target() { echo $target_path; }
+run-command-run-flows()   { run-func-for-targets run-flow-actions; }
 
 run-func-for-targets() {
     local target_func=$1
@@ -29,12 +29,12 @@ run-func-for-targets() {
         if [[ -z ${target_subdirs:-} ]]; then
             local target_path=${path%%/}
             local target_name=$target_path
-            $target_func $target_path
+            $target_func
         else
             for sd in ${target_subdirs//,/ }; do
                 local target_path=${path%%/}/$sd
                 local target_name=$target_path
-                $target_func $target_path
+                $target_func
             done
         fi
     done

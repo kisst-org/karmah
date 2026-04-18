@@ -4,12 +4,11 @@ render::init-climah-module() {
     local_vars+=" renderer output_dir already_rendered sort_env_vars"
     declare -g to_dir
     add-karmah-action r render update "render manifests to --to <path> (default tmp/manifests)"
-    set-action-pre-flow update        render
-    set-action-pre-flow update,render compare
+    set-action-pre-flow load-karmah,update render
 
     help_level=expert
-    add-karmah-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
-    add-karmah-action rm render-rm "remove all rendered manifests"
+    add-render-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
+    add-render-action rm render-rm "remove all rendered manifests"
 
     add-parse-option "" to       path  "other path to render to (default is tmp/manifests)"
     add-parse-option "" with     path  used for comparison between two manifest trees
@@ -19,6 +18,11 @@ render::init-climah-module() {
 
 parse-option-to()        { to_dir="${2%%/}"; argparse_parse_count=2; }
 parse-option-with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
+
+add-render-action() {
+    add-action "${@}"
+    set-action-pre-flow load-karmah,update,render "$2"
+}
 
 
 run-action-render() {

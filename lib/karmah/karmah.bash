@@ -9,49 +9,42 @@ karmah::init-climah-module() {
     climah_prog=karmah
     #climah_full_help_function=karmah-show-full-help
     help-add-topic ver version  karmah-show-version "show version of karmah"
-    target_func=run-karmah-path
-    default_command=run-flow-actions
     default_action=render
-    commands-add rsa run-single-actions "" "run one or more actions for all targets"
-    commands-add run run-flow-actions   "" "run one or more (flow) actions for all targets"
+    add-action lk load-karmah "load *.karmah init file(s)"
     help_level=expert
     add-value-option K force-karmah-type typ "force to use another karmah_type"
 }
 
 empty::init-target() { verbose using empty karmah_type initializer; }
 
-run-command-run-single-actions() {
-    local karmah_run_actions_func=run-single-actions
-    run-func-for-targets run-karmah-path
-}
-run-command-run-flow-actions()   {
-    local karmah_run_actions_func=run-flow-actions
-    run-func-for-targets run-karmah-path
+
+add-karmah-action() {
+    add-action "${@}"
+    set-action-pre-flow load-karmah "$2"
 }
 
-
-add-karmah-action() { add-action run-karmah-path "${@}"; }
-
-run-karmah-path() {
+run-action-load-karmah() {
     if [[ -f $target_path ]]; then
         karmah_file=$target_path
-        run-karmah-file
     elif [[ -d ${target_path:-} ]]; then
         karmah_file=($target_path/*.karmah) # use array for globbing
-        run-karmah-file
     else
         info "skipping $target_path"
+        # TODO: warn, error or skip_flow
+        return 0
     fi
+    load-karmah-file
 }
 
-run-karmah-file() {
-    local karmah_type
+
+load-karmah-file() {
+    declare -g karmah_type
     #local target_name=$(dirname $karmah_file)
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
         debug clearing $local_vars
         unset $local_vars
-        declare $local_vars
+        declare -g $local_vars
         karmah_dir=$(dirname $karmah_file)
         common_dir=$(dirname $karmah_dir)/common
         debug sourcing $karmah_file
@@ -61,7 +54,6 @@ run-karmah-file() {
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target_name}"
         fi
-        $karmah_run_actions_func
     else
         info skipping $karmah_file
     fi

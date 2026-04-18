@@ -1,22 +1,21 @@
 
 helm::init-climah-module() {
     module-add-help "actions to work with helm"
-    set-action-pre-flow update,render                           helm-diff
-    set-action-pre-flow update,render                           helm-get-diff
-    set-action-pre-flow update,render,helm-get-diff,ask         helm-install
-    set-action-pre-flow update,render,helm-get-diff,ask         helm-upgrade
-    set-action-pre-flow update,render,helm-get-diff-delete,ask  helm-uninstall
-
     help_level=expert
-    add-karmah-action hD helm-diff           "run helm diff plugin for target"
-    add-karmah-action "" helm-upgrade        "run helm upgrade --install for target"
-    add-karmah-action "" helm-install        "deprecated: run helm upgrade --install for target"
-    add-karmah-action "" helm-uninstall      "run helm uninstall for target"
-    add-karmah-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
-    add-karmah-action "" helm-get-manifests  "download helm manifests from cluster"
-    add-karmah-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
+    add-render-action hD helm-diff           "run helm diff plugin for target"
+    add-render-action "" helm-upgrade        "run helm upgrade --install for target"
+    add-render-action "" helm-install        "deprecated: run helm upgrade --install for target"
+    add-render-action "" helm-uninstall      "run helm uninstall for target"
+    add-render-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
+    add-render-action "" helm-get-manifests  "download helm manifests from cluster"
+    add-render-action hd helm-get-diff       "run diff for target vs helm deployed manifests"
     add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
+
+    set-action-pre-flow load-karmah,update,render,helm-get-diff,ask         helm-install
+    set-action-pre-flow load-karmah,update,render,helm-get-diff,ask         helm-upgrade
+    set-action-pre-flow load-karmah,update,render,helm-get-diff-delete,ask  helm-uninstall
+
 
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"

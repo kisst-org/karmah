@@ -5,16 +5,16 @@ git::declare-vars() {
 
 git::init-climah-module() {
     module-add-help "actions to work with git"
-    set-action-pre-flow update,render           git-diff git-add
-    set-action-pre-flow update,render,git-add   git-commit
     help_level=expert
-    add-karmah-action gd git-diff     "shows the changes to source and rendered manifests with git"
-    add-karmah-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
-    add-karmah-action gc git-commit   "commits the changes to source and rendered manifests to git"
-    add-karmah-action gr git-restore  "restores the changed files (source and rendered manifests)"
+    add-render-action gd git-diff     "shows the changes to source and rendered manifests with git"
+    add-render-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
+    add-render-action gc git-commit   "commits the changes to source and rendered manifests to git"
+    add-render-action gr git-restore  "restores the changed files (source and rendered manifests)"
     add-value-option m   message        msg   "set message to use with git commit"
     add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
     add-flag-option Q quiet-diff "do not show the output of diff"
+    set-action-pre-flow load-karmah,update,render           git-diff git-add
+    set-action-pre-flow load-karmah,update,render,git-add   git-commit
     local_vars+=" used_files git_commit_message"
 }
 

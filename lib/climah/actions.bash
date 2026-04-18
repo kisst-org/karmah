@@ -16,7 +16,7 @@ actions-show-help() { help-list-items action; }
 actions-show-flows() { help-list-items flow; }
 
 add-action() {
-    local cmd_func=$1 short=$2 name=$3 summary="$4"
+    local short=$1 name=$2 summary="$3"
     debug adding action: "${@}"
     argparse_parse_func[$name]=parse-action
     argparse_parse_params[$name]=$name
@@ -25,11 +25,7 @@ add-action() {
     help-add-item action $name "" "$summary"
 }
 
-parse-action() {
-    #command_to_run=run-flow-actions
-    action_list+=" ${argparse_param_list[0]}"
-    target_func=run-karmah-path
-}
+parse-action() { action_list+=" ${argparse_param_list[0]}"; }
 
 set-action-pre-flow() {
     local name actions="$1"
