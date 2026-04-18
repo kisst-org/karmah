@@ -28,6 +28,12 @@ init-module() {
         ${module}::init-climah-module
     fi
 }
+require-modules() {
+    local mod
+    for mod in "${@}"; do
+        init-module $mod
+    done
+}
 
 add-module-help() {
     local summary="${1:-info about module $module}" key
