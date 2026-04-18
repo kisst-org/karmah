@@ -9,7 +9,7 @@ modules::init-climah-module() {
 }
 modules-show() {
     cat <<EOF
-karmah-develop help [<module>]
+$climah_prog_name help [<module>]
 
 module can be any of:
 EOF
