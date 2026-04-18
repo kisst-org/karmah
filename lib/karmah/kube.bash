@@ -3,7 +3,7 @@ kube::init-climah-module() {
     add-render-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
     add-render-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
     add-render-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
-    add-render-action kw kube-watch   "watch target resources every 2 seconds"
+    add-karmah-action kw kube-watch   "watch target resources every 2 seconds"
 
     set-action-pre-flow load-karmah,update,render,kube-diff,ask         kube-apply
     set-action-pre-flow load-karmah,update,render,kube-diff-delete,ask  kube-delete
