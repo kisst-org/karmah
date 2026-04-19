@@ -36,11 +36,14 @@ help-add-topic() {
 help-add-item() {
     local type=$1 name=$2 params=$3 summary=$4
     local key=$type:$name
+    if [[ -z ${help_item_module[$key]:-} ]]; then
+        # do not add a second time
+        help_all_items[$type]+=" $name"
+    fi
     help_item_module[$key]=$module
     help_item_level[$key]=$help_level
     help_item_params[$key]=$params
     help_item_summary[$key]=$summary
-    help_all_items[$type]+=" $name"
 }
 
 help-is-visible() {
