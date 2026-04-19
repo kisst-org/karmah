@@ -38,7 +38,6 @@ run-action-load-karmah() {
 
 load-karmah-file() {
     declare -g karmah_type
-    #local target_name=$(dirname $karmah_file)
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
         debug clearing $local_vars
