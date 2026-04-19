@@ -59,6 +59,20 @@ help-is-visible() {
     fi
 }
 
+has-help-items() {
+    local type=$1
+    local item len=1 slen=0
+    for item in ${help_all_items[$type]}; do
+        local key=$type:$item
+        if $(help-is-visible $key); then
+            echo true
+            return
+        fi
+    done
+    echo false
+}
+
+
 list-help-items() {
     local type=$1
     local item len=1 slen=0

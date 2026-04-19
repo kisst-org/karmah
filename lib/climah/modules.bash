@@ -45,18 +45,22 @@ add-module-help() {
     done
 }
 
+show-help-section() {
+    local type=$1 header=${2:-}
+    if $(has-help-items $type); then
+        echo "${header:-${type}s:}"
+        list-help-items $type
+        echo
+    fi
+}
+q
 show-help-about-module() {
     help_show_level=all ;
     help_show_module=$1
-    printf "module %s: %s\n\n" "$1" "${module_summary[$1]}"
-    echo "commands:"
-    list-help-items command
-    echo
-    echo "actions:"
-    list-help-items action
-    echo
-    echo "options:"
-    list-help-items option
+    show-help-section command
+    show-help-section action
+    #show-help-section flow
+    show-help-section option
 }
 
 init-all-modules() {
