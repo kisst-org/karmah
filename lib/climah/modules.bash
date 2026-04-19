@@ -53,7 +53,7 @@ show-help-section() {
         echo
     fi
 }
-q
+
 show-help-about-module() {
     help_show_level=all ;
     help_show_module=$1
