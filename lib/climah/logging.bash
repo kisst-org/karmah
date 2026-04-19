@@ -27,7 +27,6 @@ logging::init-climah-module() {
     add-parse-option "" debug   ""    show detailded debug info
 }
 
-# TODO -vv
 parse-option-verbose()   { log_level+=10; }
 parse-option-verbose2()  { log_level+=20; }
 parse-option-verbose3()  { log_level+=30; }
@@ -82,6 +81,8 @@ verbose-pipe() {
 
 parse-loglevel() {
     for arg in "$@"; do
-        if [[ $arg == -v ]]; then log_level+=10; fi
+        if [[ $arg == -v ]];   then log_level+=10; fi
+        if [[ $arg == -vv ]];  then log_level+=20; fi
+        if [[ $arg == -vvv ]]; then log_level+=30; fi
     done
 }
