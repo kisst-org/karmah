@@ -46,7 +46,7 @@ add-module-help() {
 }
 
 show-help-about-module() {
-    help_show_level=expert;
+    help_show_level=all ;
     help_show_module=$1
     printf "module %s: %s\n\n" "$1" "${module_summary[$1]}"
     echo "commands:"

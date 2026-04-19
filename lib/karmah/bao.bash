@@ -1,11 +1,12 @@
 bao::init-climah-module() {
+    add-module-help "actions to work with bao"
+
     add-value-option "" ttl duration      "set the ttl voor a token, e.g. 30m of 60d"
     # see https://openbao.org/docs/concepts/duration-format/
     local_vars+=" ttl"
 
     add-karmah-action bli bao-login  "login and store the token in a file"
     add-karmah-action blo bao-logout "remove the file with the login token"
-
 
     add-karmah-action bti bao-token-info   "lookup the details of a token"
     add-karmah-action btr bao-token-update "create a new token"
