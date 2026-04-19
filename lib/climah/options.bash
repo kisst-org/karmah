@@ -4,17 +4,17 @@ options::declare-vars() {
 }
 
 options::init-climah-module() {
-    help-add-topic opt options "" "show available commands"
+    add-help-topic opt options "" "show available commands"
 }
 
-options-show-help() { help-list-items option; }
+options-show-help() { list-help-items option; }
 
 add-func-option() {
     local short=$1 name=$2 arg=$3 func=$4 summary="$5"
     argparse_parse_func[--$name]=$func
     argparse_parse_params[--$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
-    help-add-item option "--$name" "$arg" "$summary"
+    add-help-item option "--$name" "$arg" "$summary"
 }
 
 add-parse-option()  { add-func-option "$1" $2 "$3" parse-option-$2 "$4"; }

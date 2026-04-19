@@ -8,7 +8,7 @@ karmah::declare-vars() {
 karmah::init-climah-module() {
     climah_prog=karmah
     #climah_full_help_function=karmah-show-full-help
-    help-add-topic ver version  karmah-show-version "show version of karmah"
+    add-help-topic ver version  karmah-show-version "show version of karmah"
     default_action=render
     add-action lk load-karmah "load *.karmah init file(s)"
     help_level=expert
@@ -86,7 +86,7 @@ Description:
 Usage:
   ${climah_prog_name} [ option | command/flow | target ]...
 
-$(help-show-summary)
+$(show-short-help)
 
 Targets:
   Each path defines an application definition, that will be sourced,

@@ -8,9 +8,9 @@ commands::declare-vars() {
 }
 
 commands::init-climah-module() {
-    help-add-topic cmd commands "" "show available commands"
+    add-help-topic cmd commands "" "show available commands"
 }
-commands-show-help() { help-list-items command; }
+commands-show-help() { list-help-items command; }
 
 commands-parse() {
     local name=${argparse_param_list[0]}
@@ -28,7 +28,7 @@ commands-add() {
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     command_function[$name]=$func
     command_params[$name]=$name
-    help-add-item command $name "" "$summary"
+    add-help-item command $name "" "$summary"
 }
 
 commands-run() {

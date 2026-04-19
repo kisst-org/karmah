@@ -16,12 +16,12 @@ help::init-climah-module() {
     add-parse-option  h  help ""           "show general help information"
     add-parse-option  X  extended-help ""  "show extensive help information"
 
-    help-add-topic al  aliases  argparse-show-aliases "show all defined aliases"
-    help-add-topic top topics   show-help-topics "show all help-topics"
+    add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
+    add-help-topic top topics   show-help-topics "show all help-topics"
     argparse_parse_func[help]=parse-option-help
 }
 
-help-add-topic() {
+add-help-topic() {
     local short=$1 name=$2 func=${3} summary=${4:-no summary}
     help_topic_function[$name]=${func:-$name-show-help}
     help_topic_params[$name]=$name;
@@ -30,10 +30,10 @@ help-add-topic() {
         help_topic_params[$short]=$name;
         argparse-add-short $short $name
     fi
-    help-add-item topic $name "" "$summary"
+    add-help-item topic $name "" "$summary"
 }
 
-help-add-item() {
+add-help-item() {
     local type=$1 name=$2 params=$3 summary=$4
     local key=$type:$name
     if [[ -z ${help_item_module[$key]:-} ]]; then
@@ -59,7 +59,7 @@ help-is-visible() {
     fi
 }
 
-help-list-items() {
+list-help-items() {
     local type=$1
     local item len=1 slen=0
     for item in ${help_all_items[$type]}; do
@@ -99,16 +99,6 @@ add-help() {
   help_text[$help_level,$section,$module,$name]+="${@}"
 }
 
-help-show-module() {
-    echo help_show_module=$1
-    help_show_level=all
-    echo ${module_summary[$help_show_module]}
-    commands-show-help
-    echo
-    echo "Options:"
-    options-show-help
-}
-
 show-help() {
     local found=false
     for arg in $argparse_unknown_args; do
@@ -125,19 +115,19 @@ show-help() {
         if [[ ${help_show_level:-} == all ]]; then
             ${climah_help_full_function:-${climah_prog}-show-full-help}
         else
-            help-show-summary
+            show-short-help
         fi
     fi
 }
 
-help-show-summary() {
+show-short-help() {
   echo Options:
   options-show-help
   echo
   echo Commands/actions:
   commands-show-help
-  help-list-items command
-  help-list-items action
+  list-help-items command
+  list-help-items action
   echo
   echo see additional help topics with
   echo "   ${climah_prog_name} help topics"
@@ -149,5 +139,5 @@ ${climah_prog_name} help [<topic>]
 
 topic can be any of:
 EOF
-    help-list-items topic;
+    list-help-items topic;
 }

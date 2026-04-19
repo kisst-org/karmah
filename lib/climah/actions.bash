@@ -7,13 +7,13 @@ actions::declare-vars() {
 }
 
 actions::init-climah-module() {
-    help-add-topic act actions "" "show available actions"
-    help-add-topic flw flows actions-show-flows "show available flows"
+    add-help-topic act actions "" "show available actions"
+    add-help-topic flw flows actions-show-flows "show available flows"
     help_level=expert
     add-flag-option "" run-single-action  "run just the action, not the (pre)flow"
 }
-actions-show-help() { help-list-items action; }
-actions-show-flows() { help-list-items flow; }
+actions-show-help() { list-help-items action; }
+actions-show-flows() { list-help-items flow; }
 
 add-action() {
     local short=$1 name=$2 summary="$3"
@@ -22,7 +22,7 @@ add-action() {
     argparse_parse_params[$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     : ${action_flow[$name]:=$name}  # default flow is just the action
-    help-add-item action $name "" "$summary"
+    add-help-item action $name "" "$summary"
 }
 
 parse-action() { action_list+=" ${argparse_param_list[0]}"; }
@@ -32,7 +32,7 @@ set-action-pre-flow() {
     shift
     for name in "${@//,/ }"; do
         action_flow[$name]=$actions,$name
-        help-add-item flow $name "" "run actions ${action_flow[$name]:-$name}"
+        add-help-item flow $name "" "run actions ${action_flow[$name]:-$name}"
     done
 }
 
@@ -72,7 +72,7 @@ run-flow-actions() {
     done
 }
 
-show-actions() { help-list-items action; }
+show-actions() { list-help-items action; }
 
 warn-if-action-args() {
     if [[ ! -z ${action_args:-} ]]; then

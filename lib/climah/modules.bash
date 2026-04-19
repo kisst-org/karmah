@@ -5,7 +5,7 @@ modules::declare-vars() {
 }
 
 modules::init-climah-module() {
-    help-add-topic mod modules  modules-show "show all modules"
+    add-help-topic mod modules  modules-show "show all modules"
 }
 modules-show() {
     cat <<EOF
@@ -13,7 +13,7 @@ $climah_prog_name help [<module>]
 
 module can be any of:
 EOF
-    help-list-items module;
+    list-help-items module;
 }
 
 init-module() {
@@ -38,7 +38,7 @@ require-modules() {
 add-module-help() {
     local summary="${1:-info about module $module}" key
     module_summary[$module]=$summary
-    help-add-item module $module "" "$summary"
+    add-help-item module $module "" "$summary"
     local help_func=show-help-about-module
     for key in $module module:$module; do
         help_topic_function[$key]=$help_func
@@ -50,13 +50,13 @@ show-help-about-module() {
     help_show_level=expert;
     help_show_module=$1
     echo "commands:"
-    help-list-items command
+    list-help-items command
     echo
     echo "actions:"
-    help-list-items action
+    list-help-items action
     echo
     echo "options:"
-    help-list-items option
+    list-help-items option
 }
 
 init-all-modules() {

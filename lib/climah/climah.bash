@@ -14,7 +14,7 @@ climah-init() {
     read-config
     if [[ $# == 0 ]]; then
         printf "no arguments passed, pass at least one path or command\n\n"
-        help-show-summary
+        show-short-help
         exit 1
     else
         argparse-parse-arguments "${@}"
