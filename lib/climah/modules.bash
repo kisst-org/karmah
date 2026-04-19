@@ -39,9 +39,8 @@ add-module-help() {
     local summary="${1:-info about module $module}" key
     module_summary[$module]=$summary
     add-help-item module $module "" "$summary"
-    local help_func=show-help-about-module
-    for key in $module module:$module; do
-        help_topic_function[$key]=$help_func
+    local key; for key in $module module:$module; do
+        help_topic_function[$key]=show-help-about-module
         help_topic_params[$key]=$module;
     done
 }
@@ -49,6 +48,7 @@ add-module-help() {
 show-help-about-module() {
     help_show_level=expert;
     help_show_module=$1
+    printf "module %s: %s\n\n" "$1" "${module_summary[$1]}"
     echo "commands:"
     list-help-items command
     echo

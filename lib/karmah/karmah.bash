@@ -7,7 +7,6 @@ karmah::declare-vars() {
 
 karmah::init-climah-module() {
     climah_prog=karmah
-    #climah_full_help_function=karmah-show-full-help
     add-help-topic ver version  karmah-show-version "show version of karmah"
     default_action=render
     add-action lk load-karmah "load *.karmah init file(s)"
