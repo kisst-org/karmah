@@ -17,7 +17,9 @@ kube::init-climah-module() {
     add-karmah-action ks  kube-status    "show status of relevant resources"
     add-karmah-action ke  kube-exec      "execute a command on a pod of a resource"
     add-karmah-action kei kube-exec-it   "execute interactive command on a pod of a resource"
+    add-karmah-action ""  kube-env       "show the environment vars of a pod (run env in a shell)"
     add-karmah-action kl  kube-log       "show logging of a resource"
+    add-karmah-action kst kube-stern     "use stern to show logging of multiple pods"
 
     add-parse-option R replicas nr  "specify number of replicas"
     add-parse-option r resource res "specify a resource"
@@ -105,11 +107,18 @@ run-action-kube-watch() {
 run-action-kube-exec() {
     verbose-cmd kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
 }
+run-action-kube-env() {
+    verbose-cmd kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) -- sh -c env
+}
+
 run-action-kube-exec-it() {
     verbose-cmd kubectl $(kubectl-options) exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
 }
 run-action-kube-log() {
     verbose-cmd kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-}
+}
+run-action-kube-stern() {
+    verbose-cmd stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
 }
 
 
