@@ -109,6 +109,7 @@ show-help() {
         local key; for key in ${help_item_map[$arg]:-}; do
             if [[ $key == command:help ]]; then continue; fi
             if [[ $key == option:--help ]]; then continue; fi
+            if [[ $key == option:--verbose ]]; then continue; fi
             find-help-item
         done
     done
