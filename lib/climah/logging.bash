@@ -24,7 +24,8 @@ logging::init-climah-module() {
     add-flag-option "" dry-run   "do not execute the actual commands"
 
     help_level=expert
-    add-parse-option "" debug   ""    show detailded debug info
+    add-parse-option "" debug        ""    show detailed debug info
+    add-flag-option  "" debug-init   ""    show detailed debug info during init phase
 }
 
 parse-option-verbose()   { log_level+=10; }
@@ -81,8 +82,6 @@ verbose-pipe() {
 
 parse-loglevel() {
     for arg in "$@"; do
-        if [[ $arg == -v ]];   then log_level+=10; fi
-        if [[ $arg == -vv ]];  then log_level+=20; fi
-        if [[ $arg == -vvv ]]; then log_level+=30; fi
+        if [[ $arg == --debug-init ]];   then log_level+=20; fi
     done
 }
