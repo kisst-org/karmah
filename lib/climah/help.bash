@@ -145,7 +145,12 @@ show-help() {
 
 show-type-help() {
     local type=$1 name=$2
-    echo $type $name: ${help_item_summary[$type:$name]}
+    local short=${argparse_short_lookup[$name]:-}
+    if [[ -z $short ]]; then
+        echo "$type $short $name: ${help_item_summary[$type:$name]}"
+    else
+        echo "$type $name (or $short): ${help_item_summary[$type:$name]}"
+    fi
     # TODO: uit help text
 }
 
