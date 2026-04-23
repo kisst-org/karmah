@@ -30,7 +30,7 @@ add-help-topic() {
 add-help-item() {
     local type=$1 name=$2 params=$3 summary=$4
     local key=$type:$name
-    help_item_map[$name]=$key
+    help_item_map[$name]+=" $key"
     help_item_map[$type:$name]=$key
     if [[ -z ${help_item_module[$key]:-} ]]; then
         # do not add a second time
@@ -106,26 +106,11 @@ show-help() {
     #for arg in $argparse_parsed_args $argparse_extra_args $argparse_unknown_args ; do
     for arg in $argparse_original_args ; do
         arg=${argparse_short_map[$arg]:-$arg}
-        local key=${help_item_map[$arg]:-}
-        if [[ $key == command:help ]]; then continue; fi
-        if [[ $key == option:--help ]]; then continue; fi
-        if [[ ! -z  $key ]] ; then
-            local type=${key%:*}
-            local name=${key#*:}
-            local func=show-help-about-$type
-            if ! $(function-exists $func); then
-                func=show-type-help
-            fi
-            if $found; then
-                echo ----------------------------
-            fi
-            $func $type $name
-            found=true
-        else
-            if [[ ! -e $arg ]]; then # skip files and directories
-                unknown_topics+=" $arg"
-            fi
-        fi
+        local key; for key in ${help_item_map[$arg]:-}; do
+            if [[ $key == command:help ]]; then continue; fi
+            if [[ $key == option:--help ]]; then continue; fi
+            find-help-item
+        done
     done
     if ! $found; then
         if [[ ${help_show_level:-} == all ]]; then
@@ -141,6 +126,26 @@ show-help() {
         echo unknown arguments $unknown_topics
     fi
 
+}
+
+find-help-item() {
+    if [[ ! -z  $key ]] ; then
+        local type=${key%:*}
+        local name=${key#*:}
+        local func=show-help-about-$type
+        if ! $(function-exists $func); then
+            func=show-type-help
+        fi
+        if $found; then
+            echo ----------------------------
+        fi
+        $func $type $name
+        found=true
+    else
+        if [[ ! -e $arg ]]; then # skip files and directories
+            unknown_topics+=" $arg"
+        fi
+    fi
 }
 
 show-type-help() {
