@@ -6,7 +6,8 @@ argparse::declare-vars() {
     declare -ga argparse_replaced_aliases=()   # remember for help function
     declare -gA argparse_short_map=()
     declare -gA argparse_short_lookup=()
-    declare -ga argparse_original_args="${@}"  # remember for help function and others
+    declare -g argparse_original_args=""   # remember for help function and others
+    declare -g  argparse_parsed_args=""
     declare -g  argparse_extra_args=""
     declare -g  argparse_unknown_args=""
 }
@@ -36,6 +37,7 @@ argparse-parse-arg() {
 }
 
 argparse-parse-arguments() {
+    argparse_original_args="${@}"
     declare -a argparse_to_parse=()            # after alias subsitution is done
     argparse-replace-aliases "${@}"
     set -- "${argparse_to_parse[@]}"
@@ -46,6 +48,7 @@ argparse-parse-arguments() {
         argparse_parse_count=0
         argparse-parse-arg $arg "$@";
         if [[ "$argparse_parse_count" > 0 ]]; then
+            argparse_parsed_args+=" $arg"
             shift $(( "$argparse_parse_count" - 1))
         elif [[ -f ${arg} ]]; then target_paths+=" ${arg}"
         elif [[ -d ${arg} ]]; then target_paths+=" ${arg%%/}" # remove a possible trailing /

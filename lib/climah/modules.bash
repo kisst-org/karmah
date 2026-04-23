@@ -1,7 +1,6 @@
 
 modules::declare-vars() {
     declare -g all_modules=""
-    declare -gA module_summary=()
 }
 
 modules::init-climah-module() {
@@ -37,12 +36,7 @@ require-modules() {
 
 add-module-help() {
     local summary="${1:-info about module $module}" key
-    module_summary[$module]=$summary
     add-help-item module $module "" "$summary"
-    local key; for key in $module module:$module; do
-        help_topic_function[$key]=show-help-about-module
-        help_topic_params[$key]=$module;
-    done
 }
 
 show-help-section() {
@@ -55,8 +49,10 @@ show-help-section() {
 }
 
 show-help-about-module() {
+    local type=$1 name=$2
+    echo module $name: ${help_item_summary[module:$name]:-no summary}
     help_show_level=all ;
-    help_show_module=$1
+    help_show_module=$name
     show-help-section command
     show-help-section action
     #show-help-section flow

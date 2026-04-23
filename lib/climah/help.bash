@@ -1,8 +1,6 @@
 help::declare-vars() {
     declare -g help_show_level=basic
-    declare -gA help_topic_function=()
-    declare -gA help_topic_params=()
-
+    declare -gA help_item_map=()
     declare -gA help_item_summary=()
     declare -gA help_item_module=()
     declare -gA help_item_level=()
@@ -22,20 +20,18 @@ help::init-climah-module() {
 }
 
 add-help-topic() {
+    # TODO: func is not needed anymore
     local short=$1 name=$2 func=${3} summary=${4:-no summary}
-    help_topic_function[$name]=${func:-$name-show-help}
-    help_topic_params[$name]=$name;
-    if [[ ! -z $short ]]; then
-        help_topic_function[$short]=${func:-$name-show-help}
-        help_topic_params[$short]=$name;
-        argparse-add-short $short $name
-    fi
+    debug adding help-topic: "${@}"
+    if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     add-help-item topic $name "" "$summary"
 }
 
 add-help-item() {
     local type=$1 name=$2 params=$3 summary=$4
     local key=$type:$name
+    help_item_map[$name]=$key
+    help_item_map[$type:$name]=$key
     if [[ -z ${help_item_module[$key]:-} ]]; then
         # do not add a second time
         help_all_items[$type]+=" $name"
@@ -104,25 +100,31 @@ list-help-items() {
 parse-option-help() { command_to_run=help;  }
 parse-option-extended-help() { help_show_level=all;  }
 
-
-add-help() {
-  local section=$1
-  local name=$2
-  local option=$3
-  shift 3
-  help_text[$help_level,$section,$module,$name]+="${@}"
-}
-
 show-help() {
     local found=false
-    for arg in $argparse_unknown_args; do
-        if [[ ! -z ${help_topic_function[$arg]:-} ]] ; then
-            ${help_topic_function[$arg]} "${help_topic_params[$arg]}"
+    local unknown_topics=""
+    #for arg in $argparse_parsed_args $argparse_extra_args $argparse_unknown_args ; do
+    for arg in $argparse_original_args ; do
+        arg=${argparse_short_map[$arg]:-$arg}
+        local key=${help_item_map[$arg]:-}
+        if [[ $key == command:help ]]; then continue; fi
+        if [[ $key == option:--help ]]; then continue; fi
+        if [[ ! -z  $key ]] ; then
+            local type=${key%:*}
+            local name=${key#*:}
+            local func=show-help-about-$type
+            if ! $(function-exists $func); then
+                func=show-type-help
+            fi
+            if $found; then
+                echo ----------------------------
+            fi
+            $func $type $name
             found=true
         else
-          warn unknown help topic $arg
-          show-help-topics
-          exit 1
+            if [[ ! -e $arg ]]; then # skip files and directories
+                unknown_topics+=" $arg"
+            fi
         fi
     done
     if ! $found; then
@@ -132,6 +134,19 @@ show-help() {
             show-short-help
         fi
     fi
+    if [[ ! -z $unknown_topics ]]; then
+        if $found; then
+            echo ----------------------------
+        fi
+        echo unknown arguments $unknown_topics
+    fi
+
+}
+
+show-type-help() {
+    local type=$1 name=$2
+    echo $type $name: ${help_item_summary[$type:$name]}
+    # TODO: uit help text
 }
 
 show-short-help() {
