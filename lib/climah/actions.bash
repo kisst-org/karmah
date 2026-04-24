@@ -28,6 +28,7 @@ add-action() {
 
 parse-action() { action_list+=" ${argparse_param_list[0]}"; }
 
+set-action-pre-func() { action_pre_func[$1]=$2; }
 set-action-pre-flow() {
     local name actions="$1"
     shift
