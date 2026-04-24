@@ -1,12 +1,13 @@
 kube-secret::init-climah-module() {
     add-module-help "actions to work with kubernetes secrets"
-    add-karmah-action ksu kube-secret-update   "update or create a kubernetes secret (kubectl apply)"
-    add-karmah-action ksg kube-secret-get      "get the value of a kubernetes secret for use in following action"
-    add-karmah-action ksp kube-secret-print    "prints the value of a kubernetes secret"
-    add-karmah-action ksd kube-secret-diff     "prints the changes to a kubernetes secret"
-    add-karmah-action ksm kube-secret-manifest "prints the manifest of the secret to be created"
-    add-karmah-action kspy kube-secret-print-yaml "print the data stored in a secret as yaml"
-    add-karmah-action kssf kube-secret-save-files "save the data stored in a secret as file(s)"
+    add-karmah-action ksu  kube-secret-update      "update or create a kubernetes secret (kubectl apply)"
+    add-karmah-action ksg  kube-secret-get         "get the value of a kubernetes secret for use in following action"
+    add-karmah-action kspf kube-secret-print-field "prints the value of a kubernetes secret"
+    add-karmah-action ksd  kube-secret-diff        "prints the changes to a kubernetes secret"
+    add-karmah-action ksm  kube-secret-manifest    "prints the manifest of the secret to be created"
+    add-karmah-action kspf kube-secret-print-field "prints the value of a kubernetes secret"
+    add-karmah-action kspy kube-secret-print-yaml  "print the data stored in a secret as yaml"
+    add-karmah-action kssf kube-secret-save-files  "save the data stored in a secret as file(s)"
     add-karmah-var secret_name  "the name of a kubernetes secret to be used"
     add-karmah-var secret_field "the name of the field in a kubernetes secret to be used"
     add-karmah-var secret_value "a secret value which is generated, read, stored or printed"
@@ -43,7 +44,7 @@ run-action-kube-secret-get() {
     secret_value=$(echo -n $val| base64 -d)
 }
 
-run-action-kube-secret-print()    { run-action-kube-secret-get; echo $secret_value; }
+run-action-kube-secret-print-field() { run-action-kube-secret-get; echo $secret_value; }
 run-action-kube-secret-diff()     { kube-secret-manifest | kubectl $(kubectl-options) diff -f -; }
 run-action-kube-secret-manifest() { kube-secret-manifest; }
 
