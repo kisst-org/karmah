@@ -29,13 +29,17 @@ add-karmah-var() {
 
 parse-karmah-var() {
     local name=${1#^}
-    local value=$2
     if [[ $name == $1 ]]; then return; fi
     local varname=${karmah_var_names[$name]:-}
     if [[ -z $varname ]]; then
         warn unknown karmah var $name
     else
-        karmah_var_value_map[$name]=$value
+        if [[ $# == 1 ]]; then
+            error "missing value for karmah-var $1"
+            exit 1
+        fi
+        info "setting karmah-var $name to $2"
+        karmah_var_value_map[$name]=$2
         argparse_parse_count=2
     fi
 }
@@ -52,12 +56,15 @@ use-karmah-var() {
 }
 get-karmah-var() {
     local name=$1 default=${2:-}  # error if not found and no default???
-    local map_value=${karmah_var_value_map[$name]:-}
-    local env_value=$(get-karmah-var-from-env $name)
-    if [[ ! -z $map_value ]]; then
-        echo $map_value;
-    elif [[ ! -z ${env_value:-} ]]; then
-        echo ${env_value}
+    local module=${name/:*/};
+    local varname=${name/*:/}
+    local env_value=
+    if [[ ! -z ${karmah_var_value_map[$name]:-} ]]; then
+        echo ${karmah_var_value_map[$name]:-};
+    elif [[ ! -z ${karmah_var_value_map[$varname]:-} ]]; then
+        echo ${karmah_var_value_map[$varname]:-};
+    elif [[ ! -z $(get-karmah-var-from-env $name) ]]; then
+        echo $(get-karmah-var-from-env $name)
     elif [[ -z ${!name:-} ]]; then
         echo ${!name}
     else
