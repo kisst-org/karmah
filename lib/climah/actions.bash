@@ -4,6 +4,7 @@ actions::declare-vars() {
     declare -g tmp=false
     declare -g action_list=""
     declare -gA action_flow=()
+    declare -gA action_pre_func=()
 }
 
 actions::init-climah-module() {
@@ -38,6 +39,11 @@ set-action-pre-flow() {
 
 run-verbose-action() {
     local action=$1
+    local pre_hook=${action_pre_func[$action]:-}
+    if [[ ! -z ${pre_hook}  ]]; then
+        info running action pre-hook ${pre_hook}
+        ${pre_hook}
+    fi
     if [[ -z  $argparse_extra_args ]]; then
         verbose running $action for ${target_name:-$target_path}
     else

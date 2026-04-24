@@ -5,7 +5,8 @@ kube-secret::init-climah-module() {
     add-karmah-action ksp kube-secret-print    "prints the value of a kubernetes secret"
     add-karmah-action ksd kube-secret-diff     "prints the changes to a kubernetes secret"
     add-karmah-action ksm kube-secret-manifest "prints the manifest of the secret to be created"
-    add-karmah-action ksf kube-secret-files    "save the file(s) stored in a secret"
+    add-karmah-action kspy kube-secret-print-yaml "print the data stored in a secret as yaml"
+    add-karmah-action kssf kube-secret-save-files "save the data stored in a secret as file(s)"
     local_vars+=" kube_secret_name kube_secret_field secret_value"
     add-karmah-var secret_name "the name of the secret"
 }
@@ -40,12 +41,12 @@ run-action-kube-secret-print()    { run-action-kube-secret-get; echo $secret_val
 run-action-kube-secret-diff()     { kube-secret-manifest | kubectl $(kubectl-options) diff -f -; }
 run-action-kube-secret-manifest() { kube-secret-manifest; }
 
-run-action-kube-secret-files() {
+run-action-kube-secret-save-files() {
     use-karmah-var kube-secret:secret_name
     info "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
-        error "not secret found with name $secret_name"
+        error "no secret found with name $secret_name"
         exit 1
     fi
     local line; for line in ${data//: /:}; do
@@ -53,5 +54,20 @@ run-action-kube-secret-files() {
         local content=${line//*:/}
         info saving $name
         echo  $content | base64 -d >$name
+    done
+}
+
+run-action-kube-secret-print-yaml() {
+    use-karmah-var kube-secret:secret_name
+    info "getting file(s) from secret $secret_name"
+    local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
+    if [[ $data == null ]]; then
+        error "no secret found with name $secret_name"
+        exit 1
+    fi
+    local line; for line in ${data//: /:}; do
+        local name=${line/:*/}
+        local content=${line//*:/}
+        echo $name: $(echo $content | base64 -d)
     done
 }
