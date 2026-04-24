@@ -3,6 +3,8 @@
 karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
     declare -g default_karmah_type=empty
+    declare -gA karmah_var_names=()
+    declare -gA karmah_var_value_map=()
 }
 
 karmah::init-climah-module() {
@@ -12,10 +14,48 @@ karmah::init-climah-module() {
     add-action lk load-karmah "load *.karmah init file(s)"
     help_level=expert
     add-value-option K force-karmah-type typ "force to use another karmah_type"
+    argparse_parse_funcs+=(parse-karmah-var)
 }
 
 empty::init-target() { verbose using empty karmah_type initializer; }
 
+add-karmah-var() {
+    local name=$1 summary="${2:-none}"
+    karmah_var_names[$name]=$name
+    karmah_var_names[$module:$name]=$name
+    #add-help-item karmah-var "$name" "$arg" "$summary"
+    local_vars+=" $name"
+}
+
+parse-karmah-var() {
+    local name=${1#^}
+    local value=$2
+    if [[ $name == $1 ]]; then return; fi
+    local varname=${karmah_var_names[$name]:-}
+    if [[ -z $varname ]]; then
+        warn unknown karmah var $name
+    else
+        karmah_var_value_map[$name]=$value
+        argparse_parse_count=2
+    fi
+}
+
+set-karmah-var() { karmah_var_value_map[$1]=$2; }
+use-karmah-var() { declare -g $1=$(get-karmah-var $1 ${2:-}); }
+get-karmah-var() {
+    local name=$1 default=${2:-}  # error if not found and no default???
+    local map_value=${karmah_var_value_map[$name]:-}
+    local env_varname=KARMAH_VAR_${name^^}
+    if [[ ! -z $map_value ]]; then
+        echo $map_value;
+    elif [[ ! -z ${!env_varname:-} ]]; then
+        echo ${!env_varname}
+    elif [[ -z ${!name:-} ]]; then
+        echo ${!name}
+    else
+        echo $default
+    fi
+}
 
 add-karmah-action() {
     add-action "${@}"
