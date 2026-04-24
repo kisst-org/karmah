@@ -28,10 +28,9 @@ argparse-replace-aliases() {
 }
 
 argparse-parse-funcs() {
-    argparse_parse_count=0
-    for func in $argparse_parse_funcs; do
+    for func in ${argparse_parse_funcs[@]}; do
         $func "$@"
-        if [[ $argparse_parse_count == 0 ]]; then
+        if [[ $argparse_parse_count > 0 ]]; then
             return
         fi
     done
@@ -57,8 +56,8 @@ argparse-parse-arguments() {
     while [[ $# > 0 ]]; do
         arg=${argparse_short_map[$1]:-$1}
         shift
-        argparse_parse_count=0
-        argparse-parse-funcs $arg "$@"
+        local argparse_parse_count=0
+        argparse-parse-funcs "$arg" "$@"
         if [[ "$argparse_parse_count" > 0 ]]; then
             argparse_parsed_args+=" $arg"
             shift $(( "$argparse_parse_count" - 1))
@@ -70,7 +69,8 @@ argparse-parse-arguments() {
         fi
     done
     if [[ ! -z $argparse_unknown_args ]]; then
-        show-help
+        error unknown arguments: $argparse_unknown_args
+        #show-help
         return 1
     fi
     argparse_extra_args+=" $*"
