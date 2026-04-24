@@ -56,16 +56,16 @@ use-karmah-var() {
 }
 get-karmah-var() {
     local name=$1 default=${2:-}  # error if not found and no default???
-    local module=${name/:*/};
+    #local module=${name/:*/};
     local varname=${name/*:/}
     local env_value=
-    if [[ ! -z ${karmah_var_value_map[$name]:-} ]]; then
-        echo ${karmah_var_value_map[$name]:-};
+    if [[ ! -z ${karmah_var_value_map[$module:$name]:-} ]]; then
+        echo ${karmah_var_value_map[$module:$name]:-};
     elif [[ ! -z ${karmah_var_value_map[$varname]:-} ]]; then
         echo ${karmah_var_value_map[$varname]:-};
     elif [[ ! -z $(get-karmah-var-from-env $name) ]]; then
         echo $(get-karmah-var-from-env $name)
-    elif [[ -z ${!name:-} ]]; then
+    elif [[ ! -z ${!name:-} ]]; then
         echo ${!name}
     else
         echo $default
@@ -75,10 +75,10 @@ get-karmah-var() {
 get-karmah-var-from-env() {
     local name=${1^^}
     local result=""
-    local module=${name/:*/}; module=${module//-/}
+    #local module=${name/:*/}; module=${module//-/}
     local varname=${name/*:/}
-    local v; for v in $varname ${module}__$varname; do
-        local env_varname=KARMAH_VAR_${v//[:.-]/}
+    local v; for v in $varname ${module^^}__$varname; do
+        local env_varname=KARMAH_VAR_${v//-/_}
         result=${!env_varname:-$result}
     done
     echo $result
