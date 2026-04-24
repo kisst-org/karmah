@@ -7,18 +7,22 @@ kube-secret::init-climah-module() {
     add-karmah-action ksm kube-secret-manifest "prints the manifest of the secret to be created"
     add-karmah-action kspy kube-secret-print-yaml "print the data stored in a secret as yaml"
     add-karmah-action kssf kube-secret-save-files "save the data stored in a secret as file(s)"
-    local_vars+=" kube_secret_name kube_secret_field secret_value"
-    add-karmah-var secret_name "the name of the secret"
+    add-karmah-var secret_name  "the name of a kubernetes secret to be used"
+    add-karmah-var secret_field "the name of the field in a kubernetes secret to be used"
+    add-karmah-var secret_value "a secret value which is generated, read, stored or printed"
 }
 
 kube-secret-manifest() {
+    use-karmah-var secret_name
+    use-karmah-var secret_value
+    use-karmah-var secret_field
     cat <<EOF
 apiVersion: v1
 data:
-    ${kube_secret_field}: $(echo -n ${secret_value} | base64)
+    ${secret_field}: $(echo -n ${secret_value} | base64)
 kind: Secret
 metadata:
-    name: ${kube_secret_name}
+    name: ${secret_name}
     namespace: ${kube_namespace}
     #annotations:
     #    bao-role-policies: $(bao-role-policies)
@@ -32,8 +36,10 @@ run-action-kube-secret-update() {
 }
 
 run-action-kube-secret-get() {
-    verbose kubectl $(kubectl-options) get secrets ${kube_secret_name} -o jsonpath="{.data.${kube_secret_field}}"
-    local val=$(kubectl $(kubectl-options) get secrets  ${kube_secret_name} -o jsonpath="{.data.${kube_secret_field}}")
+    use-karmah-var secret_name
+    use-karmah-var secret_field
+    verbose kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath="{.data.${secret_field}}"
+    local val=$(kubectl $(kubectl-options) get secrets  ${secret_name} -o jsonpath="{.data.${secret_field}}")
     secret_value=$(echo -n $val| base64 -d)
 }
 
@@ -58,7 +64,7 @@ run-action-kube-secret-save-files() {
 }
 
 run-action-kube-secret-print-yaml() {
-    use-karmah-var kube-secret:secret_name
+    use-karmah-var secret_name
     info "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
