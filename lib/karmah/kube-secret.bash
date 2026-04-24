@@ -44,6 +44,10 @@ run-action-kube-secret-files() {
     use-karmah-var kube-secret:secret_name
     info "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
+    if [[ $data == null ]]; then
+        error "not secret found with name $secret_name"
+        exit 1
+    fi
     local line; for line in ${data//: /:}; do
         local name=${line/:*/}
         local content=${line//*:/}
