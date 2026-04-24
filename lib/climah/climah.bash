@@ -1,12 +1,4 @@
 
-check-bash-version() {
-    if [[ ${BASH_VERSINFO:-0} -lt 4 ]]; then
-        echo "bash version too old (3.x or older), please use a newer version"
-        echo "if you are on MacOS you can use the following command"
-        printf "  brew install bash\n"
-        exit 1
-    fi
-}
 
 climah-init() {
     init-logging "${@}"
@@ -22,7 +14,6 @@ climah-init() {
 }
 
 climah-main() {
-    check-bash-version
     declare -g climah_prog_name=$(basename $0)
     declare -g climah_prog
     declare -g climah_help_full_function
