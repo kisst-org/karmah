@@ -4,7 +4,7 @@ actions::declare-vars() {
     declare -g tmp=false
     declare -g action_list=""
     declare -gA action_flow=()
-    declare -gA action_pre_func=()
+    declare -gA action_pre_hook=()
 }
 
 actions::init-climah-module() {
@@ -28,7 +28,7 @@ add-action() {
 
 parse-action() { action_list+=" ${argparse_param_list[0]}"; }
 
-set-action-pre-func() { action_pre_func[$1]=$2; }
+set-action-pre-hook() { action_pre_hook[$1]=$2; }
 set-action-pre-flow() {
     local name actions="$1"
     shift
@@ -40,7 +40,7 @@ set-action-pre-flow() {
 
 run-verbose-action() {
     local action=$1
-    local pre_hook=${action_pre_func[$action]:-}
+    local pre_hook=${action_pre_hook[$action]:-}
     if [[ ! -z ${pre_hook}  ]]; then
         info running action pre-hook ${pre_hook}
         ${pre_hook}
