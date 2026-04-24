@@ -7,6 +7,7 @@ kube-secret::init-climah-module() {
     add-karmah-action ksm kube-secret-manifest "prints the manifest of the secret to be created"
     add-karmah-action ksf kube-secret-files    "save the file(s) stored in a secret"
     local_vars+=" kube_secret_name kube_secret_field secret_value"
+    add-karmah-var secret_name "the name of the secret"
 }
 
 kube-secret-manifest() {
@@ -40,7 +41,8 @@ run-action-kube-secret-diff()     { kube-secret-manifest | kubectl $(kubectl-opt
 run-action-kube-secret-manifest() { kube-secret-manifest; }
 
 run-action-kube-secret-files() {
-    local secret_name=$SECRET_NAME # TODO: better mechanism to pass such vars
+    use-karmah-var secret_name
+    info "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     local line; for line in ${data//: /:}; do
         local name=${line/:*/}
