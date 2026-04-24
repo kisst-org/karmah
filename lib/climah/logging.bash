@@ -53,6 +53,13 @@ info()    { if $(log-is-info);    then printf "# %s \n" "${*}";  fi }
 verbose() { if $(log-is-verbose); then printf "## %s \n" "${*}";  fi }
 debug()   { if $(log-is-debug);   then printf "### %s \n" "${*}";  fi }
 
+error-stderr()   { if $(log-is-error);   then printf >/dev/stderr "ERROR %s \n" "${*}";  fi }
+warn-stderr()    { if $(log-is-warn);    then printf >/dev/stderr "WARN %s \n" "${*}";  fi }
+info-stderr()    { if $(log-is-info);    then printf >/dev/stderr "# %s \n" "${*}";  fi }
+verbose-stderr() { if $(log-is-verbose); then printf >/dev/stderr "## %s \n" "${*}";  fi }
+debug-stderr()   { if $(log-is-debug);   then printf >/dev/stderr "### %s \n" "${*}";  fi }
+
+
 verbose-cmd() {
     if (( $log_level >= $log_level_verbose )); then
         printf "    "; echo "${@}";
