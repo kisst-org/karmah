@@ -69,9 +69,13 @@ argparse-parse-arguments() {
         fi
     done
     if [[ ! -z $argparse_unknown_args ]]; then
-        error unknown arguments: $argparse_unknown_args
-        #show-help
-        return 1
+        if [[ $command_to_run == help ]]; then
+            show-help
+        else
+            error unknown arguments: $argparse_unknown_args
+            show-basic-help
+            return 1
+        fi
     fi
     argparse_extra_args+=" $*"
     argparse_extra_args=$(echo ${argparse_extra_args}) # trim spaces

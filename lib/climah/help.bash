@@ -160,6 +160,14 @@ show-type-help() {
     # TODO: uit help text
 }
 
+show-basic-help() {
+  echo Options:
+  options-show-help
+  echo
+  echo see additional help topics with
+  echo "   ${climah_prog_name} help topics"
+}
+
 show-short-help() {
   echo Options:
   options-show-help
