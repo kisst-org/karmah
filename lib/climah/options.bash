@@ -3,10 +3,6 @@ options::declare-vars() {
     declare -gA option_var=()
 }
 
-options::init-climah-module() {
-    add-help-topic opt options "" "show available commands"
-}
-
 options-show-help() { list-help-items option; }
 
 add-func-option() {

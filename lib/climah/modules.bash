@@ -3,9 +3,6 @@ modules::declare-vars() {
     declare -g all_modules=""
 }
 
-modules::init-climah-module() {
-    add-help-topic mod modules  modules-show "show all modules"
-}
 modules-show() {
     cat <<EOF
 $climah_prog_name help [<module>]

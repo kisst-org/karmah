@@ -7,9 +7,6 @@ commands::declare-vars() {
     declare -gA command_alias=()
 }
 
-commands::init-climah-module() {
-    add-help-topic cmd commands "" "show available commands"
-}
 commands-show-help() { list-help-items command; }
 
 commands-parse() {
