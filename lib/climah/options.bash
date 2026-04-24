@@ -11,7 +11,7 @@ options-show-help() { list-help-items option; }
 
 add-func-option() {
     local short=$1 name=$2 arg=$3 func=$4 summary="$5"
-    argparse_parse_func[--$name]=$func
+    argparse_parse_func_map[--$name]=$func
     argparse_parse_params[--$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
     add-help-item option "--$name" "$arg" "$summary"

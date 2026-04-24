@@ -16,7 +16,7 @@ help::init-climah-module() {
 
     add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
     add-help-topic top topics   show-help-topics "show all help-topics"
-    argparse_parse_func[help]=parse-option-help
+    argparse_parse_func_map[help]=parse-option-help
 }
 
 add-help-topic() {

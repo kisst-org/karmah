@@ -1,7 +1,8 @@
 
 argparse::declare-vars() {
     declare -gA argparse_aliases=()
-    declare -gA argparse_parse_func=()
+    declare -gA argparse_parse_func_map=()
+    declare -ga argparse_parse_funcs=(argparse-parse-arg)
     declare -gA argparse_parse_params=()
     declare -ga argparse_replaced_aliases=()   # remember for help function
     declare -gA argparse_short_map=()
@@ -26,15 +27,26 @@ argparse-replace-aliases() {
     done
 }
 
+argparse-parse-funcs() {
+    argparse_parse_count=0
+    for func in $argparse_parse_funcs; do
+        $func "$@"
+        if [[ $argparse_parse_count == 0 ]]; then
+            return
+        fi
+    done
+}
+
 argparse-parse-arg() {
     local name=$1
-    local func=${argparse_parse_func[$name]:-}
+    local func=${argparse_parse_func_map[$name]:-}
     if [[ ! -z $func ]]; then
         argparse_parse_count=1
         local argparse_param_list=("${argparse_parse_params[$name]:-}")
         $func "$@"
     fi
 }
+
 
 argparse-parse-arguments() {
     argparse_original_args="${@}"
@@ -46,7 +58,7 @@ argparse-parse-arguments() {
         arg=${argparse_short_map[$1]:-$1}
         shift
         argparse_parse_count=0
-        argparse-parse-arg $arg "$@";
+        argparse-parse-funcs $arg "$@"
         if [[ "$argparse_parse_count" > 0 ]]; then
             argparse_parsed_args+=" $arg"
             shift $(( "$argparse_parse_count" - 1))

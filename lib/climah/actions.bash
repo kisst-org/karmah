@@ -18,7 +18,7 @@ actions-show-flows() { list-help-items flow; }
 add-action() {
     local short=$1 name=$2 summary="$3"
     debug adding action: "${@}"
-    argparse_parse_func[$name]=parse-action
+    argparse_parse_func_map[$name]=parse-action
     argparse_parse_params[$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     : ${action_flow[$name]:=$name}  # default flow is just the action
