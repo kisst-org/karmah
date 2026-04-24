@@ -41,7 +41,7 @@ run-action-kube-secret-diff()     { kube-secret-manifest | kubectl $(kubectl-opt
 run-action-kube-secret-manifest() { kube-secret-manifest; }
 
 run-action-kube-secret-files() {
-    use-karmah-var secret_name
+    use-karmah-var kube-secret:secret_name
     info "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     local line; for line in ${data//: /:}; do

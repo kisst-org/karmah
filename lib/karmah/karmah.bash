@@ -40,22 +40,43 @@ parse-karmah-var() {
     fi
 }
 
-set-karmah-var() { karmah_var_value_map[$1]=$2; }
-use-karmah-var() { declare -g $1=$(get-karmah-var $1 ${2:-}); }
+set-karmah-var() { karmah_var_value_map[$1]="$2"; }
+use-karmah-var() {
+    local longname=$1
+    local varname=${karmah_var_names[$longname]:-}
+    if [[ -z $varname ]]; then
+        error "code refers to unknown karmah-var $longname"
+        exit 1
+    fi
+    declare -g $varname=$(get-karmah-var $longname "${2:-}")
+}
 get-karmah-var() {
     local name=$1 default=${2:-}  # error if not found and no default???
     local map_value=${karmah_var_value_map[$name]:-}
-    local env_varname=KARMAH_VAR_${name^^}
+    local env_value=$(get-karmah-var-from-env $name)
     if [[ ! -z $map_value ]]; then
         echo $map_value;
-    elif [[ ! -z ${!env_varname:-} ]]; then
-        echo ${!env_varname}
+    elif [[ ! -z ${env_value:-} ]]; then
+        echo ${env_value}
     elif [[ -z ${!name:-} ]]; then
         echo ${!name}
     else
         echo $default
     fi
 }
+
+get-karmah-var-from-env() {
+    local name=${1^^}
+    local result=""
+    local module=${name/:*/}; module=${module//-/}
+    local varname=${name/*:/}
+    local v; for v in $varname ${module}__$varname; do
+        local env_varname=KARMAH_VAR_${v//[:.-]/}
+        result=${!env_varname:-$result}
+    done
+    echo $result
+}
+
 
 add-karmah-action() {
     add-action "${@}"
