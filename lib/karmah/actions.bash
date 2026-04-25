@@ -45,13 +45,13 @@ run-verbose-action() {
     local pre_hook=${action_pre_hook[$action]:-}
     local module=${action_module[$action]}
     if [[ ! -z ${pre_hook}  ]]; then
-        info running action pre-hook ${pre_hook}
+        log-info action "running action pre-hook ${pre_hook}"
         ${pre_hook}
     fi
     if [[ -z  $argparse_extra_args ]]; then
-        verbose running $action for ${target_name:-$target_path}
+        log-verbose action "running $action for ${target_name:-$target_path}"
     else
-        verbose running $action\($argparse_extra_args\) for ${target_name:-$target_path}
+        log-verbose action "running $action\($argparse_extra_args\) for ${target_name:-$target_path}"
     fi
     run-action-$action
 }
@@ -68,12 +68,12 @@ run-flow-actions() {
     declare -a flows=${@:-${action_list:-${default_action}}}
     declare -A action_already_run=()
     local action flow
-    info running flow-actions $flows
+    log-info action "running flow-actions $flows"
     for flow in ${flows//,/ }; do
         flow=${action_flow[$flow]:-$flow}
         for action in ${flow//,/ }; do
             if ${action_already_run[$action]:-false}; then
-                info "skipping $action because it already has run"
+                log-info action "skipping $action because it already has run"
             else
                 action_already_run[$action]=true
                 run-verbose-action $action

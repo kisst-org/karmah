@@ -10,35 +10,16 @@ init-logging() {
     declare -gi log_level=$log_level_info
     declare -g  log_cmds=false
     parse-loglevel "$@"
+    init-loggers
 }
 
 logging::init-climah-module() {
-    add-parse-option v  verbose  ""    "give more output"
-    add-parse-option "" quiet    ""    "show no output"
-    add-parse-option S  show-script "" "show all commands without doing much"
-    # TODO: parse multiple short options
-    argparse_parse_func_map[-vv]=parse-option-verbose2
-    argparse_parse_func_map[-vvv]=parse-option-verbose3
-
     add-flag-option C  log-cmds  "show the commands being executed"
-    add-flag-option "" dry-run   "do not execute the actual commands"
-
     help_level=expert
     add-parse-option "" debug        ""    show detailed debug info
     add-flag-option  "" debug-init   ""    show detailed debug info during init phase
 }
-
-parse-option-verbose()   { log_level+=10; }
-parse-option-verbose2()  { log_level+=20; }
-parse-option-verbose3()  { log_level+=30; }
-parse-option-quiet()     { log_level=$log_level_warn; }
 parse-option-debug()     { set -x; }
-parse-option-show-script() {
-    parse-option-quiet
-    dry_run=true
-    log_cmds=true
-    parse-option-yes
-}
 
 
 log-is-error()   { (( ${log_level} >= ${log_level_error} )) }
