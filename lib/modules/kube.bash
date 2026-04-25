@@ -39,7 +39,7 @@ kubectl-options() {
     echo $opt
 }
 kubectl-run() {
-    verbose-cmd kubectl $(kubectl-options) "${@}"
+    run-cmd-from-action verbose kubectl $(kubectl-options) "${@}"
 }
 
 filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation: [0-9]*$'; }
@@ -51,7 +51,7 @@ run-action-kube-diff() {
         #KUBECTL_EXTERNAL_DIFF='diff -qr'
         verbose-pipe filter-kube-diff-quiet kubectl diff $(kubectl-options) -f $output_dir || true
     elif $(log-is-verbose); then
-        verbose-cmd kubectl diff $(kubectl-options) -f $output_dir || true
+        run-cmd-from-action verbose kubectl diff $(kubectl-options) -f $output_dir || true
     else
         verbose-pipe filter-kube-diff-output kubectl diff $(kubectl-options) -f $output_dir || true
     fi
@@ -59,29 +59,29 @@ run-action-kube-diff() {
 
 run-action-kube-diff-delete() {
     info kube-diff-delete all resources ${target_name} from ${output_dir}
-    verbose-cmd ls -l $output_dir
+    run-cmd-from-action verbose ls -l $output_dir
 }
 
 run-action-kube-apply() {
     info kube-apply $output_dir
-    verbose-cmd kubectl apply $(kubectl-options) -f $output_dir
+    run-cmd-from-action verbose kubectl apply $(kubectl-options) -f $output_dir
 }
 
 run-action-kube-delete() {
     info kube delete $output_dir
-    verbose-cmd kubectl delete $(kubectl-options) -f $output_dir
+    run-cmd-from-action verbose kubectl delete $(kubectl-options) -f $output_dir
 }
 
 run-action-kubectl() {
     info kubectl $output_dir
-    verbose-cmd kubectl $(kubectl-options) $action_args
+    run-cmd-from-action verbose kubectl $(kubectl-options) $action_args
 }
 
 
 run-action-kube-get-manifests() {
     info kube get manifests  ${target_name} to ${output_dir}
-    verbose-cmd rm -rf ${output_dir}
-    verbose-cmd mkdir -p ${output_dir}
+    run-cmd-from-action verbose rm -rf ${output_dir}
+    run-cmd-from-action verbose mkdir -p ${output_dir}
     verbose-pipe split-yaml-items-into-files kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml
     ignore_files=configmap_kube-root-ca.crt.yaml
     ignore_files+=" deployment_ingress-nginx-controller.yaml"
@@ -99,26 +99,26 @@ run-action-kube-get-manifests() {
 }
 
 run-action-kube-get() {
-    verbose-cmd kubectl $(kubectl-options) get ${action_args:-pods,deploy,sts,cm}
+    run-cmd-from-action verbose kubectl $(kubectl-options) get ${action_args:-pods,deploy,sts,cm}
 }
 run-action-kube-watch() {
-    verbose-cmd watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
+    run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
 }
 run-action-kube-exec() {
-    verbose-cmd kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
+    run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
 }
 run-action-kube-env() {
-    verbose-cmd kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) -- sh -c env
+    run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) -- sh -c env
 }
 
 run-action-kube-exec-it() {
-    verbose-cmd kubectl $(kubectl-options) exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
+    run-cmd-from-action verbose kubectl $(kubectl-options) exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
 }
 run-action-kube-log() {
-    verbose-cmd kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-}
+    run-cmd-from-action verbose kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-}
 }
 run-action-kube-stern() {
-    verbose-cmd stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
+    run-cmd-from-action verbose stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
 }
 
 
@@ -126,7 +126,7 @@ run-action-kube-restart() {
     local res
     for res in ${kube_resource_list//,/ }; do
         res=${kube_resource_alias[$res]:-$res}
-        verbose-cmd kubectl $(kubectl-options) rollout restart $res
+        run-cmd-from-action verbose kubectl $(kubectl-options) rollout restart $res
     done
 }
 run-action-kube-tmp-scale() {
@@ -134,7 +134,7 @@ run-action-kube-tmp-scale() {
     for res in $(kube-calc-resource-names all); do
         local repl=$(kube-calc-replicas $res)
         res=${kube_resource_alias[$res]:-$res}
-        verbose-cmd kubectl $(kubectl-options) scale $res --replicas ${repl}
+        run-cmd-from-action verbose kubectl $(kubectl-options) scale $res --replicas ${repl}
     done
 }
 kube-calc-replicas() {

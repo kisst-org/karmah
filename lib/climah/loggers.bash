@@ -11,10 +11,12 @@ init-loggers() {
       [trace]=60
     )
     declare -gA logger_config=(
+        [format]="LOG %s\n"
         [format.error]="ERROR %s\n"
         [format.warn]="WARN %s\n"
         [format.info]="# %s\n"
         [format.verbose]="## %s\n"
+        [format.verbose.cmd]="    %s\n"
         [format.debug]="### %s\n"
     )
     declare -gA logger_level=([root]=info)
@@ -38,7 +40,16 @@ parse-option-verbose3()  { log_level+=30; logger_level[root]=trace; }
 parse-option-quiet()     { log_level=$log_level_warn; logger_level[root]=warn; }
 
 find-logger-level()  { echo ${logger_level[$1]:-${logger_level[root]}}; } # TODO do real search
-find-logger-config() { echo ${logger_config[$1]}; } # TODO do real search
+find-logger-config() {
+    local type=$1 logger=$2
+    local path=$type
+    local result="${logger_config[$path]}";
+    for part in ${logger//./ }; do
+        path="$path.$part"
+        result="${logger_config[$path]:-$result}";
+    done
+    echo "$result"
+}
 
 logger-shows-level() {
     local logger=$1 level=$2
@@ -52,7 +63,7 @@ logger-shows-level() {
 log-at-level() {
     local level=$1 logger=$2 message="$3"
     if $(logger-shows-level $logger $level); then
-        local format="$(find-logger-config "format.$level")" # TODO add.$logger")
+        local format="$(find-logger-config format $level.$logger)"
         printf "$format" "$message"
     fi
 }
@@ -74,11 +85,13 @@ parse-option-show-script() {
 run-and-log-cmd() {
     local level=$1 logger=$2 cmd=$3 args
     shift 3
-    printf -v args "%qs " "$@"
+    printf -v args " %s" "$@"
+    #printf "XXX %s %s %s\n" $level $cmd "$args"
     log-at-level $level $logger "$cmd $args"
+    #printf "XXX $level $logger CMD:$cmd"
+    #printf "%s\n" $args
     if ! ${dry_run:-false}; then
-        cmd=$1; shift
-        $cmd $args
+        $cmd "$@"
     fi
 }
 

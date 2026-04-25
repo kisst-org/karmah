@@ -19,20 +19,20 @@ kapp-options() {
 }
 
 run-action-kapp-diff() {
-    verbose-cmd kapp deploy $(kapp-options) --diff-run --diff-changes
+    run-cmd-from-action verbose kapp deploy $(kapp-options) --diff-run --diff-changes
 }
 
 run-action-kapp-plan() {
-    verbose-cmd kapp deploy $(kapp-options) --diff-run
+    run-cmd-from-action verbose kapp deploy $(kapp-options) --diff-run
 }
 
 run-action-kapp-deploy() {
     if ! kubectl $(kubectl_options) get ns $kube_namespace >/dev/null 2>&1; then
-        verbose-cmd kubectl $(kubectl_options) create ns $kube_namespace
+        run-cmd-from-action verbose kubectl $(kubectl_options) create ns $kube_namespace
     fi
-    verbose-cmd kapp deploy $(kapp-options)
+    run-cmd-from-action verbose kapp deploy $(kapp-options)
 }
 
 run-action-kapp-delete() {
-    verbose-cmd kapp delete $(kapp-options)
+    run-cmd-from-action verbose kapp delete $(kapp-options)
 }

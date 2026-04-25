@@ -95,3 +95,10 @@ error-if-action-args() {
         exit 1
     fi
 }
+
+log-from-action() { log-at-level $1 "$module.$action" "$2"; }
+run-cmd-from-action() {
+    local level=$1 cmd=$2
+    shift 2
+    run-and-log-cmd $level cmd.$module.$cmd $cmd "$@"
+}

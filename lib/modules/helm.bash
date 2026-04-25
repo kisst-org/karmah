@@ -86,7 +86,7 @@ run-action-helm-pull() {
     if [[ -d $dir ]]; then
         if ${force_pull:-false}; then
             log-verbose helm "$dir already exists, removing it"
-            verbose-cmd rm -rf $dir
+            run-cmd-from-action verbose rm -rf $dir
         else
             log-verbose helm "$dir already exists, skipping helm-pull (use --force-pull to override)"
             return 0
@@ -96,46 +96,46 @@ run-action-helm-pull() {
     if [[ -f $tarfile && ${force_pull:-false} == false ]]; then
         log-verbose helm "$tarfile already exists, skipping helm-pull (use --force-pull to override)"
     else
-        verbose-cmd "mkdir -p $(dirname $tarfile)"
+        run-cmd-from-action verbose mkdir -p $(dirname $tarfile)
         local cmd="helm pull --repo ${helm_chart_repo} ${helm_chart_name} --version ${helm_chart_version} --destination $(dirname $tarfile)"
-        verbose-cmd ${cmd}
+        run-cmd-from-action verbose ${cmd}
     fi
-    verbose-cmd "mkdir -p $dir"
-    verbose-cmd "tar xfz $tarfile --dir $dir --strip-components 1"
+    run-cmd-from-action verbose mkdir -p $dir
+    run-cmd-from-action verbose tar xfz $tarfile --dir $dir --strip-components 1
 }
 
 
 run-action-helm-plugin-diff() {
     log-info helm "running helm-plugin-diff for $target_name"
     local default_cmd="helm diff upgrade $(helm-cluster-options)"
-    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
+    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-upgrade() {
     log-info helm "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm-cluster-options)"
-    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
+    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-install() {
     log-info helm "running helm-install for $target_name"
     local default_cmd="helm install --create-namespace $(helm-cluster-options)"
-    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
+    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-uninstall() {
     log-info helm "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm $(helm-cluster-options) uninstall"
-    helm-run verbose-cmd ${helm_install_command:-$default_cmd}
+    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
     log-info helm "getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
-    verbose-cmd rm -rf ${output_dir}
-    verbose-cmd mkdir -p ${output_dir}
+    run-cmd-from-action verbose rm -rf ${output_dir}
+    run-cmd-from-action verbose mkdir -p ${output_dir}
     local cmd="helm $(helm-cluster-options) get manifest $release --namespace $kube_namespace"
     verbose-pipe split-yaml-docs-into-files $cmd
 }
@@ -163,7 +163,7 @@ run-action-helm-diff() {
     run-action-helm-get-manifests
     log-info helm "comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}"
     # The sed script is to make missing or added manifests stand out more clearly
-    verbose-cmd diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
+    run-cmd-from-action verbose diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }
 
 
@@ -194,7 +194,7 @@ helm-update-value-path() {
     local path="$1" value="$2"
     local val_file=${helm_value_files[@]:(-1)}
     log-verbose helm "updating $path to \"$value\""
-    verbose-cmd yq -i $path=\"$value\"   $val_file
+    run-cmd-from-action verbose yq -i $path=\"$value\"   $val_file
 }
 
 helm-cluster-options() {
