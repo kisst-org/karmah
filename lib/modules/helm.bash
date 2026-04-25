@@ -33,10 +33,10 @@ helm::init-climah-module() {
 add-optional-helm-values-file() {
     local f=($1)
     if [[ -f $f ]]; then
-        debug adding values file $f
+        log-debug helm "adding values file $f"
         helm_value_files+=("$f")
     else
-        debug skipping values file $f
+        log-debug helm "skipping values file $f"
     fi
 }
 
@@ -69,7 +69,7 @@ helm-run() {
     local verbose_runner_cmd=$1; shift
     local base_cmd=${@}
     if [[ ! -z ${force_helm_chart:-} ]]; then
-        verbose overriding original helm chart $helm_chart with ${force_helm_chart}
+        log-verbose helm "overriding original helm chart $helm_chart with ${force_helm_chart}"
         helm_chart=${force_helm_chart}
         helm_chart_location=local # TODO: other locatiom,repo,version?
     fi
@@ -82,19 +82,19 @@ helm-run() {
 
 run-action-helm-pull() {
     local dir=helm/charts/$helm_chart_name-$helm_chart_version
-    info "running helm-pull for $helm_chart_name $helm_chart_version to $dir"
+    log-info helm "running helm-pull for $helm_chart_name $helm_chart_version to $dir"
     if [[ -d $dir ]]; then
         if ${force_pull:-false}; then
-            verbose $dir already exists, removing it
+            log-verbose helm "$dir already exists, removing it"
             verbose-cmd rm -rf $dir
         else
-            verbose "$dir already exists, skipping helm-pull (use --force-pull to override)"
+            log-verbose helm "$dir already exists, skipping helm-pull (use --force-pull to override)"
             return 0
         fi
     fi
     local tarfile=tmp/helm-charts/$helm_chart_name-$helm_chart_version.tgz
     if [[ -f $tarfile && ${force_pull:-false} == false ]]; then
-        verbose "$tarfile already exists, skipping helm-pull (use --force-pull to override)"
+        log-verbose helm "$tarfile already exists, skipping helm-pull (use --force-pull to override)"
     else
         verbose-cmd "mkdir -p $(dirname $tarfile)"
         local cmd="helm pull --repo ${helm_chart_repo} ${helm_chart_name} --version ${helm_chart_version} --destination $(dirname $tarfile)"
@@ -106,26 +106,26 @@ run-action-helm-pull() {
 
 
 run-action-helm-plugin-diff() {
-    info "running helm-plugin-diff for $target_name"
+    log-info helm "running helm-plugin-diff for $target_name"
     local default_cmd="helm diff upgrade $(helm-cluster-options)"
     helm-run verbose-cmd ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-upgrade() {
-    info "running helm-upgrade for $target_name"
+    log-info helm "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm-cluster-options)"
     helm-run verbose-cmd ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-install() {
-    info "running helm-install for $target_name"
+    log-info helm "running helm-install for $target_name"
     local default_cmd="helm install --create-namespace $(helm-cluster-options)"
     helm-run verbose-cmd ${helm_install_command:-$default_cmd}
 }
 
 run-action-helm-uninstall() {
-    info "running helm-uninstall for $target_name"
+    log-info helm "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm $(helm-cluster-options) uninstall"
     helm-run verbose-cmd ${helm_install_command:-$default_cmd}
@@ -133,7 +133,7 @@ run-action-helm-uninstall() {
 
 run-action-helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
-    info getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}
+    log-info helm "getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
     verbose-cmd rm -rf ${output_dir}
     verbose-cmd mkdir -p ${output_dir}
     local cmd="helm $(helm-cluster-options) get manifest $release --namespace $kube_namespace"
@@ -144,13 +144,13 @@ run-action-helm-get-diff() { run-action-helm-diff; } # TODO: deprecated
 run-action-helm-diff() {
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
-    debug checking for helm release ${release} in namespace $kube_namespace
+    log-debug helm "checking for helm release ${release} in namespace $kube_namespace"
     local cmd="helm $(helm-cluster-options) status $release --namespace $kube_namespace"
-    verbose "   $cmd"
+    log-verbose helm "   $cmd"
     local tmp_status_failed=false
     $cmd >/dev/null || tmp_status_failed=true
     if $tmp_status_failed ; then
-        info helm release $helm_release does not yet exist in namespace $kube_namespace, skipping helm-diff
+        log-info helm "helm release $helm_release does not yet exist in namespace $kube_namespace, skipping helm-diff"
         return 0;
     fi
 
@@ -161,7 +161,7 @@ run-action-helm-diff() {
     #run-action-render
     local output_dir=$get_dir
     run-action-helm-get-manifests
-    info comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}
+    log-info helm "comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}"
     # The sed script is to make missing or added manifests stand out more clearly
     verbose-cmd diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }
@@ -193,7 +193,7 @@ helm-get-path-value() {
 helm-update-value-path() {
     local path="$1" value="$2"
     local val_file=${helm_value_files[@]:(-1)}
-    verbose updating $path to \"$value\"
+    log-verbose helm "updating $path to \"$value\""
     verbose-cmd yq -i $path=\"$value\"   $val_file
 }
 

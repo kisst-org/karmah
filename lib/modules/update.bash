@@ -32,9 +32,9 @@ run-action-update() {
     fi
     local u
     for u in "${updates[@]}"; do
-        verbose custom update function $custom_update_function
+        log-verbose update "custom update function $custom_update_function"
         ${karmah_type}::update-target "$u"
         git-add-message "update ${u}"
     done
-    $any_updates || verbose no updates specified
+    $any_updates || log-verbose update "no updates specified"
 }

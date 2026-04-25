@@ -26,7 +26,7 @@ add-render-action() {
 
 
 run-action-render() {
-    info rendering ${target_name} with ${renderer} to ${output_dir}
+    log-info render "rendering ${target_name} with ${renderer} to ${output_dir}"
     error-if-action-args
     verbose-cmd rm -rf ${output_dir}
     verbose-cmd mkdir -p ${output_dir}
@@ -37,7 +37,7 @@ run-action-render() {
 }
 
 run-action-render-rm() {
-    info removing  ${target_name} manifests in ${output_dir}
+    log-info render "removing  ${target_name} manifests in ${output_dir}"
     warn-if-action-args
     verbose-cmd rm -rf ${output_dir}
 }
@@ -46,7 +46,7 @@ run-action-render-rm() {
 run-action-compare() {
     olddir=${output_dir}
     local newdir=${with_dir:-deployed/manifests}/${target_name}
-    info comparing ${target_name}: ${output_dir} with ${newdir}
+    log-info render "comparing ${target_name}: ${output_dir} with ${newdir}"
     verbose-cmd diff -r $newdir $olddir || true
 }
 

@@ -28,16 +28,16 @@ git-add-message() {
     else
         git_commit_message+=", ${1}"
     fi
-    debug "commmit message is: $git_commit_message"
+    log-debug git "commmit message is: $git_commit_message"
 }
 
 run-action-git-pull() {
-    info "running git-pull for $target_name"
+    log-info git "running git-pull for $target_name"
     verbose-cmd git pull
 }
 
 run-action-git-diff() {
-    info git-diff ${target_name} to ${output_dir}
+    log-info git "git-diff ${target_name} to ${output_dir}"
     if ${quiet_diff:-false}; then
         verbose-cmd git diff --compact-summary -- ${used_files} ${output_dir} || true
     elif $(log-is-debug); then
@@ -51,20 +51,20 @@ run-action-git-diff() {
 
 run-action-git-add() {
     if $tmp; then
-        info skipping git-add because --tmp specfied
+        log-info git "skipping git-add because --tmp specfied"
         return
     fi
-    info git-add ${target_name} to ${output_dir}
+    log-info git "git-add ${target_name} to ${output_dir}"
     verbose-cmd git add ${used_files} ${output_dir}
 }
 run-action-git-restore() {
     # TODO: find better way to determine if path is tracked
     if [[ $output_dir == tmp/* ]]; then
         # git restore gives pathspec error on untracked paths
-        info git-restore ${used_files}
+        log-info git "git-restore ${used_files}"
         verbose-cmd git restore ${used_files}
     else
-        info git-restore ${used_files} ${output_dir}
+        log-info git "git-restore ${used_files} ${output_dir}"
         verbose-cmd git restore ${used_files} ${output_dir}
         verbose-cmd git clean --force ${output_dir}  # remove any files that were not there initially
     fi
@@ -77,10 +77,10 @@ run-action-git-status() {
 
 run-action-git-commit() {
     if $tmp; then
-        info skipping git-commit because --tmp specified
+        log-info git "skipping git-commit because --tmp specified"
         return
     fi
-    info "running git-commit for $target_name"
+    log-info git "running git-commit for $target_name"
     : ${git_commit_message:=${action} of ${target_name}}
     if git diff-index --quiet HEAD; then
         verbose Nothing added to commit for message: "${git_commit_message}"
