@@ -18,6 +18,7 @@ init-loggers() {
         [format.verbose]="## %s\n"
         [format.verbose.cmd]="    %s\n"
         [format.debug]="### %s\n"
+        [appender]=log-to-console #log-to-console-with-timestamp
     )
     declare -gA logger_level=([root]=info)
 }
@@ -60,11 +61,24 @@ logger-shows-level() {
 ##########################
 # logging functions
 
+log-to-console() {
+    local level=$1 logger=$2 message="$3"
+    local format="$(find-logger-config format $level.$logger)"
+    printf "$format" "$message"
+}
+log-to-console-with-timestamp() {
+    local level=$1 logger=$2 message="$3"
+    local format="$(find-logger-config format $level.$logger)"
+    printf "%s $format" ":$(date -I)" "$message"
+}
+
+
+
 log-at-level() {
     local level=$1 logger=$2 message="$3"
     if $(logger-shows-level $logger $level); then
-        local format="$(find-logger-config format $level.$logger)"
-        printf "$format" "$message"
+        local appender="$(find-logger-config appender $level.$logger)"
+        $appender $level $logger "$message"
     fi
 }
 log-error()   { log-at-level error $1 "$2"; }
