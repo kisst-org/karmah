@@ -28,11 +28,11 @@ log-is-info()    { (( ${log_level} >= ${log_level_info} )) }
 log-is-verbose() { (( ${log_level} >= ${log_level_verbose} )) }
 log-is-debug()   { (( ${log_level} >= ${log_level_debug} )) }
 
-error()   { if $(log-is-error);   then printf "ERROR %s \n" "${*}";  fi }
-warn()    { if $(log-is-warn);    then printf "WARN %s \n" "${*}";  fi }
-info()    { if $(log-is-info);    then printf "# %s \n" "${*}";  fi }
-verbose() { if $(log-is-verbose); then printf "## %s \n" "${*}";  fi }
-debug()   { if $(log-is-debug);   then printf "### %s \n" "${*}";  fi }
+error()   { if $(log-is-error);   then printf "*ERROR %s \n" "${*}";  fi }
+warn()    { if $(log-is-warn);    then printf "*WARN %s \n" "${*}";  fi }
+info()    { if $(log-is-info);    then printf "* %s \n" "${*}";  fi }
+verbose() { if $(log-is-verbose); then printf "*# %s \n" "${*}";  fi }
+debug()   { if $(log-is-debug);   then printf "*## %s \n" "${*}";  fi }
 
 error-stderr()   { if $(log-is-error);   then printf >/dev/stderr "ERROR %s \n" "${*}";  fi }
 warn-stderr()    { if $(log-is-warn);    then printf >/dev/stderr "WARN %s \n" "${*}";  fi }
