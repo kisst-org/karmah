@@ -83,7 +83,7 @@ run-action-git-commit() {
     log-info git "running git-commit for $target_name"
     : ${git_commit_message:=${action} of ${target_name}}
     if git diff-index --quiet HEAD; then
-        verbose Nothing added to commit for message: "${git_commit_message}"
+        log-verbose git "Nothing added to commit for message: ${git_commit_message}"
     else
         run-cmd-from-action verbose git commit -m "${git_commit_message}" ${used_files} ${output_dir}
     fi

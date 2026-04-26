@@ -98,7 +98,7 @@ run-action-bao-secret-id-info() {
     fi
     info lookup secret-id: $secret_value # TODO log-sensitive-info
     if $(log-is-warn); then
-        verbose bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value
+        log-verbose bao "write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value"
         run-bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value || exitcode=$?
         if [[ $exitcode == 2 ]]; then
             log-warn bao "bao token lookup exitcode 2: invalid secret-id $secret_value, probably expired token stored in secret"
@@ -127,7 +127,7 @@ run-action-bao-secret-id-update() {
         echo ==== creating new token in Secret
     fi
     secret_value=$(bao-create-secret-id)
-    verbose created secret-id $secret_value
+    log-verbose bao "created secret-id $secret_value"
     run-action-bao-secret-update
     if $(log-is-verbose); then
         echo ======== NEW TOKEN ============

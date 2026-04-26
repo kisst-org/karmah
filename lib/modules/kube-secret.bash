@@ -32,14 +32,14 @@ EOF
 }
 
 run-action-kube-secret-update() {
-    verbose kubectl $(kubectl-options) apply -f ...
+    log-verbose kube-secret "kubectl $(kubectl-options) apply -f ..."
     kube-secret-manifest | kubectl $(kubectl-options) apply -f -
 }
 
 run-action-kube-secret-get() {
     use-karmah-var secret_name
     use-karmah-var secret_field
-    verbose kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath="{.data.${secret_field}}"
+    log-verbose kube-secret "kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath=\"{.data.${secret_field}}\""
     local val=$(kubectl $(kubectl-options) get secrets  ${secret_name} -o jsonpath="{.data.${secret_field}}")
     secret_value=$(echo -n $val| base64 -d)
 }

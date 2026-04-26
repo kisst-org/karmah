@@ -27,7 +27,7 @@ run-action-ask() {
 run-action-deploy() {
     output_dir=deployed/manifests/$target_name
     local actions=$(add-commas ${deploy_actions:-render,git-diff,ask,git-commit})
-    verbose deploying ${output_dir} with actions: ${actions}
+    log-verbose deploy "deploying ${output_dir} with actions: ${actions}"
     git-add-message "deploy $target_name"
     # TODO: output_dir is different for actions before this action
     # should be first (only) action
