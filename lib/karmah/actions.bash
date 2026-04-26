@@ -91,7 +91,7 @@ warn-if-action-args() {
 }
 error-if-action-args() {
     if [[ ! -z ${action_args:-} ]]; then
-        error action got action_args \"$action_args\" that is not supported
+        log-error actions "action got action_args \"$action_args\" that is not supported"
         exit 1
     fi
 }

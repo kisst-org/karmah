@@ -35,7 +35,7 @@ parse-karmah-var() {
         log-warn karmah "unknown karmah var $name"
     else
         if [[ $# == 1 ]]; then
-            error "missing value for karmah-var $1"
+            log-error karmah "missing value for karmah-var $1"
             exit 1
         fi
         log-info karmah "setting karmah-var $name to $2"
@@ -49,7 +49,7 @@ use-karmah-var() {
     local longname=$1
     local varname=${karmah_var_names[$longname]:-}
     if [[ -z $varname ]]; then
-        error "code refers to unknown karmah-var $longname"
+        log-error karmah "code refers to unknown karmah-var $longname"
         exit 1
     fi
     declare -g $varname=$(get-karmah-var $longname "${2:-}")

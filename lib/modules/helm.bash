@@ -61,7 +61,7 @@ calc-helm-chart-options() {
         local)   echo $helm_chart;;
         remote)  echo "$helm_chart_name --repo $helm_chart_repo  --version helm_chart_version";;
         pulled)  echo helm/charts/$helm_chart_name-$helm_chart_version ;;
-        *) error "unknow helm_chart_location $helm_chart_location"; exit 1;;
+        *) log-error helm "unknow helm_chart_location $helm_chart_location"; exit 1;;
     esac
 }
 

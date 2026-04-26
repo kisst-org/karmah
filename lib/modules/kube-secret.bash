@@ -53,7 +53,7 @@ run-action-kube-secret-save-files() {
     log-info kube-secret "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
-        error "no secret found with name $secret_name"
+        log-error kube-secret "no secret found with name $secret_name"
         exit 1
     fi
     local line; for line in ${data//: /:}; do
@@ -69,7 +69,7 @@ run-action-kube-secret-print-yaml() {
     log-info kube-secret "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
-        error "no secret found with name $secret_name"
+        log-error kube-secret "no secret found with name $secret_name"
         exit 1
     fi
     local line; for line in ${data//: /:}; do
