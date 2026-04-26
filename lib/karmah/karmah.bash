@@ -32,7 +32,7 @@ parse-karmah-var() {
     if [[ $name == $1 ]]; then return; fi
     local varname=${karmah_var_names[$name]:-}
     if [[ -z $varname ]]; then
-        warn unknown karmah var $name
+        log-warn karmah "unknown karmah var $name"
     else
         if [[ $# == 1 ]]; then
             error "missing value for karmah-var $1"

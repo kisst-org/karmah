@@ -99,11 +99,11 @@ argparse-redefine-short() {
 argparse-add-short() {
     local short=$1 long=$2
     if [[ $long == ${argparse_short_map[$short]:-} ]]; then
-        verbose WARN "redefining short $short ==> $long"
+        log-verbose argparse "WARN redefining short $short ==> $long"
     elif [[ ! -z ${argparse_short_map[$short]:-} ]]; then
-        warn "short $short ==> $long already defined to ${argparse_short_map[$short]}"
+        log-warn argparse "short $short ==> $long already defined to ${argparse_short_map[$short]}"
     elif [[ ! -z ${argparse_short_lookup[$long]:-} ]]; then
-        warn "short $short ==> $long clashes with existing short ${argparse_short_lookup[$long]}"
+        log-warn argparse "short $short ==> $long clashes with existing short ${argparse_short_lookup[$long]}"
     else
         argparse-redefine-short $short $long
     fi
@@ -112,7 +112,7 @@ argparse-clear-short() {
     local short=$1
     local long=${argparse_short_map[$short]:-}
     if [[ -z $long ]]; then
-        warn attempting to clearing unset short $short
+        log-warn argparse "attempting to clearing unset short $short"
     else
         unset argparse_short_map[$short]
         unset argparse_short_lookup[$long]

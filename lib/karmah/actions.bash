@@ -86,7 +86,7 @@ show-actions() { list-help-items action; }
 
 warn-if-action-args() {
     if [[ ! -z ${action_args:-} ]]; then
-        warn action got action_args \"$action_args\" that is not supported
+        log-warn actions "action got action_args \"$action_args\" that is not supported"
     fi
 }
 error-if-action-args() {

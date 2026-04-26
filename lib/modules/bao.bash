@@ -56,9 +56,9 @@ run-action-bao-token-info() {
     if $(log-is-warn); then
         run-bao "token lookup" $token || exitcode=$?
         if [[ $exitcode == 2 ]]; then
-            warn bao token lookup exitcode 2: invalid token $token, probably expired token stored in secret
+            log-warn bao "bao token lookup exitcode 2: invalid token $token, probably expired token stored in secret"
         elif [[ $exitcode != 0 ]]; then
-            warn bao token lookup exitcode $exitcode: maybe permission denied
+            log-warn bao "bao token lookup exitcode $exitcode: maybe permission denied"
         fi
     else
         # same command, but no errors printed
@@ -101,9 +101,9 @@ run-action-bao-secret-id-info() {
         verbose bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value
         run-bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value || exitcode=$?
         if [[ $exitcode == 2 ]]; then
-            warn bao token lookup exitcode 2: invalid secret-id $secret_value, probably expired token stored in secret
+            log-warn bao "bao token lookup exitcode 2: invalid secret-id $secret_value, probably expired token stored in secret"
         elif [[ $exitcode != 0 ]]; then
-            warn bao token lookup exitcode $exitcode: maybe permission denied
+            log-warn bao "bao token lookup exitcode $exitcode: maybe permission denied"
         fi
     else
         # same command, but no errors printed
