@@ -16,7 +16,4 @@ config-pre-module-init() {
     if [[ -f config.d/.pre-init-modules ]]; then
         source config.d/.pre-init-modules
     fi
-    if [[ -f .${climah_prog}.config ]]; then
-        source .${climah_prog}.config
-    fi
 }

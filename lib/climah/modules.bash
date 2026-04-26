@@ -56,7 +56,7 @@ show-help-about-module() {
     show-help-section option
 }
 
-init-all-modules() {
+declare-all-module-vars() {
     declare -g modules=""
     declare -gA module_loaded=()
     declare -gA module_disabled=()
@@ -68,9 +68,10 @@ init-all-modules() {
     for m in $var_modules; do
         ${m}::declare-vars
     done
-
     config-pre-module-init
+}
 
+init-all-modules() {
     # Then load modules, that may need variable from other modules
     local m mod=$(set | grep -E '^[A-Za-z-]*::init-module ()'| sed -e 's/::init-module.*//')
     debug loading modules: $mod
