@@ -1,5 +1,5 @@
 
-update::init-climah-module() {
+update::init-module() {
     add-module-help "actions to update source files for rendering e.g. (helm values)"
     add-karmah-action u update "update source files with expressions from --update"
     add-parse-option V version ver  "specify version (tag) to use for update or scale"

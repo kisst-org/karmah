@@ -1,4 +1,4 @@
-bao::init-climah-module() {
+bao::init-module() {
     add-module-help "actions to work with bao"
 
     add-value-option "" ttl duration      "set the ttl voor a token, e.g. 30m of 60d"

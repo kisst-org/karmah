@@ -7,7 +7,7 @@ karmah::declare-vars() {
     declare -gA karmah_var_value_map=()
 }
 
-karmah::init-climah-module() {
+karmah::init-module() {
     climah_prog=karmah
     add-help-topic ver version  karmah-show-version "show version of karmah"
     default_action=render

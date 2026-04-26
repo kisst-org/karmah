@@ -1,5 +1,5 @@
 
-helm::init-climah-module() {
+helm::init-module() {
     add-module-help "actions to work with helm"
     help_level=expert
     add-render-action hd helm-diff           "run diff for target vs helm deployed manifests"

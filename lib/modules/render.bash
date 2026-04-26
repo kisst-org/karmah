@@ -1,5 +1,5 @@
 
-render::init-climah-module() {
+render::init-module() {
     add-module-help "actions to render manifests"
     local_vars+=" renderer output_dir already_rendered sort_env_vars"
     declare -g to_dir

@@ -1,5 +1,5 @@
 
-kapp::init-climah-module() {
+kapp::init-module() {
     add-module-help "actions to work with kapp"
     help_level=expert
     add-render-action "" kapp-plan    "show what resources will be updated"

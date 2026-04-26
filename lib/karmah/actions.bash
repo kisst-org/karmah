@@ -8,7 +8,7 @@ actions::declare-vars() {
     declare -gA action_pre_hook=()
 }
 
-actions::init-climah-module() {
+actions::init-module() {
     add-help-topic act actions "" "show available actions"
     add-help-topic flw flows actions-show-flows "show available flows"
     help_level=expert

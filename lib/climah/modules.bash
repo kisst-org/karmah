@@ -21,7 +21,7 @@ init-module() {
         all_modules+=" $module"
         help_level=${default_module_help_level:-basic}
         debug running init module for "${module}"
-        ${module}::init-climah-module
+        ${module}::init-module
     fi
 }
 require-modules() {
@@ -72,7 +72,7 @@ init-all-modules() {
     config-pre-module-init
 
     # Then load modules, that may need variable from other modules
-    local m mod=$(set | grep -E '^[A-Za-z-]*::init-climah-module ()'| sed -e 's/::init-climah-module.*//')
+    local m mod=$(set | grep -E '^[A-Za-z-]*::init-module ()'| sed -e 's/::init-module.*//')
     debug loading modules: $mod
     for m in "$@" $mod; do
         init-module $m

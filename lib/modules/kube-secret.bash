@@ -1,4 +1,4 @@
-kube-secret::init-climah-module() {
+kube-secret::init-module() {
     add-module-help "actions to work with kubernetes secrets"
     add-karmah-action ksu  kube-secret-update      "update or create a kubernetes secret (kubectl apply)"
     add-karmah-action ksg  kube-secret-get         "get the value of a kubernetes secret for use in following action"

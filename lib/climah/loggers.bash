@@ -23,7 +23,7 @@ init-loggers() {
     declare -gA logger_level=([root]=info)
 }
 
-loggers::init-climah-module() {
+loggers::init-module() {
     add-parse-option v  verbose  ""    "give more output"
     add-parse-option "" quiet    ""    "show no output"
     add-parse-option S  show-script "" "show all commands without doing much"

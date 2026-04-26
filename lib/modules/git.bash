@@ -3,7 +3,7 @@ git::declare-vars() {
     declare -g git_pulled=false
 }
 
-git::init-climah-module() {
+git::init-module() {
     add-module-help "actions to work with git"
     help_level=expert
     add-render-action gd git-diff     "shows the changes to source and rendered manifests with git"

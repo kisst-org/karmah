@@ -1,4 +1,4 @@
-kube::init-climah-module() {
+kube::init-module() {
     add-module-help "actions to work with kubernetes"
     add-render-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
     add-render-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"

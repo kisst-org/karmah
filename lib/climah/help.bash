@@ -9,7 +9,7 @@ help::declare-vars() {
     declare -gA help_all_items=()
 }
 
-help::init-climah-module() {
+help::init-module() {
     commands-add h  help show-help    "show general help"
     add-parse-option  h  help ""           "show general help information"
     add-parse-option  X  extended-help ""  "show extensive help information"

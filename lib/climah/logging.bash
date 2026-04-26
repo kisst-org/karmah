@@ -13,7 +13,7 @@ init-logging() {
     init-loggers
 }
 
-logging::init-climah-module() {
+logging::init-module() {
     add-flag-option C  log-cmds  "show the commands being executed"
     help_level=expert
     add-parse-option "" debug        ""    show detailed debug info
