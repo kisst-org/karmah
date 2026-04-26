@@ -19,6 +19,13 @@ help::init-climah-module() {
     argparse_parse_func_map[help]=parse-option-help
 }
 
+set-help-level() {
+    local level=$1; shift
+    local item; for item in "$@"; do
+        help_item_level[$item]=level
+    done
+}
+
 add-help-topic() {
     # TODO: func is not needed anymore
     local short=$1 name=$2 func=${3} summary=${4:-no summary}

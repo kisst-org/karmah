@@ -19,7 +19,7 @@ init-module() {
     elif [[ ${module_loaded[$module]:-false} == false ]]; then
         module_loaded[$module]=true
         all_modules+=" $module"
-        help_level=basic
+        help_level=${default_module_help_level:-basic}
         debug running init module for "${module}"
         ${module}::init-climah-module
     fi
