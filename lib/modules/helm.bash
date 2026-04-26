@@ -17,6 +17,9 @@ helm::init-module() {
     set-action-pre-flow load-karmah,update,render,helm-diff,ask         helm-upgrade
     set-action-pre-flow load-karmah,update,render,helm-diff-delete,ask  helm-uninstall
 
+    add-karmah-action "hpv" helm-print-value  "print the value of a path in  helm values"
+    add-karmah-var path "the path to show from helm values"
+
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
     local_vars+=" helm_chart"
@@ -166,6 +169,10 @@ run-action-helm-diff() {
     run-cmd-from-action verbose diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }
 
+run-action-helm-print-value() {
+    use-karmah-var path
+    helm-get-path-value $path
+}
 
 render-helm() {
     local default_cmd="helm template"
