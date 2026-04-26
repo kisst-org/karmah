@@ -1,7 +1,6 @@
-
-
 climah-init() {
     init-logging "${@}"
+    load-libraries
     init-all-modules # TODO: ordering: help logging options render git
     module=commands add-help-topic cmd commands "" "show available commands"
     module=options  add-help-topic opt options  "" "show available commands"
@@ -23,4 +22,10 @@ climah-main() {
     declare -g climah_help_full_function
     climah-init "${@}"
     commands-run
+}
+
+load-libraries() {
+    for file in ${lib_dir:-lib}/*.bash; do
+        source $file
+    done
 }
