@@ -29,7 +29,7 @@ run-action-bao-login() {
         local answer
         read -p "token file $bao_token_file already exist, do you want to login anyway [Y/n]? " answer
         if [[ "${answer}" == n ]] ;then
-            info "Stopping bao login"
+            log-info bao "Stopping bao login"
             exit 1
         fi
     fi
@@ -43,7 +43,7 @@ export-bao-login-token() { export VAULT_TOKEN=$(<$bao_token_file); }
 run-bao() {
     local cmd=$1; shift
     export-bao-login-token
-    info bao $cmd $bao_options "${@}"
+    log-info bao "bao $cmd $bao_options \"${@}\""
     bao $cmd $bao_options "${@}"
 }
 
@@ -88,7 +88,7 @@ run-action-bao-token-update() {
 # secret-id's
 run-action-bao-secret-id-create() {
     secret_value=$(run-bao write -force -format=yaml auth/approle/role/$(bao-role-name)/secret-id | yq .data.secret_id)
-    info created secret-id $secret_value
+    log-info bao "created secret-id $secret_value"
 }
 run-action-bao-secret-id-info() {
     local error
@@ -96,7 +96,7 @@ run-action-bao-secret-id-info() {
     if [[ -z ${secret_value:-} ]]; then
         secret_value=$argparse_extra_args
     fi
-    info lookup secret-id: $secret_value # TODO log-sensitive-info
+    log-info bao "lookup secret-id: $secret_value # TODO log-sensitive-info"
     if $(log-is-warn); then
         log-verbose bao "write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value"
         run-bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value || exitcode=$?

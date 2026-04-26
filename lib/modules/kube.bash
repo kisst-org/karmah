@@ -46,7 +46,7 @@ filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation:
 filter-kube-diff-quiet() { filter-kube-diff-output | grep -E ^--- | sed -e 's|--- /tmp/LIVE-[0-9]*/||' -e 's/[ \t].*$//' -e 's/^/  changed: /'; }
 
 run-action-kube-diff() {
-    info kube-diff ${target_name} to ${output_dir}
+    log-info kube "kube-diff ${target_name} to ${output_dir}"
     if ${quiet_diff:-false}; then
         #KUBECTL_EXTERNAL_DIFF='diff -qr'
         verbose-pipe filter-kube-diff-quiet kubectl diff $(kubectl-options) -f $output_dir || true
@@ -58,28 +58,28 @@ run-action-kube-diff() {
 }
 
 run-action-kube-diff-delete() {
-    info kube-diff-delete all resources ${target_name} from ${output_dir}
+    log-info kube "kube-diff-delete all resources ${target_name} from ${output_dir}"
     run-cmd-from-action verbose ls -l $output_dir
 }
 
 run-action-kube-apply() {
-    info kube-apply $output_dir
+    log-info kube "kube-apply $output_dir"
     run-cmd-from-action verbose kubectl apply $(kubectl-options) -f $output_dir
 }
 
 run-action-kube-delete() {
-    info kube delete $output_dir
+    log-info kube "kube delete $output_dir"
     run-cmd-from-action verbose kubectl delete $(kubectl-options) -f $output_dir
 }
 
 run-action-kubectl() {
-    info kubectl $output_dir
+    log-info kube "kubectl $output_dir"
     run-cmd-from-action verbose kubectl $(kubectl-options) $action_args
 }
 
 
 run-action-kube-get-manifests() {
-    info kube get manifests  ${target_name} to ${output_dir}
+    log-info kube "kube get manifests  ${target_name} to ${output_dir}"
     run-cmd-from-action verbose rm -rf ${output_dir}
     run-cmd-from-action verbose mkdir -p ${output_dir}
     verbose-pipe split-yaml-items-into-files kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml

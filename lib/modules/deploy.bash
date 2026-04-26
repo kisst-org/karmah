@@ -13,13 +13,13 @@ parse-option-yes() { yes_arg="--yes"; }
 
 run-action-ask() {
     if [[  $yes_arg == --yes ]]; then
-        info skipping ask, because --yes is specified
+        log-info deploy "skipping ask, because --yes is specified"
         return 0
     fi
     local answer
     read -p "do you want to continue [y/N]? " answer
     if [[ "${answer}" != y ]] ;then
-        info "Stopping karmah"
+        log-info deploy "Stopping karmah"
         exit 1
     fi
 }
@@ -31,19 +31,19 @@ run-action-deploy() {
     git-add-message "deploy $target_name"
     # TODO: output_dir is different for actions before this action
     # should be first (only) action
-    info "deploying $target_name with actions ${actions// /,}"
+    log-info deploy "deploying $target_name with actions ${actions// /,}"
     run-single-actions $actions
 }
 
 run-action-plan() {
     local actions=$(add-commas ${plan_actions:-render,git-diff})
-    info "planning deploy $target_name with actions: ${actions// /,}"
+    log-info deploy "planning deploy $target_name with actions: ${actions// /,}"
     run-single-actions $actions
 }
 
 run-command-undeploy() {
     output_dir="${to_dir:-deployed/manifests}/${target_name}"
     local actions=$(add-commas ${undeploy_actions:-render-rm,git-diff,ask,git-commit})
-    info "undeploying ${target_name} with actions: ${actions}"
+    log-info deploy "undeploying ${target_name} with actions: ${actions}"
     run-single-actions $actions
 }

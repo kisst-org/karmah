@@ -38,7 +38,7 @@ parse-karmah-var() {
             error "missing value for karmah-var $1"
             exit 1
         fi
-        info "setting karmah-var $name to $2"
+        log-info karmah "setting karmah-var $name to $2"
         karmah_var_value_map[$name]=$2
         argparse_parse_count=2
     fi
@@ -96,7 +96,7 @@ run-action-load-karmah() {
     elif [[ -d ${target_path:-} ]]; then
         karmah_file=($target_path/*.karmah) # use array for globbing
     else
-        info "skipping $target_path"
+        log-info karmah "skipping $target_path"
         # TODO: warn, error or skip_flow
         return 0
     fi
@@ -121,7 +121,7 @@ load-karmah-file() {
             output_dir="${to_dir:-tmp/manifests}/${target_name}"
         fi
     else
-        info skipping $karmah_file
+        log-info karmah "skipping $karmah_file"
     fi
 }
 

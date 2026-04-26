@@ -50,7 +50,7 @@ run-action-kube-secret-manifest() { kube-secret-manifest; }
 
 run-action-kube-secret-save-files() {
     use-karmah-var secret_name
-    info "getting file(s) from secret $secret_name"
+    log-info kube-secret "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
         error "no secret found with name $secret_name"
@@ -59,14 +59,14 @@ run-action-kube-secret-save-files() {
     local line; for line in ${data//: /:}; do
         local name=${line/:*/}
         local content=${line//*:/}
-        info saving $name
+        log-info kube-secret "saving $name"
         echo  $content | base64 -d >$name
     done
 }
 
 run-action-kube-secret-print-yaml() {
     use-karmah-var secret_name
-    info "getting file(s) from secret $secret_name"
+    log-info kube-secret "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
         error "no secret found with name $secret_name"
