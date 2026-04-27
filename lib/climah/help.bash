@@ -1,5 +1,6 @@
 help::declare-vars() {
     declare -g help_show_level=basic
+    declare -g help_items_to_show=""
     declare -gA help_item_map=()
     declare -gA help_item_summary=()
     declare -gA help_item_module=()
@@ -17,7 +18,17 @@ help::init-module() {
     add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
     add-help-topic top topics   show-help-topics "show all help-topics"
     argparse_parse_func_map[help]=parse-option-help
+    append-argparse-func parse-help-topic
+    append-argparse-func parse-help-item
 }
+parse-help-topic() {
+    local name=$1
+    if [[ -z ${help_item_module[$name]:-} ]]; then return 0; fi
+    command_to_run=help
+    help_items_to_show+=" $name"
+    argparse_parse_count=1;
+}
+
 
 set-help-level() {
     local level=$1; shift
@@ -31,28 +42,36 @@ add-help-topic() {
     local short=$1 name=$2 func=${3} summary=${4:-no summary}
     debug adding help-topic: "${@}"
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
-    add-help-item topic $name "" "$summary"
+    add-help-item $name topic:$name "" "$summary"
 }
 
 add-help-item() {
-    local type=$1 name=$2 params=$3 summary=$4
-    local key=$type:$name
-    help_item_map[$name]+=" $key"
-    help_item_map[$type:$name]=$key
+    local short=$1 key=$2 params=$3 summary=$4
+    if [[ ! -z $short ]]; then
+        help_item_map[$short]=$key
+    fi
+    local type=${key//:*/}
+    help_item_map[$key]=$key
     if [[ -z ${help_item_module[$key]:-} ]]; then
         # do not add a second time
-        help_all_items[$type]+=" $name"
+        help_all_items[$type]+=" $key"
     fi
     help_item_module[$key]=$module
     help_item_level[$key]=$help_level
     help_item_params[$key]=$params
     help_item_summary[$key]=$summary
+    argparse_parse_func_map[$key]=parse-help-item
+}
+parse-help-item() {
+    help_items_to_show+=" $1"
+    command_to_run=help;
+    argparse_parse_count=1;
 }
 
 help-is-visible() {
-    local item=$1
-    local lvl=${help_item_level[$item]}
-    local mod=${help_item_module[$item]}
+    local key=$1
+    local lvl=${help_item_level[$key]}
+    local mod=${help_item_module[$key]}
     if [[ ${help_show_module:-$mod} != $mod ]]; then
         echo false
     elif [[ ${help_show_level:-basic} == *${lvl}* || ${help_show_level:-basic} == all ]]; then
@@ -65,8 +84,7 @@ help-is-visible() {
 has-help-items() {
     local type=$1
     local item len=1 slen=0
-    for item in ${help_all_items[$type]}; do
-        local key=$type:$item
+    for key in ${help_all_items[$type]}; do
         if $(help-is-visible $key); then
             echo true
             return
@@ -79,27 +97,27 @@ has-help-items() {
 list-help-items() {
     local type=$1
     local item len=1 slen=0
-    for item in ${help_all_items[$type]}; do
-        local key=$type:$item
+    for key in ${help_all_items[$type]}; do
         if $(help-is-visible $key); then
-            local lname=$key
+            local lname=${key/*:/}
+            local name=${key/*:/}
             if [[ ! -z ${help_item_params[$key]} ]]; then
                 lname+=" <${help_item_params[$key]}>"
             fi
             if (( $len < ${#lname} )); then len=${#lname}; fi
-            local short=${argparse_short_lookup[$item]:-}
+            local short=${argparse_short_lookup[$name]:-}
             local shortlen=${#short}
             if (( $slen < $shortlen)); then slen=$shortlen; fi
         fi
     done
-    for item in ${help_all_items[$type]}; do
-        local lname=$item
-        local key=$type:$item
+    for key in ${help_all_items[$type]}; do
+        local name=${key/*:/}
+        local lname=$name
         if [[ ! -z ${help_item_params[$key]} ]]; then
             lname+=" <${help_item_params[$key]}>"
         fi
         if $(help-is-visible $key); then
-            printf "  %-${slen}s %-${len}s %s\n" "${argparse_short_lookup[$item]:-}" "$lname" "${help_item_summary[$key]}"
+            printf "  %-${slen}s %-${len}s %s\n" "${argparse_short_lookup[$name]:-}" "$lname" "${help_item_summary[$key]}"
         fi
     done
 }
@@ -107,18 +125,19 @@ list-help-items() {
 parse-option-help() { command_to_run=help;  }
 parse-option-extended-help() { help_show_level=all;  }
 
+add-arg-to-help() { help_items_to_show+=" $1"; }
 show-help() {
     local found=false
     local unknown_topics=""
     #for arg in $argparse_parsed_args $argparse_extra_args $argparse_unknown_args ; do
-    for arg in $argparse_original_args ; do
-        arg=${argparse_short_map[$arg]:-$arg}
-        local key; for key in ${help_item_map[$arg]:-}; do
-            if [[ $key == command:help ]]; then continue; fi
-            if [[ $key == option:--help ]]; then continue; fi
-            if [[ $key == option:--verbose ]]; then continue; fi
-            find-help-item
-        done
+    log-info help "showing help about ${help_items_to_show# }"
+    for arg in $help_items_to_show ; do
+        local key=${argparse_short_map[$arg]:-$arg}
+        key=${help_item_map[$key]:-$key}
+        if [[ $key == command:help ]]; then continue; fi
+        if [[ $key == option:--help ]]; then continue; fi
+        if [[ $key == option:--verbose ]]; then continue; fi
+        find-help-item
     done
     if ! $found; then
         if [[ ${help_show_level:-} == all ]]; then
@@ -138,8 +157,9 @@ show-help() {
 
 find-help-item() {
     if [[ ! -z  $key ]] ; then
-        local type=${key%:*}
-        local name=${key#*:}
+        key=${help_item_map[$key]:-$key}
+        local type=${key/:*/}
+        local name=${key/*:/}
         local func=show-help-about-$type
         if ! $(function-exists $func); then
             func=show-type-help
@@ -159,7 +179,7 @@ find-help-item() {
 show-type-help() {
     local type=$1 name=$2
     local short=${argparse_short_lookup[$name]:-}
-    if [[ -z $short ]]; then
+    if [[ ! -z $short ]]; then
         echo "$type $short $name: ${help_item_summary[$type:$name]}"
     else
         echo "$type $name (or $short): ${help_item_summary[$type:$name]}"
@@ -194,5 +214,5 @@ ${climah_prog_name} help [<topic>]
 
 topic can be any of:
 EOF
-    list-help-items topic;
+    list-help-items topic
 }

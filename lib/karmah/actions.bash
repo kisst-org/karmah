@@ -25,10 +25,13 @@ add-action() {
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     : ${action_flow[$name]:=$name}  # default flow is just the action
     action_module[$name]=$module
-    add-help-item action $name "" "$summary"
+    add-help-item $name action:$name "" "$summary"
 }
 
-parse-action() { action_list+=" ${argparse_param_list[0]}"; }
+parse-action() {
+    action_list+=" ${argparse_param_list[0]}";
+    help_items_to_show+=" action:${argparse_param_list[0]}"
+}
 
 set-action-pre-hook() { action_pre_hook[$1]=$2; }
 set-action-pre-flow() {
@@ -36,7 +39,7 @@ set-action-pre-flow() {
     shift
     for name in "${@//,/ }"; do
         action_flow[$name]=$actions,$name
-        add-help-item flow $name "" "run actions ${action_flow[$name]:-$name}"
+        add-help-item "" flow:$name "" "run actions ${action_flow[$name]:-$name}"
     done
 }
 

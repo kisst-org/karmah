@@ -10,7 +10,7 @@ add-func-option() {
     argparse_parse_func_map[--$name]=$func
     argparse_parse_params[--$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
-    add-help-item option "--$name" "$arg" "$summary"
+    add-help-item --$name option:--$name "$arg" "$summary"
 }
 
 add-parse-option()  { add-func-option "$1" $2 "$3" parse-option-$2 "$4"; }

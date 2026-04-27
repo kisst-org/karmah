@@ -6,6 +6,7 @@ climah-init() {
     module=commands add-help-topic cmd commands "" "show available commands"
     module=options  add-help-topic opt options  "" "show available commands"
     module=modules  add-help-topic mod modules  modules-show "show all modules"
+    append-argparse-func parse-module-name
 
     read-config
     if [[ $# == 0 ]]; then

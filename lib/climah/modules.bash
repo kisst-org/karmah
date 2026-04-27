@@ -14,13 +14,21 @@ init-module-system() {
     done
 }
 
+parse-module-name() {
+    local name=$1
+    if [[ -z ${help_item_module[module:$name]:-} ]]; then return 0; fi
+    command_to_run=help
+    help_items_to_show+=" $name"
+    argparse_parse_count=1;
+}
+
 modules-show() {
     cat <<EOF
 $climah_prog_name help [<module>]
 
 module can be any of:
 EOF
-    list-help-items module;
+    list-help-items module
 }
 
 init-module() {
@@ -45,7 +53,7 @@ require-modules() {
 
 add-module-help() {
     local summary="${1:-info about module $module}" key
-    add-help-item module $module "" "$summary"
+    add-help-item $module module:$module "" "$summary"
 }
 
 show-help-section() {
@@ -60,7 +68,7 @@ show-help-section() {
 show-help-about-module() {
     local type=$1 name=$2
     echo module $name: ${help_item_summary[module:$name]:-no summary}
-    help_show_level=all ;
+    help_show_level=all
     help_show_module=$name
     show-help-section command
     show-help-section action

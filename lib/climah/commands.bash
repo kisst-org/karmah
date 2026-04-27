@@ -25,7 +25,7 @@ commands-add() {
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     command_function[$name]=$func
     command_params[$name]=$name
-    add-help-item command $name "" "$summary"
+    add-help-item $name command:$name "" "$summary"
 }
 
 commands-run() {

@@ -13,6 +13,9 @@ argparse::declare-vars() {
     declare -g  argparse_unknown_args=""
 }
 
+append-argparse-func()  { argparse_parse_funcs=(   $argparse_parse_funcs $1); }
+prepend-argparse-func() { argparse_parse_funcs=($1 $argparse_parse_funcs   ); }
+
 add-argparse-alias() { argparse_aliases[$1]="$2"; }
 
 argparse-replace-aliases() {
