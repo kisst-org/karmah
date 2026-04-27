@@ -35,6 +35,9 @@ loggers::init-module() {
 
     add-flag-option "" dry-run   "do not execute the actual commands"
 
+    help_level=expert
+    add-parse-option "" logger-level "logger level" "show all commands without doing much"
+
     # TODO: parse multiple short options
     argparse_parse_func_map[-vv]=parse-option-verbose2
     argparse_parse_func_map[-vvv]=parse-option-verbose3
@@ -46,14 +49,19 @@ increase-log-level() {
     local -i value=${log_level_map[$old_level]}
     value+=10
     local new_level=${log_level_lookup[$value]:-trace}
-    log-debug logger increasing log-level for $logger from $old_level to $new_level
+    log-debug logger "increasing log-level for $logger from $old_level to $new_level"
     logger_level[$logger]=$new_level
 }
 parse-option-verbose()   { increase-log-level root; }
 parse-option-verbose2()  { increase-log-level root; increase-log-level root; }
 parse-option-verbose3()  { increase-log-level root; increase-log-level root; increase-log-level root;}
 parse-option-quiet()     { log_level=$log_level_warn; logger_level[root]=warn; }
-
+parse-option-logger-level() {
+    local logger=$2 level=$3 # TODO check number of args
+    log-debug logger "setting log-level for $logger to $level"
+    logger_level[$logger]=$level
+    argparse_parse_count=3
+}
 find-logger-level()  { echo ${logger_level[$1]:-${logger_level[root]}}; } # TODO do real search
 find-logger-config() {
     local type=$1 logger=$2
