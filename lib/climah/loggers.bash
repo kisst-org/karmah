@@ -10,6 +10,11 @@ init-loggers() {
       [debug]=50
       [trace]=60
     )
+    declare -ga log_level_lookup=()
+    local key; for key in ${!log_level_map[@]}; do
+        local -i val=${log_level_map[$key]}
+        log_level_lookup[$val]=$key
+    done
     declare -gA logger_config=(
         [format]="LOG %s\n"
         [format.error]="ERROR %s\n"
@@ -25,7 +30,7 @@ init-loggers() {
 
 loggers::init-module() {
     add-parse-option v  verbose  ""    "give more output"
-    add-parse-option "" quiet    ""    "show no output"
+    add-parse-option q  quiet    ""    "show no output"
     add-parse-option S  show-script "" "show all commands without doing much"
 
     add-flag-option "" dry-run   "do not execute the actual commands"
@@ -35,9 +40,18 @@ loggers::init-module() {
     argparse_parse_func_map[-vvv]=parse-option-verbose3
 }
 
-parse-option-verbose()   { log_level+=10; logger_level[root]=verbose; }
-parse-option-verbose2()  { log_level+=20; logger_level[root]=debug; }
-parse-option-verbose3()  { log_level+=30; logger_level[root]=trace; }
+increase-log-level() {
+    local logger=$1
+    local old_level=${logger_level[$logger]:-info}
+    local -i value=${log_level_map[$old_level]}
+    value+=10
+    local new_level=${log_level_lookup[$value]:-trace}
+    log-debug logger increasing log-level for $logger from $old_level to $new_level
+    logger_level[$logger]=$new_level
+}
+parse-option-verbose()   { increase-log-level root; }
+parse-option-verbose2()  { increase-log-level root; increase-log-level root; }
+parse-option-verbose3()  { increase-log-level root; increase-log-level root; increase-log-level root;}
 parse-option-quiet()     { log_level=$log_level_warn; logger_level[root]=warn; }
 
 find-logger-level()  { echo ${logger_level[$1]:-${logger_level[root]}}; } # TODO do real search
@@ -71,7 +85,6 @@ log-to-console-with-timestamp() {
     local format="$(find-logger-config format $level.$logger)"
     printf "%s $format" ":$(date -I)" "$message"
 }
-
 
 
 log-at-level() {
