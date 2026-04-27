@@ -1,28 +1,21 @@
 kube::init-module() {
-    add-module-help "actions to work with kubernetes"
-    add-render-action kd kube-diff    "compare rendered manifests with cluster (kubectl diff)"
-    add-render-action ka kube-apply   "apply rendered manifests with cluster (kubectl apply)"
-    add-render-action "" kube-delete  "delete all manifests from cluster (kubectl delete)"
+    add-module-help "helper actions to work with kubernetes"
+    add-parse-option R replicas nr  "specify number of replicas"
+    add-parse-option r resource res "specify a resource"
+
     add-karmah-action kw kube-watch   "watch target resources every 2 seconds"
-
-    set-action-pre-flow load-karmah,update,render,kube-diff,ask         kube-apply
-    set-action-pre-flow load-karmah,update,render,kube-diff-delete,ask  kube-delete
-
-    help_level=expert
     add-karmah-action ""  kube-get       "get current manifests from cluster to --to <path> (default) deployed/manifests"
-    add-karmah-action ""  kube-diff-del  "show resources that will be deleted with kube-delete"
     add-karmah-action ""  kube-tmp-scale "scale resource(s) without changing source or deployment files"
     add-karmah-action ""  kube-restart   "restart resource(s)"
+    add-karmah-action ""  kube-env       "show the environment vars of a pod (run env in a shell)"
+    add-karmah-action kl  kube-log       "show logging of a resource"
+    help_level=expert
     add-karmah-action k   kubectl        "generic kubectl in the right cluster and namespace of all targets"
     add-karmah-action ks  kube-status    "show status of relevant resources"
     add-karmah-action ke  kube-exec      "execute a command on a pod of a resource"
     add-karmah-action kei kube-exec-it   "execute interactive command on a pod of a resource"
-    add-karmah-action ""  kube-env       "show the environment vars of a pod (run env in a shell)"
-    add-karmah-action kl  kube-log       "show logging of a resource"
     add-karmah-action kst kube-stern     "use stern to show logging of multiple pods"
 
-    add-parse-option R replicas nr  "specify number of replicas"
-    add-parse-option r resource res "specify a resource"
     local_vars+=" kube_config kube_context kube_namespace"
 }
 
@@ -42,41 +35,10 @@ kubectl-run() {
     run-cmd-from-action verbose kubectl $(kubectl-options) "${@}"
 }
 
-filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation: [0-9]*$'; }
-filter-kube-diff-quiet() { filter-kube-diff-output | grep -E ^--- | sed -e 's|--- /tmp/LIVE-[0-9]*/||' -e 's/[ \t].*$//' -e 's/^/  changed: /'; }
-
-run-action-kube-diff() {
-    log-info kube "kube-diff ${target_name} to ${output_dir}"
-    if ${quiet_diff:-false}; then
-        #KUBECTL_EXTERNAL_DIFF='diff -qr'
-        verbose-pipe filter-kube-diff-quiet kubectl diff $(kubectl-options) -f $output_dir || true
-    elif $(log-is-verbose); then
-        run-cmd-from-action verbose kubectl diff $(kubectl-options) -f $output_dir || true
-    else
-        verbose-pipe filter-kube-diff-output kubectl diff $(kubectl-options) -f $output_dir || true
-    fi
-}
-
-run-action-kube-diff-delete() {
-    log-info kube "kube-diff-delete all resources ${target_name} from ${output_dir}"
-    run-cmd-from-action verbose ls -l $output_dir
-}
-
-run-action-kube-apply() {
-    log-info kube "kube-apply $output_dir"
-    run-cmd-from-action verbose kubectl apply $(kubectl-options) -f $output_dir
-}
-
-run-action-kube-delete() {
-    log-info kube "kube delete $output_dir"
-    run-cmd-from-action verbose kubectl delete $(kubectl-options) -f $output_dir
-}
-
 run-action-kubectl() {
     log-info kube "kubectl $output_dir"
     run-cmd-from-action verbose kubectl $(kubectl-options) $action_args
 }
-
 
 run-action-kube-get-manifests() {
     log-info kube "kube get manifests  ${target_name} to ${output_dir}"
