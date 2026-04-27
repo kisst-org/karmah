@@ -105,3 +105,10 @@ run-cmd-from-action() {
     shift 2
     run-and-log-cmd $level cmd.$module.$cmd $cmd "$@"
 }
+
+show-help-about-action() {
+    local type=$1 name=$2
+    echo $type $name: ${help_item_summary[$type:$name]:-no summary}
+    printf "\nCode:\n"
+    type run-action-$name| tail -n +2
+}
