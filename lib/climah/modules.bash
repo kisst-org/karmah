@@ -1,6 +1,17 @@
 
-modules::declare-vars() {
+init-module-system() {
+    declare -g modules=""
+    declare -gA module_loaded=()
+    declare -gA module_disabled=()
     declare -g all_modules=""
+    declare -gA module_help_level=()
+    #: ${default_module_help_level:=basic}
+    local mod; for mod in ${disable_modules:-}; do
+        module_disabled[$mod]=true
+    done
+    local mod; for mod in ${basic_help_modules:-}; do
+        module_help_level[$mod]=basic
+    done
 }
 
 modules-show() {
@@ -14,12 +25,13 @@ EOF
 
 init-module() {
     local module="$1"
+
     if ${module_disabled[$module]:-false}; then
         debug skipping module $module because it is disabled
     elif [[ ${module_loaded[$module]:-false} == false ]]; then
         module_loaded[$module]=true
         all_modules+=" $module"
-        help_level=${default_module_help_level:-basic}
+        help_level=${module_help_level[$module]:-${default_module_help_level:-basic}}
         debug running init module for "${module}"
         ${module}::init-module
     fi
@@ -56,33 +68,29 @@ show-help-about-module() {
     show-help-section option
 }
 
-declare-all-module-vars() {
-    declare -g modules=""
-    declare -gA module_loaded=()
-    declare -gA module_disabled=()
 
-    local func m
+
+declare-all-module-vars() {
+    init-module-system
+    #local func # TODO remove
     # first declare any variables that might be used in other modules
     local var_modules=$(set | grep -E '^[A-Za-z-]*::declare-vars'| sed -e 's/::declare-vars.*//')
     debug init-vars: $var_modules
-    for m in $var_modules; do
-        ${m}::declare-vars
+    local mod; for mod in $var_modules; do
+        if ! ${module_disabled[$mod]:-false}; then
+            ${mod}::declare-vars
+        fi
     done
     config-pre-module-init
 }
 
 init-all-modules() {
     # Then load modules, that may need variable from other modules
-    local m mod=$(set | grep -E '^[A-Za-z-]*::init-module ()'| sed -e 's/::init-module.*//')
-    debug loading modules: $mod
-    for m in "$@" $mod; do
-        init-module $m
+    local modules=$(set | grep -E '^[A-Za-z-]*::init-module ()'| sed -e 's/::init-module.*//')
+    log-debug modules "loading modules: $modules"
+    local mod; for mod in "$@" $modules; do
+        if ! ${module_disabled[$mod]:-false}; then
+            init-module $mod
+        fi
     done
-}
-
-module-disable() {
-   for m in "${@}"; do
-      debug disabling module $m
-      module_disabled[$m]=true;
-   done
 }

@@ -1,10 +1,7 @@
 climah-init() {
-    if [[ -f .climah.config ]]; then # TODO other name?
-        source .climah.config
-    fi
     init-logging "${@}"
-    declare-all-module-vars
     load-libraries
+    declare-all-module-vars
     init-all-modules # TODO: ordering: help logging options render git
     module=commands add-help-topic cmd commands "" "show available commands"
     module=options  add-help-topic opt options  "" "show available commands"
