@@ -1,11 +1,12 @@
 
 helm::init-module() {
     add-module-help "actions to work with helm"
-    help_level=expert
     add-render-action hd helm-diff           "run diff for target vs helm deployed manifests"
-    add-render-action "" helm-get-diff       "old name for helm-diff (deprecated)"
-    add-render-action hD helm-plugin-diff    "run helm diff plugin for target"
     add-render-action "" helm-upgrade        "run helm upgrade --install for target"
+    add-karmah-action "hpv" helm-print-value  "print the value of a path in  helm values"
+    help_level=expert
+    add-render-action "" helm-get-diff       "old name for helm-diff (deprecated)"
+    add-render-action "" helm-plugin-diff    "run helm diff plugin for target"
     add-render-action "" helm-install        "deprecated: run helm upgrade --install for target"
     add-render-action "" helm-uninstall      "run helm uninstall for target"
     add-render-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
@@ -17,7 +18,6 @@ helm::init-module() {
     set-action-pre-flow load-karmah,update,render,helm-diff,ask         helm-upgrade
     set-action-pre-flow load-karmah,update,render,helm-diff-delete,ask  helm-uninstall
 
-    add-karmah-action "hpv" helm-print-value  "print the value of a path in  helm values"
     add-karmah-var path "the path to show from helm values"
 
     local_vars+=" helm_template_command"
