@@ -16,16 +16,16 @@ help::init-module() {
     add-parse-option  X  extended-help ""  "show extensive help information"
 
     add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
-    add-help-topic top topics   show-help-topics "show all help-topics"
+    add-help-topic top topic    show-help-topics "show all help-topics"
     argparse_parse_func_map[help]=parse-option-help
     append-argparse-func parse-help-topic
     append-argparse-func parse-help-item
 }
 parse-help-topic() {
-    local name=$1
-    if [[ -z ${help_item_module[$name]:-} ]]; then return 0; fi
+    local key=${help_item_map[$1]:-$1}
+    if [[ -z ${help_item_module[$key]:-} ]]; then return 0; fi
     command_to_run=help
-    help_items_to_show+=" $name"
+    help_items_to_show+=" $key"
     argparse_parse_count=1;
 }
 
@@ -43,6 +43,12 @@ add-help-topic() {
     debug adding help-topic: "${@}"
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     add-help-item $name topic:$name "" "$summary"
+}
+show-help-about-topic() {
+    local ignore=$1 type=$2
+    #echo ${help_item_summary[topic:$name]:-no summary}
+    help_show_level=all
+    show-help-section $type
 }
 
 add-help-item() {

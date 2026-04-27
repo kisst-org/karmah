@@ -9,8 +9,8 @@ actions::declare-vars() {
 }
 
 actions::init-module() {
-    add-help-topic act actions "" "show available actions"
-    add-help-topic flw flows actions-show-flows "show available flows"
+    add-help-topic act action "" "show available actions"
+    add-help-topic flw flow actions-show-flows "show available flows"
     help_level=expert
     add-flag-option "" run-single-action  "run just the action, not the (pre)flow"
 }
