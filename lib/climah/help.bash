@@ -24,9 +24,9 @@ help::init-module() {
 parse-help-topic() {
     local key=${help_item_map[$1]:-$1}
     if [[ -z ${help_item_module[$key]:-} ]]; then return 0; fi
-    command_to_run=help
+    #command_to_run=help
     help_items_to_show+=" $key"
-    argparse_parse_count=1;
+    #argparse_parse_count=1;
 }
 
 
@@ -68,9 +68,10 @@ add-help-item() {
     argparse_parse_func_map[$key]=parse-help-item
 }
 parse-help-item() {
-    help_items_to_show+=" $1"
-    command_to_run=help;
-    argparse_parse_count=1;
+    if [[ ! -z ${help_item_module[$1]:-} ]]; then
+        help_items_to_show+=" $1";
+        argparse_understood_arg=true
+    fi
 }
 
 help-is-visible() {
@@ -184,7 +185,7 @@ find-help-item() {
 show-type-help() {
     local type=$1 name=$2
     local short=${argparse_short_lookup[$name]:-}
-    if [[ ! -z $short ]]; then
+    if [[ -z $short ]]; then
         echo "$type $short $name: ${help_item_summary[$type:$name]}"
     else
         echo "$type $name (or $short): ${help_item_summary[$type:$name]}"

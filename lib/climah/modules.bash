@@ -14,14 +14,6 @@ init-module-system() {
     done
 }
 
-parse-module-name() {
-    local name=$1
-    if [[ -z ${help_item_module[module:$name]:-} ]]; then return 0; fi
-    command_to_run=help
-    help_items_to_show+=" $name"
-    argparse_parse_count=1;
-}
-
 modules-show() {
     cat <<EOF
 $climah_prog_name help [<module>]

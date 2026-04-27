@@ -14,7 +14,7 @@ argparse::declare-vars() {
 }
 
 append-argparse-func()  { argparse_parse_funcs+=($1); }
-prepend-argparse-func() { argparse_parse_funcs=($1 ${argparse_parse_funcs[@]}); }
+prepend-argparse-func() { argparse_parse_funcs=($1 $argparse_parse_funcs   ); }
 
 add-argparse-alias() { argparse_aliases[$1]="$2"; }
 
@@ -59,16 +59,18 @@ argparse-parse-arguments() {
     while [[ $# > 0 ]]; do
         arg=${argparse_short_map[$1]:-$1}
         shift
-        local argparse_parse_count=0
+        local argparse_parse_count=0 argparse_understood_arg=false
         argparse-parse-funcs "$arg" "$@"
         if [[ "$argparse_parse_count" > 0 ]]; then
             argparse_parsed_args+=" $arg"
             shift $(( "$argparse_parse_count" - 1))
         elif [[ -f ${arg} ]]; then target_paths+=" ${arg}"
-        elif [[ -d ${arg} ]]; then target_paths+=" ${arg%%/}" # remove a possible trailing /
+        elif [[ -d ${arg} ]]; then target_paths+=" ${arg%/}" # remove a possible trailing /
         elif [[ $arg == "--" ]]; then break
         else
-            argparse_unknown_args+=" $arg"
+            if ! $argparse_understood_arg; then
+                argparse_unknown_args+=" $arg"
+            fi
         fi
     done
     if [[ ! -z $argparse_unknown_args ]]; then
