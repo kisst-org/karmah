@@ -104,9 +104,8 @@ argparse-add-short() {
         log-warn argparse "short $short ==> $long already defined to ${argparse_short_map[$short]}"
     elif [[ ! -z ${argparse_short_lookup[$long]:-} ]]; then
         log-warn argparse "short $short ==> $long clashes with existing short ${argparse_short_lookup[$long]}"
-    else
-        argparse-redefine-short $short $long
     fi
+    argparse-redefine-short $short $long
 }
 argparse-clear-short() {
     local short=$1
