@@ -35,12 +35,12 @@ init-module() {
     local module="$1"
 
     if ${module_disabled[$module]:-false}; then
-        debug skipping module $module because it is disabled
+        log-debug modules "skipping module $module because it is disabled"
     elif [[ ${module_loaded[$module]:-false} == false ]]; then
         module_loaded[$module]=true
         all_modules+=" $module"
         help_level=${module_help_level[$module]:-${default_module_help_level:-basic}}
-        debug running init module for "${module}"
+        log-debug modules "running init module for ${module}"
         ${module}::init-module
     fi
 }
@@ -83,7 +83,7 @@ declare-all-module-vars() {
     #local func # TODO remove
     # first declare any variables that might be used in other modules
     local var_modules=$(set | grep -E '^[A-Za-z-]*::declare-vars'| sed -e 's/::declare-vars.*//')
-    debug init-vars: $var_modules
+    log-debug modules "init-vars: $var_modules"
     local mod; for mod in $var_modules; do
         if ! ${module_disabled[$mod]:-false}; then
             ${mod}::declare-vars

@@ -113,12 +113,12 @@ load-karmah-file() {
     declare -g karmah_type
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
-        debug clearing $local_vars
+        log-debug karmah "clearing $local_vars"
         unset $local_vars
         declare -g $local_vars
         karmah_dir=$(dirname $karmah_file)
         common_dir=$(dirname $karmah_dir)/common
-        debug sourcing $karmah_file
+        log-debug karmah "sourcing $karmah_file"
         source ${karmah_file}
         common-karmah
         output_dir="${to_dir:-tmp/manifests}/${target_name}"
@@ -134,7 +134,7 @@ common-karmah() {
     used_files=${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
-        debug sourcing $common_karmah_file
+        log-debug karmah "sourcing $common_karmah_file"
         source $common_karmah_file
     fi
     karmah_type=${force_karmah_type:-${karmah_type:-$default_karmah_type}}

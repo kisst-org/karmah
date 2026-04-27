@@ -52,7 +52,7 @@ run-action-compare() {
 
 sort-env-vars() {
     if [[ $(yq '.spec.template.spec.containers[].env // null' $1) != null ]]; then
-        debug sorting containers env keys in manifest $1
+        log-debug render "sorting containers env keys in manifest $1"
         yq -i '.spec.template.spec.containers[].env |= sort_by(.name)' $1
     fi
 }

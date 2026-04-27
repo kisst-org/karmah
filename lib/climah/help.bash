@@ -40,13 +40,12 @@ set-help-level() {
 add-help-topic() {
     # TODO: func is not needed anymore
     local short=$1 name=$2 func=${3} summary=${4:-no summary}
-    debug adding help-topic: "${@}"
+    log-debug help "adding help-topic: ${@}"
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     add-help-item $name topic:$name "" "$summary"
 }
 show-help-about-topic() {
     local ignore=$1 type=$2
-    #echo ${help_item_summary[topic:$name]:-no summary}
     help_show_level=all
     show-help-section $type
 }

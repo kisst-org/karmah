@@ -12,7 +12,7 @@ commands-show-help() { list-help-items command; }
 commands-parse() {
     local name=${argparse_param_list[0]}
     if [[ ! -z ${command_to_run:-} ]]; then
-        debug overriding current command $command_to_run with $name
+        log-debug command "overriding current command $command_to_run with $name"
     fi
     command_to_run=$name
 }

@@ -8,7 +8,7 @@ add-map-value() {
     local map_name=$1 map_idx=$2 value=$3 handler=${4:-warn} dupl_handler=${5:-debug}
     local oldval="$(eval "echo \${$map_name[$map_idx]:-}")"
     if [[ -z $oldval ]]; then
-        debug adding "$map_name[$map_idx]=\"$value\""
+        log-debug ${module:-util} "adding $map_name[$map_idx]=\"$value\""
         eval "$map_name[$map_idx]=\"$value\""
         return 0
     elif [[ $oldval == $val ]]; then
@@ -24,7 +24,7 @@ change-map-value() {
     local map_name=$1 map_idx=$2 value=$3 handler=${4:-warn}
     local oldval="$(eval "echo \${$map_name[$map_idx]:-}")"
     if [[ ! -z $oldval ]]; then
-        debug changing "$map_name[$map_idx]=\"$value\""
+        log-debug ${module:-util} "changing $map_name[$map_idx]=\"$value\""
         eval "$map_name[$map_idx]=\"$value\""
         return 0
     fi
