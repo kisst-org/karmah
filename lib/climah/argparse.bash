@@ -69,10 +69,11 @@ argparse-parse-arguments() {
         fi
     done
     if [[ ! -z $argparse_unknown_args ]]; then
+        log-error argparse "unknown arguments: $argparse_unknown_args"
         if [[ $command_to_run == help ]]; then
             show-help
+            exit 0
         else
-            log-error argparse "unknown arguments: $argparse_unknown_args"
             show-basic-help
             return 1
         fi
