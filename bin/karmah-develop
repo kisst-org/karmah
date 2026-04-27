@@ -5,4 +5,4 @@ for lib in $libdir/pre.bash $libdir/*/*.bash; do
     source $lib
 done
 
-main "${@}"
+karmah-main "${@}"

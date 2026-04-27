@@ -1,4 +1,4 @@
-karmah-show-full-help() {
+karmah::show-full-help() {
 cat <<EOF
 karmah: Kubernetes Application Rendered MAnifest Helper (version $karmah_version)
 

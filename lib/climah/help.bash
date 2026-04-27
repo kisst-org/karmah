@@ -122,7 +122,7 @@ show-help() {
     done
     if ! $found; then
         if [[ ${help_show_level:-} == all ]]; then
-            ${climah_help_full_function:-${climah_prog}-show-full-help}
+            ${help_full_function:-${climah_prog}::show-full-help}
         else
             show-short-help
         fi

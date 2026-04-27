@@ -1,4 +1,9 @@
 # karmah: do stuff based on *.karmah file
+karmah-main() {
+    declare -g climah_prog=karmah
+    #declare -g help_full_function=
+    climah-main "$@"
+}
 
 karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
