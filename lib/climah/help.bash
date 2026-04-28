@@ -18,15 +18,6 @@ help::init-module() {
     add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
     add-help-topic top topic    show-help-topics "show all help-topics"
     argparse_parse_func_map[help]=parse-option-help
-    append-argparse-func parse-help-topic
-    append-argparse-func parse-help-item
-}
-parse-help-topic() {
-    local key=${help_item_map[$1]:-$1}
-    if [[ -z ${help_item_module[$key]:-} ]]; then return 0; fi
-    #command_to_run=help
-    help_items_to_show+=" $key"
-    #argparse_parse_count=1;
 }
 
 help-is-verbose() { logger-shows-level help verbose; }
@@ -68,10 +59,12 @@ add-help-item() {
     help_item_summary[$key]=$summary
     argparse_parse_func_map[$key]=parse-help-item
 }
-parse-help-item() {
-    local arg=$1
-    if [[ ! -z ${help_item_module[$arg]:-} ]]; then
-        add-help-item-to-show $arg
+
+parse-if-help-item() {
+    local key=${help_item_map[$1]:-$1}
+    key=${key# } # TODO: why do we need to strip space???
+    if [[ ! -z  ${help_item_module[$key]:-} ]]; then
+        add-help-item-to-show $key
     fi
 }
 

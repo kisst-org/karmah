@@ -2,7 +2,8 @@
 argparse::declare-vars() {
     declare -gA argparse_aliases=()
     declare -gA argparse_parse_func_map=()
-    declare -ga argparse_parse_funcs=(argparse-parse-arg)
+    # parse-if-help-item is first to add any command to possible help
+    declare -ga argparse_parse_funcs=(parse-if-help-item argparse-parse-arg)
     declare -gA argparse_parse_params=()
     declare -ga argparse_replaced_aliases=()   # remember for help function
     declare -gA argparse_short_map=()
