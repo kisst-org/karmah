@@ -69,6 +69,17 @@ show-help-about-module() {
 }
 
 
+show-module-md-text() {
+    local mod=$1;
+    local func=show-md-help-about-module-$mod
+    local file=${karmah_docs_dir:-docs}/module-$mod.md
+    if $(function-exists $func); then
+        $func
+    elif [[ -f $file ]]; then
+        cat $file
+    fi
+}
+
 
 declare-all-module-vars() {
     init-module-system

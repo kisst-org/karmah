@@ -109,6 +109,9 @@ run-cmd-from-action() {
 show-help-about-action() {
     local type=$1 name=$2
     echo $type $name: ${help_item_summary[$type:$name]:-no summary}
+    echo
+    local module=${help_item_module[$type:$name]}
+    show-module-md-text $module | sed -n "/^## action $name/,/^## /p" |grep -v '^##'
     printf "\nCode:\n"
     type run-action-$name| tail -n +2
 }
