@@ -31,7 +31,7 @@ kubectl-options() {
     opt+="--context ${kube_context} -n $kube_namespace"
     echo $opt
 }
-kubectl-run() {
+run-kubectl() {
     run-cmd-from-action verbose kubectl $(kubectl-options) "${@}"
 }
 
