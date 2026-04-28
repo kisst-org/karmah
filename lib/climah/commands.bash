@@ -6,29 +6,34 @@ commands::declare-vars() {
     declare -gA command_params=()
     declare -gA command_alias=()
 }
+commands::init-module() {
+    append-argparse-func parse-if-command
+}
 
 commands-show-help() { list-help-items command; }
 
-commands-parse() {
-    local name=${argparse_param_list[0]}
+parse-if-command() {
+    local name=$1
+    if [[ -z ${command_function[$name]:-} ]]; then  return 0; fi
     if [[ ! -z ${command_to_run:-} ]]; then
-        log-debug command "overriding current command $command_to_run with $name"
+        log-warn command "overriding current command $command_to_run with $name"
     fi
     command_to_run=$name
+    argparse_parse_count=1
 }
 
-commands-add() {
+add-command() {
     local short=$1 name=$2
     local func=${3:-run-command-$name} summary=${4:-no summary}
-    argparse_parse_func_map[$name]=commands-parse
-    argparse_parse_params[$name]=$name
+    #argparse_parse_func_map[$name]=parse-if-command
+    #argparse_parse_params[$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     command_function[$name]=$func
     command_params[$name]=$name
     add-help-item $name command:$name "" "$summary"
 }
 
-commands-run() {
+run-active-command() {
     local command=${command_to_run:-$default_command}
     ${command_function[$command]} ${command_params[$command]}
 }

@@ -11,7 +11,7 @@ help::declare-vars() {
 }
 
 help::init-module() {
-    commands-add h  help show-help    "show general help"
+    add-command h  help show-help    "show general help"
     add-parse-option  h  help ""           "show general help information"
     add-parse-option  X  extended-help ""  "show extensive help information"
 

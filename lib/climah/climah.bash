@@ -24,7 +24,7 @@ climah-main() {
     declare -g climah_prog_name=$(basename $0)
     declare -g climah_prog_path="$0"
     climah-init "${@}"
-    commands-run
+    run-active-command
 }
 
 load-libraries() {

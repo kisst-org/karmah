@@ -6,7 +6,7 @@ targets::declare-vars() {
 
 targets::init-module() {
     add-action pt print-target "print all target paths"
-    commands-add run run-flows "" "run one or more (flow) actions for all targets"
+    add-command run run-flows "" "run one or more (flow) actions for all targets"
     help_level=expert
     add-parse-option s subdir dir "add subdir to list of subdirs (can be comma separated list)"
     default_command=run-flows
