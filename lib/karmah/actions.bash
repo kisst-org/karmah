@@ -111,6 +111,8 @@ show-help-about-action() {
     echo $type $name: ${help_item_summary[$type:$name]:-no summary}
     echo
     show-md-for-help-item $type $name
-    printf "\nCode:\n"
-    type run-action-$name| tail -n +2
+    if $(help-is-verbose); then
+        printf "Code:\n"
+        type run-action-$name| tail -n +2
+    fi
 }

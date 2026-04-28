@@ -29,6 +29,7 @@ parse-help-topic() {
     #argparse_parse_count=1;
 }
 
+help-is-verbose() { logger-shows-level help verbose; }
 
 set-help-level() {
     local level=$1; shift
