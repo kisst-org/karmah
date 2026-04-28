@@ -10,7 +10,6 @@ init-logging() {
     declare -gi log_level=$log_level_info
     declare -g  log_cmds=false
     parse-loglevel "$@"
-    init-loggers
 }
 
 logging::init-module() {

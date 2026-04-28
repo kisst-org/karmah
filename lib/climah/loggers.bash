@@ -52,6 +52,18 @@ increase-log-level() {
     log-debug logger "increasing log-level for $logger from $old_level to $new_level"
     logger_level[$logger]=$new_level
 }
+
+parse-pre-init-loglevels() {
+    for arg in "$@"; do
+        case $arg in
+            -v|--verbose) parse-option-verbose;;
+            -vv)          parse-option-verbose2;;
+            -vvv)         parse-option-verbose3;;
+            -q|--quiet)   parse-option-quiet;;
+        esac
+    done
+}
+
 parse-option-verbose()   { increase-log-level root; }
 parse-option-verbose2()  { increase-log-level root; increase-log-level root; }
 parse-option-verbose3()  { increase-log-level root; increase-log-level root; increase-log-level root;}

@@ -1,5 +1,7 @@
 climah-init() {
-    init-logging "${@}"
+    init-logging "${@}" # TODO: deprecated remove with logging module
+    init-loggers
+    parse-pre-init-loglevels "${@}"
     load-libraries
     declare-all-module-vars
     init-all-modules # TODO: ordering: help logging options render git
@@ -13,6 +15,7 @@ climah-init() {
         show-short-help
         exit 1
     else
+        logger_level=([root]=info) # reset all loglevels, from pre-init
         argparse-parse-arguments "${@}"
     fi
 }
