@@ -1,13 +1,24 @@
 #!/bin/env bash
 
-libdir=$(dirname $(dirname $(readlink -f ${BASH_SOURCE[0]})))/lib
+basedir=$(dirname $(dirname $(readlink -f ${BASH_SOURCE[0]})))
 prog="${1:-karmah}"
 
-cat $libdir/pre.bash >"$prog"
-for lib in  $libdir/*/*.bash; do
+cat $basedir/lib/pre.bash >"$prog"
+for lib in  $basedir/lib/*/*.bash; do
     echo adding $lib
     printf '\n#####################################\n# %s\n' $(basename $lib) >>"$prog"
     cat $lib  >>"$prog"
 done
-printf '\n#####################################\n${prog}-main "${@}"\n' >>"$prog"
+for file in $basedir/docs/module-*.md; do
+    module=$(basename $file)
+    module=${module%.md}
+    module=${module#module-}
+    echo adding help about module $module from $file
+    printf '\n#####################################\n# %s\n' $(basename $file) >>"$prog"
+    printf "show-md-help-about-module-$module() {\n    cat <<EOF\n" >>"$prog"
+    sed -e 's/`/\\`/g' -e 's/[$]/\\$/g' $file  >>"$prog"
+    printf "EOF\n}\n" >>"$prog"
+done
+
+printf '\n#####################################\n%s-main "${@}"\n' $prog >>"$prog"
 chmod 755 "$prog"
