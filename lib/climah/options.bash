@@ -23,3 +23,10 @@ set-option-value() {
     local var_name=${argparse_param_list[0]//-/_}
     eval "$var_name=\"$1\""
 }
+
+show-help-about-option() {
+    local type=$1 name=$2
+    echo $type $name: ${help_item_summary[$type:$name]:-no summary}
+    echo
+    show-md-for-help-item $type $name
+}
