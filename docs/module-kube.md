@@ -5,7 +5,7 @@ This module has some actions that can help with managing kubernetes resources
 Uses the `watch` command to periodically show some resources.
 Example:
 ```
-karmah apps/demo/tst kube-watch
+  karmah apps/demo/tst kube-watch
 ```
 
 ## action kube-exec

@@ -85,6 +85,9 @@ show-md-for-help-item() {
     local module=${help_item_module[$type:$name]}
     show-module-md-text $module | sed -n "/^## $type $name/,/^## /p" | grep -v '^##' || true
 }
+show-text-for-help-item() {
+    show-md-for-help-item $1 $2 | sed -e '/^```/d'
+}
 
 
 
