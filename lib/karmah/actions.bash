@@ -30,7 +30,7 @@ add-action() {
 
 parse-action() {
     action_list+=" ${argparse_param_list[0]}";
-    help_items_to_show+=" action:${argparse_param_list[0]}"
+    add-help-item-to-show "${argparse_param_list[0]}"
 }
 
 set-action-pre-hook() { action_pre_hook[$1]=$2; }

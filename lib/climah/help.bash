@@ -53,7 +53,7 @@ show-help-about-topic() {
 add-help-item() {
     local short=$1 key=$2 params=$3 summary=$4
     if [[ ! -z $short ]]; then
-        help_item_map[$short]=$key
+        help_item_map[$short]+=" $key"
     fi
     local type=${key//:*/}
     help_item_map[$key]=$key
@@ -68,9 +68,9 @@ add-help-item() {
     argparse_parse_func_map[$key]=parse-help-item
 }
 parse-help-item() {
-    if [[ ! -z ${help_item_module[$1]:-} ]]; then
-        help_items_to_show+=" $1";
-        argparse_understood_arg=true
+    local arg=$1
+    if [[ ! -z ${help_item_module[$arg]:-} ]]; then
+        add-help-item-to-show $arg
     fi
 }
 
@@ -131,19 +131,23 @@ list-help-items() {
 parse-option-help() { command_to_run=help;  }
 parse-option-extended-help() { help_show_level=all;  }
 
-add-arg-to-help() { help_items_to_show+=" $1"; }
+add-help-item-to-show() {
+    local item=$1
+    help_items_to_show+=" ${help_item_map[$item]:-$item}";
+    argparse_understood_arg=true
+}
 show-help() {
     local found=false
     local unknown_topics=""
     #for arg in $argparse_parsed_args $argparse_extra_args $argparse_unknown_args ; do
     log-info help "showing help about ${help_items_to_show# }"
     for arg in $help_items_to_show ; do
-        local key=${argparse_short_map[$arg]:-$arg}
-        key=${help_item_map[$key]:-$key}
-        if [[ $key == command:help ]]; then continue; fi
-        if [[ $key == option:--help ]]; then continue; fi
-        if [[ $key == option:--verbose ]]; then continue; fi
-        find-help-item
+        for key in ${help_item_map[$arg]:-$arg}; do
+            if [[ $key == command:help ]]; then continue; fi
+            if [[ $key == option:--help ]]; then continue; fi
+            if [[ $key == option:--verbose ]]; then continue; fi
+            find-help-item
+        done
     done
     if ! $found; then
         if [[ ${help_show_level:-} == all ]]; then
