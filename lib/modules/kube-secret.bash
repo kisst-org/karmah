@@ -5,7 +5,6 @@ kube-secret::init-module() {
     add-karmah-action kspf kube-secret-print-field "prints the value of a kubernetes secret"
     add-karmah-action ksd  kube-secret-diff        "prints the changes to a kubernetes secret"
     add-karmah-action ksm  kube-secret-manifest    "prints the manifest of the secret to be created"
-    add-karmah-action kspf kube-secret-print-field "prints the value of a kubernetes secret"
     add-karmah-action kspy kube-secret-print-yaml  "print the data stored in a secret as yaml"
     add-karmah-action kssf kube-secret-save-files  "save the data stored in a secret as file(s)"
     add-karmah-var secret_name  "the name of a kubernetes secret to be used"
