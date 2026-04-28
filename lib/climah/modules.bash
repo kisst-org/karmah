@@ -71,8 +71,9 @@ show-help-about-module() {
 
 show-module-md-text() {
     local mod=$1;
+    : ${module_docs_dir:=$(dirname $(readlink -f $climah_prog_path))/docs}
     local func=show-md-help-about-module-$mod
-    local file=${karmah_docs_dir:-docs}/module-$mod.md
+    local file=${module_docs_dir:-docs}/module-$mod.md
     if $(function-exists $func); then
         $func
     elif [[ -f $file ]]; then

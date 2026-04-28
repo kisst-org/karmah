@@ -140,7 +140,7 @@ show-help() {
     local found=false
     local unknown_topics=""
     #for arg in $argparse_parsed_args $argparse_extra_args $argparse_unknown_args ; do
-    log-info help "showing help about ${help_items_to_show# }"
+    log-verbose help "showing help about ${help_items_to_show# }"
     for arg in $help_items_to_show ; do
         for key in ${help_item_map[$arg]:-$arg}; do
             if [[ $key == command:help ]]; then continue; fi

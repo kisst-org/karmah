@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-libdir=$(dirname $(dirname $(readlink -f ${BASH_SOURCE[0]})))/lib
+libdir=$(dirname $(readlink -f ${BASH_SOURCE[0]}))/lib
 for lib in $libdir/pre.bash $libdir/*/*.bash; do
     source $lib
 done

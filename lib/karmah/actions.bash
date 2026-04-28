@@ -111,7 +111,7 @@ show-help-about-action() {
     echo $type $name: ${help_item_summary[$type:$name]:-no summary}
     echo
     local module=${help_item_module[$type:$name]}
-    show-module-md-text $module | sed -n "/^## action $name/,/^## /p" |grep -v '^##'
+    show-module-md-text $module | sed -n "/^## action $name/,/^## /p" | grep -v '^##'
     printf "\nCode:\n"
     type run-action-$name| tail -n +2
 }
