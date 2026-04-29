@@ -44,7 +44,7 @@ run-action-kube-get-manifests() {
     log-info kube "kube get manifests  ${target_name} to ${output_dir}"
     run-cmd-from-action verbose rm -rf ${output_dir}
     run-cmd-from-action verbose mkdir -p ${output_dir}
-    verbose-pipe split-yaml-items-into-files kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml
+    run-verbose-cmd kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml \| split-yaml-items-into-files
     ignore_files=configmap_kube-root-ca.crt.yaml
     ignore_files+=" deployment_ingress-nginx-controller.yaml"
     ignore_files+=" service_ingress-nginx-controller-admission.yaml"
@@ -131,7 +131,7 @@ kube-calc-full-resource-names() {
 render-kustomize() {
     local command="kubectl kustomize --enable-helm"
     #used_files+=" $helm_chart_dir/$ch"
-    verbose-pipe split-yaml-docs-into-files "$command ${karmah_dir}"
+    run-verbose-cmd kubectl "$command ${karmah_dir}" \| split-yaml-docs-into-files
 }
 
 kube-calc-resource() {
