@@ -75,14 +75,27 @@ parse-option-logger-level() {
     logger_level[$logger]=$level
     argparse_parse_count=3
 }
-find-logger-level()  { echo ${logger_level[$1]:-${logger_level[root]}}; } # TODO do real search
+find-logger-level()  {
+    local logger=$1
+    local result=${logger_level[root]}
+    local path=""
+    for part in ${logger//./ }; do
+        path="$path.$part"
+        result="${logger_level[${path#.}]:-$result}"
+        if [[ $path == .sub* ]]; then
+            echo XXX path=$path result=$result >/dev/stderr
+        fi
+    done
+    echo "$result"
+}
+
 find-logger-config() {
     local type=$1 logger=$2
     local path=$type
     local result="${logger_config[$path]}";
     for part in ${logger//./ }; do
         path="$path.$part"
-        result="${logger_config[$path]:-$result}";
+        result="${logger_config[$path]:-$result}"
     done
     echo "$result"
 }
@@ -126,6 +139,7 @@ log-trace()   { log-at-level trace $1 "$2"; }
 # logging commands to be run
 parse-option-show-script() {
     parse-option-quiet
+    logger_level[cmd]=verbose
     dry_run=true
     log_cmds=true
     parse-option-yes
