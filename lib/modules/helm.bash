@@ -136,7 +136,7 @@ run-action-helm-get-manifests() {
     log-info helm "getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
     run-cmd-from-action verbose rm -rf ${output_dir}
     run-cmd-from-action verbose mkdir -p ${output_dir}
-    run-helm get manifest \| split-yaml-docs-into-files
+    run-verbose-cmd helm get manifest $release $(helm-cluster-options) \| split-yaml-docs-into-files
 }
 
 run-action-helm-get-diff() { run-action-helm-diff; } # TODO: deprecated
@@ -144,9 +144,10 @@ run-action-helm-diff() {
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
     log-debug helm "checking for helm release ${release} in namespace $kube_namespace"
-    local cmd="helm status $release --namespace $kube_namespace"
-    log-verbose helm "   $cmd"
+    local cmd="helm status $release $(helm-cluster-options)"
+    log-verbose cmd.helm "$cmd"
     local tmp_status_failed=false
+    # Note: not using log-verbose-cmd, so is run, even in dry-run
     $cmd >/dev/null || tmp_status_failed=true
     if $tmp_status_failed ; then
         log-info helm "helm release $helm_release does not yet exist in namespace $kube_namespace, skipping helm-diff"
