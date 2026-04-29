@@ -33,8 +33,7 @@ loggers::init-module() {
     add-parse-option v  verbose  ""    "give more output"
     add-parse-option q  quiet    ""    "show no output"
     add-parse-option S  show-script "" "show all commands without doing much"
-
-    add-flag-option "" dry-run   "do not execute the actual commands"
+    add-flag-option  "" dry-run   "do not execute the actual commands"
 
     help_level=expert
     add-parse-option "" logger-level "logger level" "show all commands without doing much"
@@ -141,7 +140,6 @@ parse-option-show-script() {
     parse-option-quiet
     logger_level[cmd]=verbose
     dry_run=true
-    log_cmds=true
     parse-option-yes
 }
 
@@ -149,15 +147,22 @@ run-and-log-cmd() {
     local level=$1 logger=$2 cmd=$3 args
     shift 3
     printf -v args " %s" "$@"
-    #printf "XXX %s %s %s\n" $level $cmd "$args"
     log-at-level $level $logger "$cmd $args"
-    #printf "XXX $level $logger CMD:$cmd"
-    #printf "%s\n" $args
     if ! ${dry_run:-false}; then
         $cmd "$@"
     fi
 }
 
-run-and-log-pipe() {
-    : #TODO
+run-verbose-cmd() {
+    local cmd=$1 script="$@"
+    log-at-level verbose cmd.$cmd "${*}"
+    if ! ${dry_run:-false}; then
+        pipe=${script/*|/}
+        script=${script/|*/}
+        if [[ "$pipe" == "$args" ]]; then
+            $script
+        else
+            $script | $pipe
+        fi
+    fi
 }
