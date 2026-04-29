@@ -154,15 +154,15 @@ run-and-log-cmd() {
 }
 
 run-verbose-cmd() {
-    local cmd=$1 script="$@"
-    log-at-level verbose cmd.$cmd "${*}"
+    local maincmd=$1 cmd="$@"
+    log-at-level verbose cmd.$maincmd "${*}"
     if ! ${dry_run:-false}; then
-        pipe=${script/*|/}
-        script=${script/|*/}
-        if [[ "$pipe" == "$args" ]]; then
-            $script
+        pipe=${cmd/*|/}
+        cmd=${cmd/|*/}
+        if [[ "$pipe" == "$cmd" ]]; then
+            $cmd
         else
-            $script | $pipe
+            $cmd | $pipe
         fi
     fi
 }
