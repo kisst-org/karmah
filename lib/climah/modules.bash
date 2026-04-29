@@ -32,7 +32,7 @@ init-module() {
         module_loaded[$module]=true
         all_modules+=" $module"
         help_level=${module_help_level[$module]:-${default_module_help_level:-basic}}
-        log-debug modules "running init module for ${module}"
+        log-trace modules "running init module for ${module}"
         ${module}::init-module
     fi
 }
@@ -96,6 +96,7 @@ declare-all-module-vars() {
     #local func # TODO remove
     # first declare any variables that might be used in other modules
     local var_modules=$(set | grep -E '^[A-Za-z-]*::declare-vars'| sed -e 's/::declare-vars.*//')
+    var_modules="$(echo $var_modules)"  # change newlines into spaces
     log-debug modules "init-vars: $var_modules"
     local mod; for mod in $var_modules; do
         if ! ${module_disabled[$mod]:-false}; then
@@ -108,6 +109,7 @@ declare-all-module-vars() {
 init-all-modules() {
     # Then load modules, that may need variable from other modules
     local modules=$(set | grep -E '^[A-Za-z-]*::init-module ()'| sed -e 's/::init-module.*//')
+    modules="$(echo $modules)"  # change newlines into spaces
     log-debug modules "loading modules: $modules"
     local mod; for mod in "$@" $modules; do
         if ! ${module_disabled[$mod]:-false}; then

@@ -19,7 +19,7 @@ actions-show-flows() { list-help-items flow; }
 
 add-action() {
     local short=$1 name=$2 summary="$3"
-    log-debug actions "adding action: ${@}"
+    log-trace actions "adding action: ${@}"
     argparse_parse_func_map[$name]=parse-action
     argparse_parse_params[$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi

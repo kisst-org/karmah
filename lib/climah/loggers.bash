@@ -23,6 +23,7 @@ init-loggers() {
         [format.verbose]="## %s\n"
         [format.verbose.cmd]="    %s\n"
         [format.debug]="### %s\n"
+        [format.trace]="#### %s\n"
         [appender]=log-to-console #log-to-console-with-timestamp
     )
     declare -gA logger_level=([root]=info)
@@ -119,6 +120,7 @@ log-warn()    { log-at-level warn $1 "$2"; }
 log-info()    { log-at-level info $1 "$2"; }
 log-verbose() { log-at-level verbose $1 "$2"; }
 log-debug()   { log-at-level debug $1 "$2"; }
+log-trace()   { log-at-level trace $1 "$2"; }
 
 ##########################
 # logging commands to be run

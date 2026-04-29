@@ -32,7 +32,7 @@ set-help-level() {
 add-help-topic() {
     # TODO: func is not needed anymore
     local short=$1 name=$2 func=${3} summary=${4:-no summary}
-    log-debug help "adding help-topic: ${@}"
+    log-trace help "adding help-topic: ${@}"
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     add-help-item $name topic:$name "" "$summary"
 }
