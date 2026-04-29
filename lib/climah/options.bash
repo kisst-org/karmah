@@ -1,9 +1,47 @@
 
 options::declare-vars() {
-    declare -gA option_var=()
+    declare -gA option_type=()
+    declare -gA option_value=()
 }
 
+options::init-module() {
+    append-argparse-func parse-if-option
+}
+
+
 options-show-help() { list-help-items option; }
+
+parse-if-option() {
+    local arg=${1}
+    arg=${arg#--}
+    if [[ $arg == $1 ]]; then
+        return
+    fi
+    local name=${arg/=*/}
+    local value="${arg/*=/}"
+    argparse_parse_count=1
+    case ${option_type[$name]:-none} in
+        value)
+            if [[ $value == $arg ]]; then # not format --opt=val
+                option_value[$name]="${2}"
+                argparse_parse_count=2
+            else
+                option_value[$name]="$value"
+                help_items_to_show+=" --$name"
+            fi
+            ;;
+        flag)
+            if [[ $value == $arg ]]; then # not format --opt=val
+                option_value[$name]=true
+            else
+                option_value[$name]="$value"
+                help_items_to_show+=" --$name"
+            fi
+            ;;
+        none)    argparse_parse_count=0;;
+    esac
+}
+
 
 add-func-option() {
     local short=$1 name=$2 arg=$3 func=$4 summary="$5"
@@ -14,14 +52,17 @@ add-func-option() {
 }
 
 add-parse-option()  { add-func-option "$1" $2 "$3" parse-option-$2 "$4"; }
-add-flag-option()   { add-func-option "$1" $2 ""   parse-flag-option "$3"; }
-add-value-option()  { add-func-option "$1" $2 "$3" parse-value-option "$4"; }
-parse-flag-option()  { set-option-value true; }
-parse-value-option() { set-option-value "$2"; argparse_parse_count=2; }
-
-set-option-value() {
-    local var_name=${argparse_param_list[0]//-/_}
-    eval "$var_name=\"$1\""
+add-flag-option()   {
+    local short=$1 name=$2 summary="$3"
+    if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
+    option_type[$name]=flag
+    add-help-item --$name option:--$name "" "$summary"
+}
+add-value-option()   {
+    local short=$1 name=$2 arg=$3 summary="$4"
+    if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
+    option_type[$name]=value
+    add-help-item --$name option:--$name "$arg" "$summary"
 }
 
 show-help-about-option() {
