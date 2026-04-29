@@ -68,19 +68,19 @@ calc-helm-chart-options() {
     esac
 }
 
-helm-run() {
-    local verbose_runner_cmd=$1; shift
-    local base_cmd=${@}
-    if [[ ! -z ${force_helm_chart:-} ]]; then
-        log-verbose helm "overriding original helm chart $helm_chart with ${force_helm_chart}"
-        helm_chart=${force_helm_chart}
-        helm_chart_location=local # TODO: other locatiom,repo,version?
+run-helm() {
+    local subcmd=$1 args=${@:2}
+    : ${helm_release:=$(basename $target_name)}
+    local opts="$(helm-cluster-options)"
+    opts+=" $helm_release"
+    opts+=" $(calc-helm-chart-options)"
+    if [[ ! -z ${helm_post_renderer:-} ]]; then
+        opts+=" --post-renderer ${helm_post_renderer}"
     fi
-    local helm_cmd="$(helm-calc-command ${base_cmd})"
-    # TODO: used_files+=" $ch"
-    # This does not work nicely with git-restore, when testing a template
-    # better issur a warning if a helm chart is modified when commiting
-    $verbose_runner_cmd "$helm_cmd"
+    local f; for f in ${helm_value_files[@]}; do
+        opts+=" -f ${f}";
+    done
+    run-verbose-cmd helm $subcmd $opts $args
 }
 
 run-action-helm-pull() {
@@ -110,28 +110,25 @@ run-action-helm-pull() {
 
 run-action-helm-plugin-diff() {
     log-info helm "running helm-plugin-diff for $target_name"
-    local default_cmd="helm diff upgrade $(helm-cluster-options)"
-    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
+    run-helm diff upgrade
 }
 
 run-action-helm-upgrade() {
     log-info helm "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
-    local default_cmd="helm upgrade --install ${helm_atomic_wait} --create-namespace $(helm-cluster-options)"
-    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
+    run-helm upgrade --install ${helm_atomic_wait}
 }
 
 run-action-helm-install() {
     log-info helm "running helm-install for $target_name"
-    local default_cmd="helm install --create-namespace $(helm-cluster-options)"
-    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
+    run-helm install --create-namespace
 }
 
 run-action-helm-uninstall() {
     log-info helm "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
-    local default_cmd="helm $(helm-cluster-options) uninstall"
-    helm-run run-cmd-from-action verbose ${helm_install_command:-$default_cmd}
+    local default_cmd="helm uninstall"
+    run-helm uninstall ${helm_atomic_wait}
 }
 
 run-action-helm-get-manifests() {
@@ -139,8 +136,7 @@ run-action-helm-get-manifests() {
     log-info helm "getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
     run-cmd-from-action verbose rm -rf ${output_dir}
     run-cmd-from-action verbose mkdir -p ${output_dir}
-    local cmd="helm $(helm-cluster-options) get manifest $release --namespace $kube_namespace"
-    verbose-pipe split-yaml-docs-into-files $cmd
+    run-helm get manifest \| split-yaml-docs-into-files
 }
 
 run-action-helm-get-diff() { run-action-helm-diff; } # TODO: deprecated
@@ -148,7 +144,7 @@ run-action-helm-diff() {
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
     log-debug helm "checking for helm release ${release} in namespace $kube_namespace"
-    local cmd="helm $(helm-cluster-options) status $release --namespace $kube_namespace"
+    local cmd="helm status $release --namespace $kube_namespace"
     log-verbose helm "   $cmd"
     local tmp_status_failed=false
     $cmd >/dev/null || tmp_status_failed=true
@@ -160,8 +156,6 @@ run-action-helm-diff() {
     local render_dir=tmp/manifests/${target_name}
     local get_dir=${with_dir:-tmp/get}/${target_name}
     local output_dir=$render_dir
-    #run-action-update
-    #run-action-render
     local output_dir=$get_dir
     run-action-helm-get-manifests
     log-info helm "comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}"
@@ -175,10 +169,8 @@ run-action-helm-print-value() {
 }
 
 render-helm() {
-    local default_cmd="helm template"
-    local f
     used_files+=" ${helm_value_files[@]}"
-    helm-run "verbose-pipe split-yaml-docs-into-files" ${helm_template_command:-$default_cmd}
+    run-helm template \| split-yaml-docs-into-files
 }
 
 # this function will iterate over all helm_value_files
