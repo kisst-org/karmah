@@ -23,18 +23,18 @@ init-bao-token-vars() {
     kube_secret_field=${kube_bao_token_secret_field:-token}
 }
 
-run-action-kube-bao-token-print() {
+action::kube-bao-token-print() {
    init-bao-token-vars
-   run-action-kube-secret-get
+   action::kube-secret-get
    echo "bao token is $secret_value"
 }
-run-action-kube-bao-token-info() {
+action::kube-bao-token-info() {
     init-bao-token-vars
     run-flow-actions kube-secret-get,bao-token-info
 }
-run-action-kube-bao-token-update() {
+action::kube-bao-token-update() {
     init-bao-token-vars
-    if $(log-is-verbose); then run-action-kube-secret-get; fi
+    if $(log-is-verbose); then action::kube-secret-get; fi
     run-flow-actions bao-token-update,kube-secret-update
 }
 
@@ -48,17 +48,17 @@ init-bao-secret-id-vars() {
     fi
     kube_secret_field=${kube_bao_secret_id_secret_field:-secret-id}
 }
-run-action-kube-bao-secret-id-print() {
+action::kube-bao-secret-id-print() {
    init-bao-secret-id-vars
-   run-action-kube-secret-get
+   action::kube-secret-get
    echo "bao secret-id is $secret_value"
 }
-run-action-kube-bao-secret-id-info() {
+action::kube-bao-secret-id-info() {
     init-bao-secret-id-vars
     run-flow-actions kube-secret-get,bao-secret-id-info
 }
-run-action-kube-bao-secret-id-update() {
+action::kube-bao-secret-id-update() {
     init-bao-secret-id-vars
-    if $(log-is-verbose); then run-action-kube-secret-get; fi
+    if $(log-is-verbose); then action::kube-secret-get; fi
     run-flow-actions bao-secret-id-update,kube-secret-update
 }

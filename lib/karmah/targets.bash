@@ -13,7 +13,7 @@ targets::init-module() {
 }
 
 parse-option-subdir() { target_subdirs+=" $2"; argparse_parse_count=2; }
-run-action-print-target() { echo $target_path; }
+action::print-target() { echo $target_path; }
 run-command-run-flows()   { run-func-for-targets run-flow-actions; }
 
 run-func-for-targets() {

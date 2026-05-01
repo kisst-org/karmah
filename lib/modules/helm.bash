@@ -83,7 +83,7 @@ run-helm() {
     run-verbose-cmd helm $subcmd $opts $args
 }
 
-run-action-helm-pull() {
+action::helm-pull() {
     local dir=helm/charts/$helm_chart_name-$helm_chart_version
     log-info helm "running helm-pull for $helm_chart_name $helm_chart_version to $dir"
     if [[ -d $dir ]]; then
@@ -108,30 +108,30 @@ run-action-helm-pull() {
 }
 
 
-run-action-helm-plugin-diff() {
+action::helm-plugin-diff() {
     log-info helm "running helm-plugin-diff for $target_name"
     run-helm diff upgrade
 }
 
-run-action-helm-upgrade() {
+action::helm-upgrade() {
     log-info helm "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     run-helm upgrade --install ${helm_atomic_wait}
 }
 
-run-action-helm-install() {
+action::helm-install() {
     log-info helm "running helm-install for $target_name"
     run-helm install --create-namespace
 }
 
-run-action-helm-uninstall() {
+action::helm-uninstall() {
     log-info helm "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall"
     run-helm uninstall ${helm_atomic_wait}
 }
 
-run-action-helm-get-manifests() {
+action::helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
     log-info helm "getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
     run-cmd-from-action verbose rm -rf ${output_dir}
@@ -139,8 +139,8 @@ run-action-helm-get-manifests() {
     run-verbose-cmd helm get manifest $release $(helm-cluster-options) \| split-yaml-docs-into-files
 }
 
-run-action-helm-get-diff() { run-action-helm-diff; } # TODO: deprecated
-run-action-helm-diff() {
+action::helm-get-diff() { run-action-helm-diff; } # TODO: deprecated
+action::helm-diff() {
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
     log-debug helm "checking for helm release ${release} in namespace $kube_namespace"
@@ -158,13 +158,13 @@ run-action-helm-diff() {
     local get_dir=${with_dir:-tmp/get}/${target_name}
     local output_dir=$render_dir
     local output_dir=$get_dir
-    run-action-helm-get-manifests
+    action::helm-get-manifests
     log-info helm "comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}"
     # The sed script is to make missing or added manifests stand out more clearly
     run-cmd-from-action verbose diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }
 
-run-action-helm-print-value() {
+action::helm-print-value() {
     use-karmah-var path
     helm-get-path-value $path
 }

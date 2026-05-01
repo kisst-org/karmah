@@ -16,7 +16,7 @@ update::init-module() {
 parse-option-version()  { update_version="$2"; argparse_parse_count=2; }
 parse-option-update()   { updates+=("$2"); argparse_parse_count=2; }
 
-run-action-update() {
+action::update() {
     local any_updates=false
     if [[ ! -z ${update_version:-} ]]; then
         #info update $target_name version to $update_version

@@ -30,12 +30,12 @@ type: Opaque
 EOF
 }
 
-run-action-kube-secret-update() {
+action::kube-secret-update() {
     log-verbose kube-secret "kubectl $(kubectl-options) apply -f ..."
     kube-secret-manifest | kubectl $(kubectl-options) apply -f -
 }
 
-run-action-kube-secret-get() {
+action::kube-secret-get() {
     use-karmah-var secret_name
     use-karmah-var secret_field
     log-verbose kube-secret "kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath=\"{.data.${secret_field}}\""
@@ -43,11 +43,11 @@ run-action-kube-secret-get() {
     secret_value=$(echo -n $val| base64 -d)
 }
 
-run-action-kube-secret-print-field() { run-action-kube-secret-get; echo $secret_value; }
-run-action-kube-secret-diff()     { kube-secret-manifest | kubectl $(kubectl-options) diff -f -; }
-run-action-kube-secret-manifest() { kube-secret-manifest; }
+action::kube-secret-print-field() { run-action-kube-secret-get; echo $secret_value; }
+action::kube-secret-diff()     { kube-secret-manifest | kubectl $(kubectl-options) diff -f -; }
+action::kube-secret-manifest() { kube-secret-manifest; }
 
-run-action-kube-secret-save-files() {
+action::kube-secret-save-files() {
     use-karmah-var secret_name
     local dir="${to_dir:-tmp}"
     log-info kube-secret "getting file(s) from secret $secret_name to directory $dir"
@@ -66,7 +66,7 @@ run-action-kube-secret-save-files() {
     done
 }
 
-run-action-kube-secret-print-yaml() {
+action::kube-secret-print-yaml() {
     use-karmah-var secret_name
     log-info kube-secret "getting file(s) from secret $secret_name"
     local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)

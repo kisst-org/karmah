@@ -31,12 +31,12 @@ git-add-message() {
     log-debug git "commmit message is: $git_commit_message"
 }
 
-run-action-git-pull() {
+action::git-pull() {
     log-info git "running git-pull for $target_name"
     run-cmd-from-action verbose git pull
 }
 
-run-action-git-diff() {
+action::git-diff() {
     log-info git "git-diff ${target_name} to ${output_dir}"
     if ${quiet_diff:-false}; then
         run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
@@ -49,7 +49,7 @@ run-action-git-diff() {
     fi
 }
 
-run-action-git-add() {
+action::git-add() {
     if $tmp; then
         log-info git "skipping git-add because --tmp specfied"
         return
@@ -57,7 +57,7 @@ run-action-git-add() {
     log-info git "git-add ${target_name} to ${output_dir}"
     run-cmd-from-action verbose git add ${used_files} ${output_dir}
 }
-run-action-git-restore() {
+action::git-restore() {
     # TODO: find better way to determine if path is tracked
     if [[ $output_dir == tmp/* ]]; then
         # git restore gives pathspec error on untracked paths
@@ -70,12 +70,12 @@ run-action-git-restore() {
     fi
 }
 
-run-action-git-status() {
+action::git-status() {
     git status
 }
 
 
-run-action-git-commit() {
+action::git-commit() {
     if $tmp; then
         log-info git "skipping git-commit because --tmp specified"
         return

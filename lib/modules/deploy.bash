@@ -11,7 +11,7 @@ deploy::init-module() {
 
 parse-option-yes() { yes_arg="--yes"; }
 
-run-action-ask() {
+action::ask() {
     if [[  $yes_arg == --yes ]]; then
         log-info deploy "skipping ask, because --yes is specified"
         return 0
@@ -24,7 +24,7 @@ run-action-ask() {
     fi
 }
 
-run-action-deploy() {
+action::deploy() {
     output_dir=deployed/manifests/$target_name
     local actions=$(add-commas ${deploy_actions:-render,git-diff,ask,git-commit})
     log-verbose deploy "deploying ${output_dir} with actions: ${actions}"
@@ -35,7 +35,7 @@ run-action-deploy() {
     run-single-actions $actions
 }
 
-run-action-plan() {
+action::plan() {
     local actions=$(add-commas ${plan_actions:-render,git-diff})
     log-info deploy "planning deploy $target_name with actions: ${actions// /,}"
     run-single-actions $actions

@@ -18,21 +18,21 @@ kapp-options() {
     echo $opt
 }
 
-run-action-kapp-diff() {
+action::kapp-diff() {
     run-cmd-from-action verbose kapp deploy $(kapp-options) --diff-run --diff-changes
 }
 
-run-action-kapp-plan() {
+action::kapp-plan() {
     run-cmd-from-action verbose kapp deploy $(kapp-options) --diff-run
 }
 
-run-action-kapp-deploy() {
+action::kapp-deploy() {
     if ! kubectl $(kubectl_options) get ns $kube_namespace >/dev/null 2>&1; then
         run-cmd-from-action verbose kubectl $(kubectl_options) create ns $kube_namespace
     fi
     run-cmd-from-action verbose kapp deploy $(kapp-options)
 }
 
-run-action-kapp-delete() {
+action::kapp-delete() {
     run-cmd-from-action verbose kapp delete $(kapp-options)
 }

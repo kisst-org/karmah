@@ -55,7 +55,7 @@ run-verbose-action() {
     else
         log-verbose action "running $action\($argparse_extra_args\) for ${target_name:-$target_path}"
     fi
-    run-action-$action
+    action::$action
 }
 
 run-single-actions() {
@@ -112,6 +112,6 @@ show-help-about-action() {
     show-text-for-help-item $type $name
     if $(help-is-verbose); then
         printf "Code:\n"
-        type run-action-$name| tail -n +2
+        type action::$name| tail -n +2
     fi
 }

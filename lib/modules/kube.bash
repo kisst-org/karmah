@@ -35,12 +35,12 @@ run-kubectl() {
     run-cmd-from-action verbose kubectl $(kubectl-options) "${@}"
 }
 
-run-action-kubectl() {
+action::kubectl() {
     log-info kube "kubectl $output_dir"
     run-cmd-from-action verbose kubectl $(kubectl-options) $action_args
 }
 
-run-action-kube-get-manifests() {
+action::kube-get-manifests() {
     log-info kube "kube get manifests  ${target_name} to ${output_dir}"
     run-cmd-from-action verbose rm -rf ${output_dir}
     run-cmd-from-action verbose mkdir -p ${output_dir}
@@ -60,38 +60,38 @@ run-action-kube-get-manifests() {
     done
 }
 
-run-action-kube-get() {
+action::kube-get() {
     run-cmd-from-action verbose kubectl $(kubectl-options) get ${action_args:-pods,deploy,sts,cm}
 }
-run-action-kube-watch() {
+action::kube-watch() {
     run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
 }
-run-action-kube-exec() {
+action::kube-exec() {
     run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
 }
-run-action-kube-env() {
+action::kube-env() {
     run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) -- sh -c env
 }
 
-run-action-kube-exec-it() {
+action::kube-exec-it() {
     run-cmd-from-action verbose kubectl $(kubectl-options) exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
 }
-run-action-kube-log() {
+action::kube-log() {
     run-cmd-from-action verbose kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-}
 }
-run-action-kube-stern() {
+action::kube-stern() {
     run-cmd-from-action verbose stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
 }
 
 
-run-action-kube-restart() {
+action::kube-restart() {
     local res
     for res in ${kube_resource_list//,/ }; do
         res=${kube_resource_alias[$res]:-$res}
         run-cmd-from-action verbose kubectl $(kubectl-options) rollout restart $res
     done
 }
-run-action-kube-tmp-scale() {
+action::kube-tmp-scale() {
     local res
     for res in $(kube-calc-resource-names all); do
         local repl=$(kube-calc-replicas $res)

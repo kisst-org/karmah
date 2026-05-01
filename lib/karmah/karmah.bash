@@ -95,7 +95,7 @@ add-karmah-action() {
     set-action-pre-flow load-karmah "$2"
 }
 
-run-action-load-karmah() {
+action::load-karmah() {
     if [[ -f $target_path ]]; then
         karmah_file=$target_path
     elif [[ -d ${target_path:-} ]]; then

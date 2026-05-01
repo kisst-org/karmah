@@ -24,7 +24,7 @@ bao::init-module() {
     add-karmah-action bpc  bao-policy-create  "create a bao policy"
 }
 
-run-action-bao-login() {
+action::bao-login() {
     if [[ -f $bao_token_file ]]; then
         local answer
         read -p "token file $bao_token_file already exist, do you want to login anyway [Y/n]? " answer
@@ -38,7 +38,7 @@ run-action-bao-login() {
     echo $token >${bao_token_file}
     chmod 600 ${bao_token_file}
 }
-run-action-bao-logout() { rm -f $bao_token_file; }
+action::bao-logout() { rm -f $bao_token_file; }
 export-bao-login-token() { export VAULT_TOKEN=$(<$bao_token_file); }
 run-bao() {
     local cmd=$1; shift
@@ -49,7 +49,7 @@ run-bao() {
 
 #######################
 # tokens
-run-action-bao-token-info() {
+action::bao-token-info() {
     local error
     local token=$secret_value
     exitcode=0
@@ -66,31 +66,31 @@ run-action-bao-token-info() {
     fi
 }
 
-run-action-bao-token-create() {
+action::bao-token-create() {
     : ${ttl:=${default_ttl:=30m}}
     secret_value=$(run-bao "token create"  -ttl=$ttl -format=yaml | yq .auth.client_token)
 }
 
-run-action-bao-token-update() {
+action::bao-token-update() {
     if $(log-is-verbose); then
         echo ======== OLD TOKEN ============
-        run-action-bao-token-info
+        action::bao-token-info
         echo ==== creating new token in Secret
     fi
-    run-action-bao-token-create
+    action::bao-token-create
     if $(log-is-verbose); then
         echo ======== NEW TOKEN ============
-        run-action-bao-token-info
+        action::bao-token-info
     fi
 }
 
 #######################
 # secret-id's
-run-action-bao-secret-id-create() {
+action::bao-secret-id-create() {
     secret_value=$(run-bao write -force -format=yaml auth/approle/role/$(bao-role-name)/secret-id | yq .data.secret_id)
     log-info bao "created secret-id $secret_value"
 }
-run-action-bao-secret-id-info() {
+action::bao-secret-id-info() {
     local error
     exitcode=0
     if [[ -z ${secret_value:-} ]]; then
@@ -110,7 +110,7 @@ run-action-bao-secret-id-info() {
         run-bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_value=$secret_value 2>/dev/null || exitcode=$?
     fi
 }
-run-action-bao-secret-id-list()   {
+action::bao-secret-id-list()   {
     run-bao list auth/approle/role/$(bao-role-name)/secret-id
     if $(log-is-verbose); then
         for id in $(bao list auth/approle/role/$(bao-role-name)/secret-id| tail -n +3); do
@@ -119,23 +119,23 @@ run-action-bao-secret-id-list()   {
         done
     fi
 }
-run-action-bao-secret-id-update() {
+action::bao-secret-id-update() {
     #: ${ttl:=30m}
     if $(log-is-verbose); then
         echo ======== OLD SECRET_ID ============
-        run-action-bao-secret-info
+        action::bao-secret-info
         echo ==== creating new token in Secret
     fi
     secret_value=$(bao-create-secret-id)
     log-verbose bao "created secret-id $secret_value"
-    run-action-bao-secret-update
+    action::bao-secret-update
     if $(log-is-verbose); then
         echo ======== NEW TOKEN ============
-        run-action-bao-secret-info
+        action::bao-secret-info
     fi
 }
 
-run-action-bao-secret-id-create() {
+action::bao-secret-id-create() {
     if $(log-is-verbose); then
         run-cmd-from-action verbose bao write -force auth/approle/role/$(bao-role-name)/secret-id
     else
@@ -150,20 +150,20 @@ bao-role-name()     { echo -n external-secret-$postfix; }
 bao-role-id()       { run-bao read -format=yaml auth/approle/role/$(bao-role-name)/role-id | yq .data.role_id; }
 bao-role-policies() { run-bao read -format=yaml auth/approle/role/$(bao-role-name) | yq '.data.token_policies[]'; }
 
-run-action-bao-role-list() { run-bao list auth/approle/role; }
-run-action-bao-role-info() {
+action::bao-role-list() { run-bao list auth/approle/role; }
+action::bao-role-info() {
     echo "role-name: $(bao-role-name)"
     echo "role-id:   $(bao-role-id)"
     run-bao read auth/approle/role/$(bao-role-name)
 }
-run-action-bao-role-create() {
+action::bao-role-create() {
     run-bao write auth/approle/role/external-secret-$postfix  token_policies="$bao_token_policies"
 }
 
 #######################
 # policies
 
-run-action-bao-policy-create() {
+action::bao-policy-create() {
     bao policy write read-kv-$postfix - <<EOF
 {
     "path": {
@@ -174,6 +174,6 @@ run-action-bao-policy-create() {
 EOF
 }
 
-run-action-bao-policy-info() { run-cmd-from-action verbose bao policy read read-kv-$postfix; }
+action::bao-policy-info() { run-cmd-from-action verbose bao policy read read-kv-$postfix; }
 
-# TODO: run-action-bao-role-login() { bao write auth/approle/login role_id= secret_id=... }
+# TODO: action::bao-role-login() { bao write auth/approle/login role_id= secret_id=... }
