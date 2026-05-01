@@ -60,8 +60,9 @@ run-action-kube-secret-save-files() {
     local line; for line in ${data//: /:}; do
         local name=${line/:*/}
         local content=${line//*:/}
-        log-info kube-secret "saving $dir/$name"
+        log-info kube-secret "saving    $dir/$name"
         echo  $content | base64 -d >$dir/$name
+        run-verbose-cmd chmod 600 $dir/$name
     done
 }
 
