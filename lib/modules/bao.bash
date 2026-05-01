@@ -53,7 +53,7 @@ action::bao-token-info() {
     local error
     local token=$secret_value
     exitcode=0
-    if $(log-is-warn); then
+    if $(logger-shows-level root warn); then
         run-bao "token lookup" $token || exitcode=$?
         if [[ $exitcode == 2 ]]; then
             log-warn bao "bao token lookup exitcode 2: invalid token $token, probably expired token stored in secret"
@@ -72,13 +72,13 @@ action::bao-token-create() {
 }
 
 action::bao-token-update() {
-    if $(log-is-verbose); then
+    if $(logger-shows-level root verbose); then
         echo ======== OLD TOKEN ============
         action::bao-token-info
         echo ==== creating new token in Secret
     fi
     action::bao-token-create
-    if $(log-is-verbose); then
+    if $(logger-shows-level root verbose); then
         echo ======== NEW TOKEN ============
         action::bao-token-info
     fi
@@ -97,7 +97,7 @@ action::bao-secret-id-info() {
         secret_value=$argparse_extra_args
     fi
     log-info bao "lookup secret-id: $secret_value # TODO log-sensitive-info"
-    if $(log-is-warn); then
+    if $(logger-shows-level root warn); then
         log-verbose bao "write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value"
         run-bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value || exitcode=$?
         if [[ $exitcode == 2 ]]; then
@@ -112,7 +112,7 @@ action::bao-secret-id-info() {
 }
 action::bao-secret-id-list()   {
     run-bao list auth/approle/role/$(bao-role-name)/secret-id
-    if $(log-is-verbose); then
+    if $(logger-shows-level root verbose); then
         for id in $(bao list auth/approle/role/$(bao-role-name)/secret-id| tail -n +3); do
             echo ======= $id
             bao write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_value=$id
@@ -120,7 +120,7 @@ action::bao-secret-id-list()   {
     fi
 }
 action::bao-secret-id-update() {
-    if $(log-is-verbose); then
+    if $(logger-shows-level root verbose); then
         echo ======== OLD SECRET_ID ============
         action::bao-secret-info
         echo ==== creating new token in Secret
@@ -128,14 +128,14 @@ action::bao-secret-id-update() {
     secret_value=$(bao-create-secret-id)
     log-verbose bao "created secret-id $secret_value"
     action::bao-secret-update
-    if $(log-is-verbose); then
+    if $(logger-shows-level root verbose); then
         echo ======== NEW TOKEN ============
         action::bao-secret-info
     fi
 }
 
 action::bao-secret-id-create() {
-    if $(log-is-verbose); then
+    if $(logger-shows-level root verbose); then
         run-cmd-from-action verbose bao write -force auth/approle/role/$(bao-role-name)/secret-id
     else
         echo $(bao-secret-create)

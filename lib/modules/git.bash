@@ -10,6 +10,7 @@ git::init-module() {
     add-render-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
     add-render-action gc git-commit   "commits the changes to source and rendered manifests to git"
     add-render-action gr git-restore  "restores the changed files (source and rendered manifests)"
+    add-render-action "" git-pull     "pull the latest version of the repo"
     add-value-option m   message        msg   "set message to use with git commit"
     add-flag-option Q quiet-diff "do not show the output of diff"
     set-action-pre-flow load-karmah,update,render           git-diff git-add
@@ -36,9 +37,9 @@ action::git-diff() {
     log-info git "git-diff ${target_name} to ${output_dir}"
     if ${quiet_diff}; then
         run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
-    elif $(log-is-debug); then
+    elif $(logger-shows-level root debug); then
         run-cmd-from-action verbose git diff -- ${used_files} ${output_dir} || true
-    elif $(log-is-verbose); then
+    elif $(logger-shows-level root verbose); then
         run-cmd-from-action verbose git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
     else
         run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
@@ -71,7 +72,6 @@ action::git-status() {
     git status
 }
 
-
 action::git-commit() {
     use-option-var tmp false
     use-option-var message
@@ -79,11 +79,11 @@ action::git-commit() {
         log-info git "skipping git-commit because --tmp specified"
         return
     fi
-    log-info git "running git-commit for $target_name"
-    if [[ ! -z $message ]]; then
-        git-append-message $message
-    fi
     : ${git_commit_message:=${action} of ${target_name}}
+    if [[ ! -z $message ]]; then
+        git-add-message "$message"
+    fi
+    log-info git "running git-commit for $target_name with message \"$git_commit_message\""
     if git diff-index --quiet HEAD; then
         log-verbose git "Nothing added to commit for message: ${git_commit_message}"
     else

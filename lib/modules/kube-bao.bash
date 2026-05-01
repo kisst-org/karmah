@@ -34,7 +34,7 @@ action::kube-bao-token-info() {
 }
 action::kube-bao-token-update() {
     init-bao-token-vars
-    if $(log-is-verbose); then action::kube-secret-get; fi
+    if $(logger-shows-level root verbose); then action::kube-secret-get; fi
     run-flow-actions bao-token-update,kube-secret-update
 }
 
@@ -59,6 +59,6 @@ action::kube-bao-secret-id-info() {
 }
 action::kube-bao-secret-id-update() {
     init-bao-secret-id-vars
-    if $(log-is-verbose); then action::kube-secret-get; fi
+    if $(logger-shows-level root verbose); then action::kube-secret-get; fi
     run-flow-actions bao-secret-id-update,kube-secret-update
 }

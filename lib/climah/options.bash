@@ -15,7 +15,12 @@ get-option-var() {
     local opt_name=${name//_/-}
     echo "${option_value[$opt_name]:-$default}"
 }
-use-option-var() { declare -g $1=$(get-option-var $1 ${2:-}); }
+use-option-var() {
+    local name=$1 default=${2:-}
+    local value=$(get-option-var $name ${default:-})
+    log-debug option "use option var $name=\"$value\""
+    declare -g $name="$value";
+}
 
 set-option-value() {
     local name=$1 value="$2"
@@ -27,7 +32,7 @@ parse-flag-option() { set-option-value $name ${value:-true}; }
 parse-value-option() {
    local name=$1 value="$2"
    if [[ -z $value ]]; then
-       value=$2
+       value="$4"
        argparse_parse_count=2
    fi
    set-option-value $name "$value"
@@ -46,7 +51,7 @@ parse-if-option() {
     if [[ $value == $arg ]]; then value=""; fi   # TODO: this will not work with opt=  to set something to empty
 
     argparse_parse_count=1
-    $func $name $value "$@"
+    $func $name "$value" "$@"
 }
 
 
