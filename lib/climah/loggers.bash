@@ -125,19 +125,20 @@ log-verbose() { log-at-level verbose $1 "$2"; }
 log-debug()   { log-at-level debug $1 "$2"; }
 log-trace()   { log-at-level trace $1 "$2"; }
 
-stderr-trace() { echo >/dev/stderr $@; }
+stderr-trace() { echo >/dev/stderr $@; }  # TODO: better name trace-stderr
 
 ##########################
 # logging commands to be run
 parse-option-show-script() {
     parse-option-quiet
     logger_config[level.cmd]=verbose
-    dry_run=true
+    set-option-value dry-run true
     parse-option-yes
 }
 
 run-and-log-cmd() {
     local level=$1 logger=$2 cmd=$3 args
+    use-option-var dry_run false
     shift 3
     printf -v args " %s" "$@"
     log-at-level $level $logger "$cmd $args"
@@ -148,6 +149,7 @@ run-and-log-cmd() {
 
 run-verbose-cmd() {
     local maincmd=$1 cmd="$@"
+    use-option-var dry_run false
     log-at-level verbose cmd.$maincmd "${*}"
     if ! ${dry_run:-false}; then
         pipe=${cmd/*|/}
