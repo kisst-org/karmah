@@ -11,7 +11,7 @@ helm::init-module() {
     add-render-action "" helm-uninstall      "run helm uninstall for target"
     add-render-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
     add-render-action "" helm-get-manifests  "download helm manifests from cluster"
-    add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
+    #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
 
     set-action-pre-flow load-karmah,update,render,helm-diff,ask         helm-install

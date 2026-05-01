@@ -11,20 +11,15 @@ git::init-module() {
     add-render-action gc git-commit   "commits the changes to source and rendered manifests to git"
     add-render-action gr git-restore  "restores the changed files (source and rendered manifests)"
     add-value-option m   message        msg   "set message to use with git commit"
-    add-value-option M prepend-message  msg   "prepend commit message before auto generated message"
     add-flag-option Q quiet-diff "do not show the output of diff"
     set-action-pre-flow load-karmah,update,render           git-diff git-add
     set-action-pre-flow load-karmah,update,render,git-add   git-commit
     local_vars+=" used_files git_commit_message"
 }
 
-parse-option-prepend-message()   { prepend_message="$2";   argparse_parse_count=2; }
 git-add-message() {
     if [[ -z ${git_commit_message:-} ]] then
-        git_commit_message="${prepend_message:-}"
-    fi
-    if [[ -z ${git_commit_message:-} ]] then
-        git_commit_message+="${1}"
+        git_commit_message="${1}"
     else
         git_commit_message+=", ${1}"
     fi
@@ -79,11 +74,15 @@ action::git-status() {
 
 action::git-commit() {
     use-option-var tmp false
+    use-option-var message
     if $tmp; then
         log-info git "skipping git-commit because --tmp specified"
         return
     fi
     log-info git "running git-commit for $target_name"
+    if [[ ! -z $message ]]; then
+        git-append-message $message
+    fi
     : ${git_commit_message:=${action} of ${target_name}}
     if git diff-index --quiet HEAD; then
         log-verbose git "Nothing added to commit for message: ${git_commit_message}"
