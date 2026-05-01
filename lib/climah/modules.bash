@@ -103,7 +103,6 @@ declare-all-module-vars() {
             ${mod}::declare-vars
         fi
     done
-    config-pre-module-init
 }
 
 init-all-modules() {

@@ -27,8 +27,27 @@ climah-main() {
     run-active-command
 }
 
+load-lib-config() {
+    if [[ -f lib/config ]]; then
+        log-debug lib "loading initial config lib/config"
+        source lib/config
+    fi
+}
+
 load-libraries() {
-    for file in ${lib_dir:-lib}/*.bash; do
-        source $file
+    load-lib-config
+    local dir; for dir in ${lib_dirs:-lib}; do
+        local file; for file in ${dir}/*.bash; do
+            log-debug lib "loading library $file"
+            source $file
+        done
     done
+}
+
+read-config() {
+    if [[ -d config.d ]] && "${use_config_d:-true}"; then
+        for file in config.d/*.config; do
+            source $file
+        done
+    fi
 }
