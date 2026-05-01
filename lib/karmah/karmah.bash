@@ -16,9 +16,9 @@ karmah::init-module() {
     climah_prog=karmah
     add-help-topic ver version  karmah-show-version "show version of karmah"
     default_action=render
-    add-action lk load-karmah "load *.karmah init file(s)"
     help_level=expert
-    add-value-option K force-karmah-type typ "force to use another karmah_type"
+    add-action lk load-karmah "load *.karmah init file(s)"
+    add-value-option "" force-karmah-type typ "force to use another karmah_type"
     argparse_parse_funcs+=(parse-karmah-var)
 }
 
@@ -133,6 +133,7 @@ load-karmah-file() {
 }
 
 common-karmah() {
+    use-option-var force_karmah_type
     used_files=${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
