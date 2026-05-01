@@ -10,14 +10,14 @@ options::init-module() {
 
 options-show-help() { list-help-items option; }
 
-get-option-var() {
+get-option-value() {
     local name=$1 default=${2:-}
     local opt_name=${name//_/-}
     echo "${option_value[$opt_name]:-$default}"
 }
 use-option-var() {
     local name=$1 default=${2:-}
-    local value=$(get-option-var $name ${default:-})
+    local value=$(get-option-value $name ${default:-})
     log-debug option "use option var $name=\"$value\""
     declare -g $name="$value";
 }
