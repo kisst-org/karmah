@@ -51,6 +51,7 @@ action::git-diff() {
 }
 
 action::git-add() {
+    use-option-var tmp false
     if $tmp; then
         log-info git "skipping git-add because --tmp specfied"
         return
@@ -77,6 +78,7 @@ action::git-status() {
 
 
 action::git-commit() {
+    use-option-var tmp false
     if $tmp; then
         log-info git "skipping git-commit because --tmp specified"
         return

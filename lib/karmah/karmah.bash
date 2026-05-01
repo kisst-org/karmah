@@ -110,6 +110,7 @@ action::load-karmah() {
 
 
 load-karmah-file() {
+    use-option-var tmp false
     declare -g karmah_type
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
@@ -121,6 +122,7 @@ load-karmah-file() {
         log-debug karmah "sourcing $karmah_file"
         source ${karmah_file}
         common-karmah
+        # TODO: output_dir does not belong here
         output_dir="${to_dir:-tmp/manifests}/${target_name}"
         if $tmp; then
             output_dir="${to_dir:-tmp/manifests}/${target_name}"
