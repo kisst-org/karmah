@@ -15,7 +15,7 @@ get-option-var() {
     local opt_name=${name//_/-}
     echo "${option_value[$opt_name]:-$default}"
 }
-use-option-var() { declare -g $1=$(get-option-var $1 $2); }
+use-option-var() { declare -g $1=$(get-option-var $1 ${2:-}); }
 
 set-option-value() {
     local name=$1 value="$2"
