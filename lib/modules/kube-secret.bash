@@ -38,7 +38,8 @@ action::kube-secret-update() {
 action::kube-secret-get() {
     use-karmah-var secret_name
     use-karmah-var secret_field
-    log-verbose kube-secret "kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath=\"{.data.${secret_field}}\""
+    # TODO: use function that handles dry-run
+    log-verbose cmd.kubectl "kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath=\"{.data.${secret_field}}\""
     local val=$(kubectl $(kubectl-options) get secrets  ${secret_name} -o jsonpath="{.data.${secret_field}}")
     secret_value=$(echo -n $val| base64 -d)
 }
