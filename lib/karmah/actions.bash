@@ -11,8 +11,6 @@ actions::declare-vars() {
 actions::init-module() {
     add-help-topic act action "" "show available actions"
     add-help-topic flw flow actions-show-flows "show available flows"
-    help_level=expert
-    add-flag-option "" run-single-action  "run just the action, not the (pre)flow"
 }
 actions-show-help() { list-help-items action; }
 actions-show-flows() { list-help-items flow; }

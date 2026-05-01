@@ -84,10 +84,11 @@ run-helm() {
 }
 
 action::helm-pull() {
+    use-option-var force_pull false
     local dir=helm/charts/$helm_chart_name-$helm_chart_version
     log-info helm "running helm-pull for $helm_chart_name $helm_chart_version to $dir"
     if [[ -d $dir ]]; then
-        if ${force_pull:-false}; then
+        if ${force_pull}; then
             log-verbose helm "$dir already exists, removing it"
             run-cmd-from-action verbose rm -rf $dir
         else
@@ -96,7 +97,7 @@ action::helm-pull() {
         fi
     fi
     local tarfile=tmp/helm-charts/$helm_chart_name-$helm_chart_version.tgz
-    if [[ -f $tarfile && ${force_pull:-false} == false ]]; then
+    if [[ -f $tarfile && ${force_pull} == false ]]; then
         log-verbose helm "$tarfile already exists, skipping helm-pull (use --force-pull to override)"
     else
         run-cmd-from-action verbose mkdir -p $(dirname $tarfile)

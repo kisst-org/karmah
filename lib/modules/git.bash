@@ -37,8 +37,9 @@ action::git-pull() {
 }
 
 action::git-diff() {
+    use-option-var quiet_diff false
     log-info git "git-diff ${target_name} to ${output_dir}"
-    if ${quiet_diff:-false}; then
+    if ${quiet_diff}; then
         run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
     elif $(log-is-debug); then
         run-cmd-from-action verbose git diff -- ${used_files} ${output_dir} || true

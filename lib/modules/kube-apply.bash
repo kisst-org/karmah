@@ -13,8 +13,9 @@ filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation:
 filter-kube-diff-quiet() { filter-kube-diff-output | grep -E ^--- | sed -e 's|--- /tmp/LIVE-[0-9]*/||' -e 's/[ \t].*$//' -e 's/^/  changed: /'; }
 
 action::kube-diff() {
+    use-option-var quiet_diff false
     log-info kube "kube-diff ${target_name} to ${output_dir}"
-    if ${quiet_diff:-false}; then
+    if ${quiet_diff}; then
         #KUBECTL_EXTERNAL_DIFF='diff -qr'
         run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir \| filter-kube-diff-quiet #|| true
     elif $(log-is-verbose); then
