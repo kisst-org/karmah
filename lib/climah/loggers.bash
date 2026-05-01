@@ -16,6 +16,7 @@ init-loggers() {
         log_level_lookup[$val]=$key
     done
     declare -gA logger_config=(
+        [level]=info
         [format]="LOG %s\n"
         [format.error]="ERROR %s\n"
         [format.warn]="WARN %s\n"
@@ -26,7 +27,6 @@ init-loggers() {
         [format.trace]="#### %s\n"
         [appender]=log-to-console #log-to-console-with-timestamp
     )
-    declare -gA logger_level=([root]=info)
 }
 
 loggers::init-module() {
@@ -44,13 +44,13 @@ loggers::init-module() {
 }
 
 increase-log-level() {
-    local logger=$1
-    local old_level=${logger_level[$logger]:-info}
+    local inc=${1:-10}
+    local old_level=${logger_config[level]:-info}
     local -i value=${log_level_map[$old_level]}
-    value+=10
+    value=$(($value + $inc))
     local new_level=${log_level_lookup[$value]:-trace}
-    log-debug logger "increasing log-level for $logger from $old_level to $new_level"
-    logger_level[$logger]=$new_level
+    log-debug logger "increasing log-level from $old_level to $new_level"
+    logger_config[level]=$new_level
 }
 
 parse-pre-init-loglevels() {
@@ -64,35 +64,25 @@ parse-pre-init-loglevels() {
     done
 }
 
-parse-option-verbose()   { increase-log-level root; }
-parse-option-verbose2()  { increase-log-level root; increase-log-level root; }
-parse-option-verbose3()  { increase-log-level root; increase-log-level root; increase-log-level root;}
-parse-option-quiet()     { log_level=$log_level_warn; logger_level[root]=warn; }
+parse-option-verbose()   { increase-log-level 10; }
+parse-option-verbose2()  { increase-log-level 20; }
+parse-option-verbose3()  { increase-log-level 30; }
+parse-option-quiet()     { log_level=$log_level_warn; logger_config[level]=error; }
 parse-option-logger-level() {
     local logger=$2 level=$3 # TODO check number of args
     log-debug logger "setting log-level for $logger to $level"
-    logger_level[$logger]=$level
+    logger_config[level.$logger]=$level
     argparse_parse_count=3
 }
-find-logger-level()  {
-    local logger=$1
-    local result=${logger_level[root]}
-    local path=""
-    for part in ${logger//./ }; do
-        path="$path.$part"
-        result="${logger_level[${path#.}]:-$result}"
-        if [[ $path == .sub* ]]; then
-            echo XXX path=$path result=$result >/dev/stderr
-        fi
-    done
-    echo "$result"
-}
+find-logger-level()  { find-logger-config level $1; }
 
 find-logger-config() {
     local type=$1 logger=$2
     local path=$type
+    #stderr-verbose  type=$type logger=$logger path=$path
     local result="${logger_config[$path]}";
     for part in ${logger//./ }; do
+        #stderr-verbose type=$type logger=$logger path=$path result=$result
         path="$path.$part"
         result="${logger_config[$path]:-$result}"
     done
@@ -102,6 +92,7 @@ find-logger-config() {
 logger-shows-level() {
     local logger=$1 level=$2
     local lvl=$(find-logger-level $logger)
+    #stderr-verbose logger=$logger lvl=$lvl
     (( ${log_level_map[$lvl]} >= ${log_level_map[$level]} ))
 }
 
@@ -134,11 +125,13 @@ log-verbose() { log-at-level verbose $1 "$2"; }
 log-debug()   { log-at-level debug $1 "$2"; }
 log-trace()   { log-at-level trace $1 "$2"; }
 
+stderr-trace() { echo >/dev/stderr $@; }
+
 ##########################
 # logging commands to be run
 parse-option-show-script() {
     parse-option-quiet
-    logger_level[cmd]=verbose
+    logger_config[level.cmd]=verbose
     dry_run=true
     parse-option-yes
 }

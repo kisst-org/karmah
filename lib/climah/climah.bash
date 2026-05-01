@@ -15,7 +15,7 @@ climah-init() {
         show-short-help
         exit 1
     else
-        logger_level=([root]=info) # reset all loglevels, from pre-init
+        logger_config[level]=info # reset root loglevels, from pre-init
         argparse-parse-arguments "${@}"
     fi
 }
