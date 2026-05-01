@@ -67,7 +67,7 @@ action::bao-token-info() {
 }
 
 action::bao-token-create() {
-    : ${ttl:=${default_ttl:=30m}}
+    use-option-var ttl 30m
     secret_value=$(run-bao "token create"  -ttl=$ttl -format=yaml | yq .auth.client_token)
 }
 
@@ -120,7 +120,6 @@ action::bao-secret-id-list()   {
     fi
 }
 action::bao-secret-id-update() {
-    #: ${ttl:=30m}
     if $(log-is-verbose); then
         echo ======== OLD SECRET_ID ============
         action::bao-secret-info
