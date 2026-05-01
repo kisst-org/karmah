@@ -56,7 +56,6 @@ argparse-parse-arguments() {
     declare -a argparse_to_parse=()            # after alias subsitution is done
     argparse-replace-aliases "${@}"
     set -- "${argparse_to_parse[@]}"
-    log_level=$log_level_info
     while [[ $# > 0 ]]; do
         arg=${argparse_short_map[$1]:-$1}
         shift

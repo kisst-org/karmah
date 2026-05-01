@@ -1,5 +1,4 @@
 climah-init() {
-    init-logging "${@}" # TODO: deprecated remove with logging module
     init-loggers
     parse-pre-init-loglevels "${@}"
     load-libraries

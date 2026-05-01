@@ -67,7 +67,7 @@ parse-pre-init-loglevels() {
 parse-option-verbose()   { increase-log-level 10; }
 parse-option-verbose2()  { increase-log-level 20; }
 parse-option-verbose3()  { increase-log-level 30; }
-parse-option-quiet()     { log_level=$log_level_warn; logger_config[level]=error; }
+parse-option-quiet()     { logger_config[level]=error; }
 parse-option-logger-level() {
     local logger=$2 level=$3 # TODO check number of args
     log-debug logger "setting log-level for $logger to $level"
