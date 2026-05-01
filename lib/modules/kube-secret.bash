@@ -43,7 +43,7 @@ action::kube-secret-get() {
     secret_value=$(echo -n $val| base64 -d)
 }
 
-action::kube-secret-print-field() { run-action-kube-secret-get; echo $secret_value; }
+action::kube-secret-print-field() { action::kube-secret-get; echo $secret_value; }
 action::kube-secret-diff()     { kube-secret-manifest | kubectl $(kubectl-options) diff -f -; }
 action::kube-secret-manifest() { kube-secret-manifest; }
 

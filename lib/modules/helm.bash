@@ -139,7 +139,7 @@ action::helm-get-manifests() {
     run-verbose-cmd helm get manifest $release $(helm-cluster-options) \| split-yaml-docs-into-files
 }
 
-action::helm-get-diff() { run-action-helm-diff; } # TODO: deprecated
+action::helm-get-diff() { action::helm-diff; } # TODO: deprecated
 action::helm-diff() {
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
