@@ -11,7 +11,7 @@ kube::init-module() {
     add-karmah-action kl  kube-log       "show logging of a resource"
     help_level=expert
     add-karmah-action k   kubectl        "generic kubectl in the right cluster and namespace of all targets"
-    add-karmah-action ks  kube-status    "show status of relevant resources"
+    #add-karmah-action ks  kube-status    "show status of relevant resources"
     add-karmah-action ke  kube-exec      "execute a command on a pod of a resource"
     add-karmah-action kei kube-exec-it   "execute interactive command on a pod of a resource"
     add-karmah-action kst kube-stern     "use stern to show logging of multiple pods"
