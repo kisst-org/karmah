@@ -199,6 +199,9 @@ helm-update-value-path() {
 }
 
 helm-cluster-options() {
+    use-karmah-var kube_config
+    use-karmah-var kube_context
+    use-karmah-var kube_namespace
     local cfg=${kube_config:-default}
     local opt=""
     if [[ $cfg != default ]]; then

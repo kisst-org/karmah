@@ -16,10 +16,16 @@ kube::init-module() {
     add-karmah-action kei kube-exec-it   "execute interactive command on a pod of a resource"
     add-karmah-action kst kube-stern     "use stern to show logging of multiple pods"
 
-    local_vars+=" kube_config kube_context kube_namespace"
+    add-karmah-var "" kube_config  "<file>" "The kube config file to be used (default means none)"
+    add-karmah-var "" kube_context "<ctx>"  "The kube context"
+    add-karmah-var "" kube_namespace "<ns>" "The kube namespace"
+    #local_vars+=" kube_config kube_context kube_namespace"
 }
 
 kubectl-options() {
+    use-karmah-var kube_context
+    use-karmah-var kube_config
+    use-karmah-var kube_namespace
     local cfg=${kube_config:-default}
     local opt=""
     if [[ $cfg != default ]]; then
