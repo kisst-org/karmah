@@ -9,7 +9,6 @@ karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
     declare -g default_karmah_type=empty
     declare -gA karmah_var_names=()
-    declare -gA karmah_var_value_map=()
 }
 
 karmah::init-module() {
@@ -18,8 +17,7 @@ karmah::init-module() {
     default_action=render
     help_level=expert
     add-action lk load-karmah "load *.karmah init file(s)"
-    add-value-option "" force-karmah-type typ "force to use another karmah_type"
-    argparse_parse_funcs+=(parse-karmah-var)
+    add-karmah-var karmah_type "defines extar functionality"
 }
 
 empty::init-target() { verbose using empty karmah_type initializer; }
@@ -27,60 +25,39 @@ empty::init-target() { verbose using empty karmah_type initializer; }
 add-karmah-var() {
     local name=$1 summary="${2:-none}"
     karmah_var_names[$name]=$name
-    karmah_var_names[$module:$name]=$name
+    #karmah_var_names[$module:$name]=$name
     #add-help-item karmah-var "$name" "$arg" "$summary"
+    add-value-option "" ${name//_/-} "<val>" "karmah-var ..." # TODO
     local_vars+=" $name"
 }
 
-parse-karmah-var() {
-    local name=${1#^}
-    if [[ $name == $1 ]]; then return; fi
-    local varname=${karmah_var_names[$name]:-}
-    if [[ -z $varname ]]; then
-        log-warn karmah "unknown karmah var $name"
-    else
-        if [[ $# == 1 ]]; then
-            log-error karmah "missing value for karmah-var $1"
-            exit 1
-        fi
-        log-info karmah "setting karmah-var $name to $2"
-        karmah_var_value_map[$name]=$2
-        argparse_parse_count=2
-    fi
-}
-
-set-karmah-var() { karmah_var_value_map[$1]="$2"; }
 use-karmah-var() {
-    local longname=$1
-    local varname=${karmah_var_names[$longname]:-}
-    if [[ -z $varname ]]; then
-        log-error karmah "code refers to unknown karmah-var $longname"
+    local varname=$1 default="${2:-}"
+    if [[ -z ${karmah_var_names[$varname]:-} ]]; then
+        log-error karmah "code refers to unknown karmah-var $varname"
         exit 1
     fi
-    declare -g $varname=$(get-karmah-var $longname "${2:-}")
+    declare -g $varname=$(get-karmah-var $varname "${default}")
 }
 get-karmah-var() {
-    local name=$1 default=${2:-}  # error if not found and no default???
-    #local module=${name/:*/};
-    local varname=${name/*:/}
-    local env_value=
-    if [[ ! -z ${karmah_var_value_map[$module:$name]:-} ]]; then
-        echo ${karmah_var_value_map[$module:$name]:-};
-    elif [[ ! -z ${karmah_var_value_map[$varname]:-} ]]; then
-        echo ${karmah_var_value_map[$varname]:-};
-    elif [[ ! -z $(get-karmah-var-from-env $name) ]]; then
-        echo $(get-karmah-var-from-env $name)
-    elif [[ ! -z ${!name:-} ]]; then
-        echo ${!name}
+    local varname=$1 default="${2:-}"  # error if not found and no default???
+    local default_varname=default_$varname
+    if [[ ! -z $(get-option-value ${varname//_/-}) ]]; then
+        echo "$(get-option-value ${varname//_/-})"
+    elif [[ ! -z $(get-karmah-var-from-env $varname) ]]; then
+        echo "$(get-karmah-var-from-env $varname)"
+    elif [[ ! -z ${!varname:-} ]]; then
+        echo "${!varname}"
+    elif [[ ! -z ${!default_varname:-} ]]; then
+        echo "${!default_varname}"
     else
-        echo $default
+        echo "$default"
     fi
 }
 
 get-karmah-var-from-env() {
     local name=${1^^}
     local result=""
-    #local module=${name/:*/}; module=${module//-/}
     local varname=${name/*:/}
     local v; for v in $varname ${module^^}__$varname; do
         local env_varname=KARMAH_VAR_${v//-/_}
@@ -119,9 +96,13 @@ load-karmah-file() {
         declare -g $local_vars
         karmah_dir=$(dirname $karmah_file)
         common_dir=$(dirname $karmah_dir)/common
-        log-debug karmah "sourcing $karmah_file"
+        log-verbose karmah "loading $karmah_file"
         source ${karmah_file}
         common-karmah
+        use-karmah-var karmah_type
+        log-verbose karmah "using karmah-type $karmah_type"
+        ${karmah_type}::init-target
+
         # TODO: output_dir does not belong here
         output_dir="${to_dir:-tmp/manifests}/${target_name}"
         if $tmp; then
@@ -137,11 +118,9 @@ common-karmah() {
     used_files=${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
-        log-debug karmah "sourcing $common_karmah_file"
+        log-verbose karmah "loading $common_karmah_file"
         source $common_karmah_file
     fi
-    karmah_type=${force_karmah_type:-${karmah_type:-$default_karmah_type}}
-    ${karmah_type}::init-target
 }
 
 karmah-show-version() { echo karmah version: $karmah_version; }
