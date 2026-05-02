@@ -1,7 +1,7 @@
 kube::init-module() {
     add-module-help "helper actions to work with kubernetes"
-    add-func-option R replicas nr  "specify number of replicas"
-    add-func-option r resource res "specify a resource"
+    add-karmah-var R replicas nr  "specify number of replicas"
+#TODO    add-karmah-var r resource res "specify a resource"
 
     add-karmah-action kw kube-watch   "watch target resources every 2 seconds"
     add-karmah-action ""  kube-get       "get current manifests from cluster to --to <path> (default) deployed/manifests"
@@ -18,9 +18,6 @@ kube::init-module() {
 
     local_vars+=" kube_config kube_context kube_namespace"
 }
-
-parse-option-resource()  { kube_resource_list+=" $2"; argparse_parse_count=2; }
-parse-option-replicas()  { kube_replicas="$2";  argparse_parse_count=2; }
 
 kubectl-options() {
     local cfg=${kube_config:-default}
@@ -100,11 +97,11 @@ action::kube-tmp-scale() {
     done
 }
 kube-calc-replicas() {
-    local repl=${kube_replicas:-default}
-    if [[  $repl == default ]]; then
+    use-karmah-var replicas
+    if [[  $replicas == default ]]; then
         ${karmah_type}::kube-default-replicas $1
     else
-        echo $repl
+        echo $replicas
     fi
 }
 

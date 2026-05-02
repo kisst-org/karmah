@@ -17,6 +17,7 @@ parse-option-version()  { update_version="$2"; argparse_parse_count=2; }
 parse-option-update()   { updates+=("$2"); argparse_parse_count=2; }
 
 action::update() {
+    use-karmah-var replicas
     local any_updates=false
     if [[ ! -z ${update_version:-} ]]; then
         #info update $target_name version to $update_version
@@ -24,11 +25,11 @@ action::update() {
         any_updates=true
         git-add-message "version ${update_version}"
     fi
-    if [[ ! -z ${kube_replicas:-} ]]; then
-        #info update $target_name replicas to $kube_replicas
-        ${karmah_type}::update-target-replicas $kube_replicas
+    if [[ ! -z ${replicas:-} ]]; then
+        #info update $target_name replicas to $replicas
+        ${karmah_type}::update-target-replicas $replicas
         any_updates=true
-        git-add-message "replicas ${kube_replicas}"
+        git-add-message "replicas ${replicas}"
     fi
     local u
     for u in "${updates[@]}"; do

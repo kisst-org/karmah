@@ -18,7 +18,7 @@ helm::init-module() {
     set-action-pre-flow init-karmah,update,render,helm-diff,ask         helm-upgrade
     set-action-pre-flow init-karmah,update,render,helm-diff-delete,ask  helm-uninstall
 
-    add-karmah-var path "the path to show from helm values"
+    add-karmah-var "" json_path "path" "the path to show from helm values"
 
     local_vars+=" helm_template_command"
     local_vars+=" helm_value_files"
@@ -166,8 +166,8 @@ action::helm-diff() {
 }
 
 action::helm-print-value() {
-    use-karmah-var path
-    helm-get-path-value $path
+    use-karmah-var json_path
+    helm-get-path-value $json_path
 }
 
 render-helm() {

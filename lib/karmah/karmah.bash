@@ -18,17 +18,17 @@ karmah::init-module() {
     help_level=expert
     add-action "" init-karmah "load *.karmah init file(s) and run ::init-target function"
     add-action "" clear-karmah "clear all karmah-vars"
-    add-karmah-var karmah_type "defines extar functionality"
+    add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
 }
 
 empty::init-target() { verbose using empty karmah_type initializer; }
 
 add-karmah-var() {
-    local name=$1 summary="${2:-none}"
+    local short=$1 name=$2 arg=$3 summary="${4:-none}"
     karmah_var_names[$name]=$name
     #karmah_var_names[$module:$name]=$name
     #add-help-item karmah-var "$name" "$arg" "$summary"
-    add-value-option "" ${name//_/-} "<val>" "karmah-var ..." # TODO
+    add-value-option "$short" ${name//_/-} "${arg:-'<val>'}" "karmah-var ..." # TODO
     used_karmah_vars+=" $name"
 }
 
