@@ -18,7 +18,7 @@ action::kube-diff() {
     if ${quiet_diff}; then
         #KUBECTL_EXTERNAL_DIFF='diff -qr'
         run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir \| filter-kube-diff-quiet #|| true
-    elif $(logger-shows-level root verbose); then
+    elif $(log-shows-verbose); then
         run-cmd-from-action verbose kubectl diff $(kubectl-options) -f $output_dir || true
     else
         run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir \| filter-kube-diff-output # TODO true

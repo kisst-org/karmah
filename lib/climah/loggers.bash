@@ -1,7 +1,7 @@
 
 # This function is called before anything else, to immediately make logging work
 init-loggers() {
-    declare -gA log_level_map=(
+    declare -gA log_level_int_value=(
       [fatal]=0
       [error]=10
       [warn]=20
@@ -11,8 +11,8 @@ init-loggers() {
       [trace]=60
     )
     declare -ga log_level_lookup=()
-    local key; for key in ${!log_level_map[@]}; do
-        local -i val=${log_level_map[$key]}
+    local key; for key in ${!log_level_int_value[@]}; do
+        local -i val=${log_level_int_value[$key]}
         log_level_lookup[$val]=$key
     done
     declare -gA logger_config=(
@@ -42,7 +42,7 @@ loggers::init-module() {
 increase-log-level() {
     local inc=${1:-10}
     local old_level=${logger_config[level]:-info}
-    local -i value=${log_level_map[$old_level]}
+    local -i value=${log_level_int_value[$old_level]}
     value=$(($value + $inc))
     local new_level=${log_level_lookup[$value]:-trace}
     log-debug logger "increasing log-level from $old_level to $new_level"
@@ -93,8 +93,14 @@ logger-shows-level() {
     local logger=$1 level=$2
     local lvl=$(find-logger-level $logger)
     #stderr-verbose logger=$logger lvl=$lvl
-    (( ${log_level_map[$lvl]} >= ${log_level_map[$level]} ))
+    (( ${log_level_int_value[$lvl]} >= ${log_level_int_value[$level]} ))
 }
+
+# special functions for the root logger
+log-shows-warn()    { (( ${log_level_int_value[${logger_config[level]}]} >= ${log_level_int_value[warn]} )); }
+log-shows-info()    { (( ${log_level_int_value[${logger_config[level]}]} >= ${log_level_int_value[info]} )); }
+log-shows-verbose() { (( ${log_level_int_value[${logger_config[level]}]} >= ${log_level_int_value[verbose]} )); }
+log-shows-debug()   { (( ${log_level_int_value[${logger_config[level]}]} >= ${log_level_int_value[debug]} )); }
 
 ##########################
 # logging functions
@@ -124,6 +130,8 @@ log-info()    { log-at-level info $1 "$2"; }
 log-verbose() { log-at-level verbose $1 "$2"; }
 log-debug()   { log-at-level debug $1 "$2"; }
 log-trace()   { log-at-level trace $1 "$2"; }
+
+
 
 stderr-trace() { echo >/dev/stderr $@; }  # TODO: better name trace-stderr
 

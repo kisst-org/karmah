@@ -37,9 +37,9 @@ action::git-diff() {
     log-info git "git-diff ${target_name} to ${output_dir}"
     if ${quiet_diff}; then
         run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
-    elif $(logger-shows-level root debug); then
+    elif $(log-shows-debug); then
         run-cmd-from-action verbose git diff -- ${used_files} ${output_dir} || true
-    elif $(logger-shows-level root verbose); then
+    elif $(log-shows-verbose); then
         run-cmd-from-action verbose git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
     else
         run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
