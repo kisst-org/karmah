@@ -87,29 +87,30 @@ action::load-karmah() {
 
 
 load-karmah-file() {
-    local tmp=$(get-option-value tmp false)
     declare -g karmah_type
-    if [[ -f "${karmah_file}" ]]; then
-        # cleanup of any vars that might have been set with previous file
-        log-trace karmah "clearing $local_vars"
-        unset $local_vars
-        declare -g $local_vars
-        karmah_dir=$(dirname $karmah_file)
-        common_dir=$(dirname $karmah_dir)/common
-        log-verbose karmah "loading $karmah_file"
-        source ${karmah_file}
-        common-karmah
-        use-karmah-var karmah_type
-        log-verbose karmah "using karmah-type $karmah_type"
-        ${karmah_type}::init-target
-
-        # TODO: output_dir does not belong here
-        output_dir="${to_dir:-tmp/manifests}/${target_name}"
-        if $tmp; then
-            output_dir="${to_dir:-tmp/manifests}/${target_name}"
-        fi
-    else
+    if [[ ! -f "${karmah_file}" ]]; then
         log-info karmah "skipping $karmah_file"
+        return
+    fi
+    # cleanup of any vars that might have been set with previous file
+    log-trace karmah "clearing $local_vars"
+    unset $local_vars
+    declare -g $local_vars
+
+    karmah_dir=$(dirname $karmah_file)
+    common_dir=$(dirname $karmah_dir)/common
+    log-verbose karmah "loading $karmah_file"
+    source ${karmah_file}
+    common-karmah
+    use-karmah-var karmah_type
+    log-verbose karmah "using karmah-type $karmah_type"
+    ${karmah_type}::init-target
+
+    # TODO: output_dir does not belong here
+    local tmp=$(get-option-value tmp false)
+    output_dir="${to_dir:-tmp/manifests}/${target_name}"
+    if $tmp; then
+        output_dir="${to_dir:-tmp/manifests}/${target_name}"
     fi
 }
 
