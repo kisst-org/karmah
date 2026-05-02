@@ -53,18 +53,19 @@ parse-pre-init-loglevels() {
     for arg in "$@"; do
         parse-if-log-option $arg
     done
+    log-debug logger "root log-level ${logger_config[level]:-unknown}"
 }
 
 parse-if-log-option() {
     case $1 in
-        -v|--verbose) increase-log-level 10;       argparse_parse_count=1;;
+        -v|--verbose) parse-option-verbose();;
+        -q|--quiet)   parse-option-quiet;;
         -vv)          increase-log-level 20;       argparse_parse_count=1;;
         -vvv)         increase-log-level 30;       argparse_parse_count=1;;
-        -q|--quiet)   logger_config[level]=error;  argparse_parse_count=1;;
     esac
 }
-parse-option-verbose()   { increase-log-level 10; }
-parse-option-quiet()     { logger_config[level]=error; }
+parse-option-verbose()   { increase-log-level 10;      argparse_parse_count=1; }
+parse-option-quiet()     { logger_config[level]=error; argparse_parse_count=1;}
 
 parse-option-log() {
     local logger=$2 level=$3 # TODO check number of args
