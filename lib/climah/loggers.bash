@@ -58,7 +58,7 @@ parse-pre-init-loglevels() {
 
 parse-if-log-option() {
     case $1 in
-        -v|--verbose) parse-option-verbose();;
+        -v|--verbose) parse-option-verbose;;
         -q|--quiet)   parse-option-quiet;;
         -vv)          increase-log-level 20;       argparse_parse_count=1;;
         -vvv)         increase-log-level 30;       argparse_parse_count=1;;
