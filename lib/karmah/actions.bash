@@ -11,6 +11,7 @@ actions::declare-vars() {
 actions::init-module() {
     add-help-topic act action "" "show available actions"
     add-help-topic flw flow actions-show-flows "show available flows"
+    append-argparse-func parse-if-action
 }
 actions-show-help() { list-help-items action; }
 actions-show-flows() { list-help-items flow; }
@@ -18,16 +19,18 @@ actions-show-flows() { list-help-items flow; }
 add-action() {
     local short=$1 name=$2 summary="$3"
     log-trace actions "adding action: ${@}"
-    argparse_parse_func_map[$name]=parse-action
-    argparse_parse_params[$name]=$name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     : ${action_flow[$name]:=$name}  # default flow is just the action
     action_module[$name]=$module
     add-help-item $name action:$name "" "$summary"
 }
 
-parse-action() {
-    action_list+=" ${argparse_param_list[0]}";
+parse-if-action() {
+    local action_name=$1
+    if [[ ! -z ${action_module[$action_name]:-} ]]; then
+        action_list+=" $action_name"
+        argparse_parse_count=1
+    fi
 }
 
 set-action-pre-hook() { action_pre_hook[$1]=$2; }
