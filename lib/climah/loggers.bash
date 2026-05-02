@@ -36,11 +36,7 @@ loggers::init-module() {
     add-flag-option  "" dry-run   "do not execute the actual commands"
 
     help_level=expert
-    add-func-option "" logger-level "logger level" "show all commands without doing much"
-
-    # TODO: parse multiple short options
-    argparse_parse_func_map[-vv]=parse-option-verbose2
-    argparse_parse_func_map[-vvv]=parse-option-verbose3
+    add-func-option "" log "logger level" "show all commands without doing much"
 }
 
 increase-log-level() {
@@ -55,25 +51,28 @@ increase-log-level() {
 
 parse-pre-init-loglevels() {
     for arg in "$@"; do
-        case $arg in
-            -v|--verbose) parse-option-verbose;;
-            -vv)          parse-option-verbose2;;
-            -vvv)         parse-option-verbose3;;
-            -q|--quiet)   parse-option-quiet;;
-        esac
+        parse-if-log-option $arg
     done
 }
 
+parse-if-log-option() {
+    case $1 in
+        -v|--verbose) increase-log-level 10;       argparse_parse_count=1;;
+        -vv)          increase-log-level 20;       argparse_parse_count=1;;
+        -vvv)         increase-log-level 30;       argparse_parse_count=1;;
+        -q|--quiet)   logger_config[level]=error;  argparse_parse_count=1;;
+    esac
+}
 parse-option-verbose()   { increase-log-level 10; }
-parse-option-verbose2()  { increase-log-level 20; }
-parse-option-verbose3()  { increase-log-level 30; }
 parse-option-quiet()     { logger_config[level]=error; }
-parse-option-logger-level() {
+
+parse-option-log() {
     local logger=$2 level=$3 # TODO check number of args
     log-debug logger "setting log-level for $logger to $level"
     logger_config[level.$logger]=$level
     argparse_parse_count=3
 }
+
 find-logger-level()  { find-logger-config level $1; }
 
 find-logger-config() {

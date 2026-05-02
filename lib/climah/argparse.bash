@@ -1,10 +1,8 @@
 
 argparse::declare-vars() {
     declare -gA argparse_aliases=()
-    declare -gA argparse_parse_func_map=()
     # parse-if-help-item is first to add any command to possible help
-    declare -ga argparse_parse_funcs=(parse-if-help-item argparse-parse-arg)
-    declare -gA argparse_parse_params=()
+    declare -ga argparse_parse_funcs=(parse-if-help-item)
     declare -ga argparse_replaced_aliases=()   # remember for help function
     declare -gA argparse_short_map=()
     declare -gA argparse_short_lookup=()
@@ -39,17 +37,6 @@ argparse-parse-funcs() {
         fi
     done
 }
-
-argparse-parse-arg() {
-    local name=$1
-    local func=${argparse_parse_func_map[$name]:-}
-    if [[ ! -z $func ]]; then
-        argparse_parse_count=1
-        local argparse_param_list=("${argparse_parse_params[$name]:-}")
-        $func "$@"
-    fi
-}
-
 
 argparse-parse-arguments() {
     argparse_original_args="${@}"

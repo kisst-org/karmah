@@ -17,7 +17,6 @@ help::init-module() {
 
     add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
     add-help-topic top topic    show-help-topics "show all help-topics"
-    argparse_parse_func_map[help]=parse-option-help
 }
 
 help-is-verbose() { logger-shows-level help verbose; }
@@ -57,7 +56,6 @@ add-help-item() {
     help_item_level[$key]=$help_level
     help_item_params[$key]=$params
     help_item_summary[$key]=$summary
-    argparse_parse_func_map[$key]=parse-help-item
 }
 
 parse-if-help-item() {
