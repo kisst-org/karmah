@@ -22,30 +22,33 @@ set-option-value() {
     option_value[$name]="$value"
 }
 
-parse-flag-option() { set-option-value $name ${value:-true}; }
+parse-flag-option() {
+    case $1 in
+        --$option_name)       set-option-value $option_name true  ;;
+        --$option_name=true)  set-option-value $option_name true  ;;
+        --$option_name=false) set-option-value $option_name false ;;
+        *) log-error option "unsupported syntax for flag option $1"
+    esac
+}
 parse-value-option() {
-   local name=$1 value="$2"
-   if [[ -z $value ]]; then
-       value="$4"
-       argparse_parse_count=2
-   fi
-   set-option-value $name "$value"
+    local value=${1#*=}
+    if [[ $value == $1 ]]; then # --option=...
+        value="$2"
+        argparse_parse_count=2
+    fi
+    stderr-trace XXX set-option-value $option_name "$value"
+    set-option-value $option_name "$value"
 }
 
 parse-if-option() {
-    local arg=${1}
-    arg=${arg#--}
+    local arg=${1#--}
     if [[ $arg == $1 ]]; then return 0; fi  # not an argument starting with --...
 
-    local name=${arg/=*/}
-    local func=${option_func[$name]:-}
+    local option_name=${arg/=*/}
+    local func=${option_func[$option_name]:-}
     if [[ -z $func ]]; then return 0; fi   # not a known option
-
-    local value="${arg/*=/}"
-    if [[ $value == $arg ]]; then value=""; fi   # TODO: this will not work with opt=  to set something to empty
-
-    argparse_parse_count=1
-    $func $name "$value" "$@"
+    argparse_parse_count=1 # options that need more argyments can set this
+    $func "$@"
 }
 
 
