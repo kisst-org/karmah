@@ -36,7 +36,6 @@ parse-value-option() {
         value="$2"
         argparse_parse_count=2
     fi
-    stderr-trace XXX set-option-value $option_name "$value"
     set-option-value $option_name "$value"
 }
 
@@ -52,27 +51,15 @@ parse-if-option() {
 }
 
 
-add-func-option() {
-    local short=$1 name=$2 arg=$3 func=$4 summary="$5"
-    argparse_parse_func_map[--$name]=$func
-    argparse_parse_params[--$name]=$name
+_add-option() {
+    local short=$1 name=$2 arg=$3 summary="$4" func=$5
     if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
+    option_func[$name]=$func
     add-help-item --$name option:--$name "$arg" "$summary"
 }
-
-add-parse-option()  { add-func-option "$1" $2 "$3" parse-option-$2 "$4"; }
-add-flag-option()   {
-    local short=$1 name=$2 summary="$3"
-    if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
-    option_func[$name]=parse-flag-option
-    add-help-item --$name option:--$name "" "$summary"
-}
-add-value-option()   {
-    local short=$1 name=$2 arg=$3 summary="$4"
-    if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
-    option_func[$name]=parse-value-option
-    add-help-item --$name option:--$name "$arg" "$summary"
-}
+add-func-option()  { _add-option "$1" $2 "$3" "$4" parse-option-$2; }
+add-flag-option()  { _add-option "$1" $2  ""  "$3" parse-flag-option; }
+add-value-option() { _add-option "$1" $2 "$3" "$4" parse-value-option; }
 
 show-help-about-option() {
     local type=$1 name=$2

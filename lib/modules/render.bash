@@ -10,8 +10,8 @@ render::init-module() {
     add-render-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
     add-render-action rm render-rm "remove all rendered manifests"
 
-    add-parse-option "" to       path  "other path to render to (default is tmp/manifests)"
-    add-parse-option "" with     path  used for comparison between two manifest trees
+    add-func-option "" to       path  "other path to render to (default is tmp/manifests)"
+    add-func-option "" with     path  used for comparison between two manifest trees
     add-flag-option "" tmp  "render to tmp/manifests (already default), do not commit"
 
 }

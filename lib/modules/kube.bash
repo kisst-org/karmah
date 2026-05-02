@@ -1,7 +1,7 @@
 kube::init-module() {
     add-module-help "helper actions to work with kubernetes"
-    add-parse-option R replicas nr  "specify number of replicas"
-    add-parse-option r resource res "specify a resource"
+    add-func-option R replicas nr  "specify number of replicas"
+    add-func-option r resource res "specify a resource"
 
     add-karmah-action kw kube-watch   "watch target resources every 2 seconds"
     add-karmah-action ""  kube-get       "get current manifests from cluster to --to <path> (default) deployed/manifests"

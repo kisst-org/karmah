@@ -30,13 +30,13 @@ init-loggers() {
 }
 
 loggers::init-module() {
-    add-parse-option v  verbose  ""    "give more output"
-    add-parse-option q  quiet    ""    "show no output"
-    add-parse-option S  show-script "" "show all commands without doing much"
+    add-func-option v  verbose  ""    "give more output"
+    add-func-option q  quiet    ""    "show no output"
+    add-func-option S  show-script "" "show all commands without doing much"
     add-flag-option  "" dry-run   "do not execute the actual commands"
 
     help_level=expert
-    add-parse-option "" logger-level "logger level" "show all commands without doing much"
+    add-func-option "" logger-level "logger level" "show all commands without doing much"
 
     # TODO: parse multiple short options
     argparse_parse_func_map[-vv]=parse-option-verbose2

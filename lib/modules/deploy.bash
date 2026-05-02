@@ -5,7 +5,7 @@ deploy::init-module() {
     add-karmah-action "" plan   "show what deploy action would do"
     help_level=expert
     add-karmah-action "" ask "ask for confirmation (unless --yes is specified)"
-    add-parse-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
+    add-func-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
 }
 
