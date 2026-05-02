@@ -67,7 +67,7 @@ action::bao-token-info() {
 }
 
 action::bao-token-create() {
-    use-option-var ttl 30m
+    local ttl=$(get-option-value ttl 30m)
     secret_value=$(run-bao "token create"  -ttl=$ttl -format=yaml | yq .auth.client_token)
 }
 

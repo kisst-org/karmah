@@ -84,7 +84,7 @@ run-helm() {
 }
 
 action::helm-pull() {
-    use-option-var force_pull false
+    local force_pull=$(get-option-value force-pull false)
     local dir=helm/charts/$helm_chart_name-$helm_chart_version
     log-info helm "running helm-pull for $helm_chart_name $helm_chart_version to $dir"
     if [[ -d $dir ]]; then

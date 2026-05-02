@@ -138,7 +138,7 @@ parse-option-show-script() {
 
 run-and-log-cmd() {
     local level=$1 logger=$2 cmd=$3 args
-    use-option-var dry_run false
+    local dry_run=$(get-option-value dry-run false)
     shift 3
     printf -v args " %s" "$@"
     log-at-level $level $logger "$cmd $args"
@@ -149,7 +149,7 @@ run-and-log-cmd() {
 
 run-verbose-cmd() {
     local maincmd=$1 cmd="$@"
-    use-option-var dry_run false
+    local dry_run=$(get-option-value dry-run false)
     log-at-level verbose cmd.$maincmd "${*}"
     if ! ${dry_run:-false}; then
         pipe=${cmd/*|/}

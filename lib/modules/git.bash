@@ -33,7 +33,7 @@ action::git-pull() {
 }
 
 action::git-diff() {
-    use-option-var quiet_diff false
+    local quiet_diff=$(get-option-value quiet-diff false)
     log-info git "git-diff ${target_name} to ${output_dir}"
     if ${quiet_diff}; then
         run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
@@ -47,7 +47,7 @@ action::git-diff() {
 }
 
 action::git-add() {
-    use-option-var tmp false
+    local tmp=$(get-option-value tmp false)
     if $tmp; then
         log-info git "skipping git-add because --tmp specfied"
         return
@@ -73,8 +73,8 @@ action::git-status() {
 }
 
 action::git-commit() {
-    use-option-var tmp false
-    use-option-var message
+    local tmp=$(get-option-value tmp false)
+    local message=$(get-option-value message)
     if $tmp; then
         log-info git "skipping git-commit because --tmp specified"
         return

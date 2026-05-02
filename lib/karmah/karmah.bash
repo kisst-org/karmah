@@ -110,7 +110,7 @@ action::load-karmah() {
 
 
 load-karmah-file() {
-    use-option-var tmp false
+    local tmp=$(get-option-value tmp false)
     declare -g karmah_type
     if [[ -f "${karmah_file}" ]]; then
         # cleanup of any vars that might have been set with previous file
@@ -133,7 +133,7 @@ load-karmah-file() {
 }
 
 common-karmah() {
-    use-option-var force_karmah_type
+    local force_karmah_type=$(get-option-value force-karmah-type) # TODO karmah_var will do this
     used_files=${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
