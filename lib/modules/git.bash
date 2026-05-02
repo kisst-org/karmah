@@ -13,8 +13,8 @@ git::init-module() {
     add-render-action "" git-pull     "pull the latest version of the repo"
     add-value-option m   message        msg   "set message to use with git commit"
     add-flag-option Q quiet-diff "do not show the output of diff"
-    set-action-pre-flow load-karmah,update,render           git-diff git-add
-    set-action-pre-flow load-karmah,update,render,git-add   git-commit
+    set-action-pre-flow init-karmah,update,render           git-diff git-add
+    set-action-pre-flow init-karmah,update,render,git-add   git-commit
     local_vars+=" used_files git_commit_message"
 }
 

@@ -14,9 +14,9 @@ helm::init-module() {
     #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
 
-    set-action-pre-flow load-karmah,update,render,helm-diff,ask         helm-install
-    set-action-pre-flow load-karmah,update,render,helm-diff,ask         helm-upgrade
-    set-action-pre-flow load-karmah,update,render,helm-diff-delete,ask  helm-uninstall
+    set-action-pre-flow init-karmah,update,render,helm-diff,ask         helm-install
+    set-action-pre-flow init-karmah,update,render,helm-diff,ask         helm-upgrade
+    set-action-pre-flow init-karmah,update,render,helm-diff-delete,ask  helm-uninstall
 
     add-karmah-var path "the path to show from helm values"
 

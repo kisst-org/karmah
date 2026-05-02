@@ -16,7 +16,8 @@ karmah::init-module() {
     add-help-topic ver version  karmah-show-version "show version of karmah"
     default_action=render
     help_level=expert
-    add-action lk load-karmah "load *.karmah init file(s)"
+    add-action "" init-karmah "load *.karmah init file(s) and run ::init-target function"
+    add-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var karmah_type "defines extar functionality"
 }
 
@@ -28,7 +29,7 @@ add-karmah-var() {
     #karmah_var_names[$module:$name]=$name
     #add-help-item karmah-var "$name" "$arg" "$summary"
     add-value-option "" ${name//_/-} "<val>" "karmah-var ..." # TODO
-    local_vars+=" $name"
+    used_karmah_vars+=" $name"
 }
 
 use-karmah-var() {
@@ -69,10 +70,10 @@ get-karmah-var-from-env() {
 
 add-karmah-action() {
     add-action "${@}"
-    set-action-pre-flow load-karmah "$2"
+    set-action-pre-flow init-karmah "$2"
 }
 
-action::load-karmah() {
+action::init-karmah() {
     if [[ -f $target_path ]]; then
         karmah_file=$target_path
     elif [[ -d ${target_path:-} ]]; then
@@ -82,7 +83,13 @@ action::load-karmah() {
         # TODO: warn, error or skip_flow
         return 0
     fi
+    declare -g used_karmah_vars=""
     load-karmah-file
+    post_flow_actions+=" clear-karmah"
+}
+action::clear-karmah() {
+    log-debug karmah "clearing karmah-vars: ${used_karmah_vars:-}"
+    unset ${used_karmah_vars:-};
 }
 
 

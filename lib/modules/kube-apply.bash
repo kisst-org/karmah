@@ -5,8 +5,8 @@ kube-apply::init-module() {
     help_level=expert
     add-render-action "" kube-delete   "delete all manifests from cluster (kubectl delete)"
     #add-karmah-action "" kube-diff-del "show resources that will be deleted with kube-delete"
-    set-action-pre-flow load-karmah,update,render,kube-diff,ask         kube-apply
-    set-action-pre-flow load-karmah,update,render,kube-diff-delete,ask  kube-delete
+    set-action-pre-flow init-karmah,update,render,kube-diff,ask         kube-apply
+    set-action-pre-flow init-karmah,update,render,kube-diff-delete,ask  kube-delete
 }
 
 filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation: [0-9]*$'; }

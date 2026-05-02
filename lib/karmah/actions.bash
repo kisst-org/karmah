@@ -19,6 +19,10 @@ actions-show-flows() { list-help-items flow; }
 add-action() {
     local short=$1 name=$2 summary="$3"
     log-trace actions "adding action: ${@}"
+    if ! $(function-exists action::$name) ; then
+        log-error action "adding action $name without function action::$name in module $module"
+        exit 1
+    fi
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     : ${action_flow[$name]:=$name}  # default flow is just the action
     action_module[$name]=$module
@@ -46,7 +50,7 @@ set-action-pre-flow() {
 run-verbose-action() {
     local action=$1
     local pre_hook=${action_pre_hook[$action]:-}
-    local module=${action_module[$action]}
+    local module=${action_module[$action]:-}
     if [[ ! -z ${pre_hook}  ]]; then
         log-info action "running action pre-hook ${pre_hook}"
         ${pre_hook}
@@ -67,22 +71,28 @@ run-single-actions() {
     done
 }
 
+_run-action() {
+    local action=$1
+    if ${action_already_run[$action]:-false}; then
+        log-verbose action "skipping $action because it already has run"
+    else
+        action_already_run[$action]=true
+        run-verbose-action $action
+    fi
+}
+
 run-flow-actions() {
     declare -a flows=${@:-${action_list:-${default_action}}}
     declare -A action_already_run=()
     local action flow
+    local post_flow_actions=""
     log-info action "running flow-actions $flows"
     for flow in ${flows//,/ }; do
         flow=${action_flow[$flow]:-$flow}
-        for action in ${flow//,/ }; do
-            if ${action_already_run[$action]:-false}; then
-                log-info action "skipping $action because it already has run"
-            else
-                action_already_run[$action]=true
-                run-verbose-action $action
-            fi
-        done
+        for action in ${flow//,/ }; do _run-action $action; done
     done
+    log-verbose action "running postflow actions: ${post_flow_actions:-}"
+    for action in ${post_flow_actions:-}; do _run-action $action; done
 }
 
 show-actions() { list-help-items action; }
