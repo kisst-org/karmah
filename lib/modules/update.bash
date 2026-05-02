@@ -2,7 +2,7 @@
 update::init-module() {
     add-module-help "actions to update source files for rendering e.g. (helm values)"
     add-karmah-action u update "update source files with expressions from --update"
-    add-func-option V version ver  "specify version (tag) to use for update or scale"
+    add-karmah-var    V version ver  "specify version (tag) to use for update or scale"
     help_level=expert
     add-func-option u update expr  "apply a custom update"
 
@@ -13,17 +13,17 @@ update::init-module() {
     argparse_aliases[start]="deploy --replicas default"
 }
 
-parse-option-version()  { update_version="$2"; argparse_parse_count=2; }
 parse-option-update()   { updates+=("$2"); argparse_parse_count=2; }
 
 action::update() {
     use-karmah-var replicas
+    use-karmah-var version
     local any_updates=false
-    if [[ ! -z ${update_version:-} ]]; then
-        #info update $target_name version to $update_version
-        ${karmah_type}::update-target-version ${update_version}
+    if [[ ! -z ${version:-} ]]; then
+        #info update $target_name version to $version
+        ${karmah_type}::update-target-version ${version}
         any_updates=true
-        git-add-message "version ${update_version}"
+        git-add-message "version ${version}"
     fi
     if [[ ! -z ${replicas:-} ]]; then
         #info update $target_name replicas to $replicas
