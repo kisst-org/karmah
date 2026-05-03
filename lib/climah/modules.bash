@@ -48,15 +48,6 @@ add-module-help() {
     add-help-item $module module:$module "" "$summary"
 }
 
-show-help-section() {
-    local type=$1 header=${2:-}
-    if $(has-help-items $type); then
-        echo "${header:-${type}s:}"
-        list-help-items $type
-        echo
-    fi
-}
-
 show-help-about-module() {
     local type=$1 name=$2
     echo module $name: ${help_item_summary[module:$name]:-no summary}

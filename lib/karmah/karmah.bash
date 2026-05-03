@@ -1,7 +1,9 @@
 # karmah: do stuff based on *.karmah file
 karmah-main() {
     declare -g climah_prog=karmah
-    #declare -g help_full_function=
+    # too many actions and options so only show some basic stuff
+    default_module_help_level=expert
+    basic_help_modules="loggers actions options commands"
     climah-main "$@"
 }
 

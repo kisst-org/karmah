@@ -13,9 +13,6 @@ help::declare-vars() {
 help::init-module() {
     add-command h  help show-help    "show general help"
     add-func-option  h  help ""           "show general help information"
-
-    add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
-    add-help-topic top topic    show-help-topics "show all help-topics"
 }
 
 help-is-verbose() { logger-shows-level help verbose; }
@@ -25,19 +22,6 @@ set-help-level() {
     local item; for item in "$@"; do
         help_item_level[$item]=level
     done
-}
-
-add-help-topic() {
-    # TODO: func is not needed anymore
-    local short=$1 name=$2 func=${3} summary=${4:-no summary}
-    log-trace help "adding help-topic: ${@}"
-    if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
-    add-help-item $name topic:$name "" "$summary"
-}
-show-help-about-topic() {
-    local ignore=$1 type=$2
-    help_show_level=all
-    show-help-section $type
 }
 
 add-help-item() {
@@ -206,13 +190,4 @@ show-short-help() {
   echo
   echo see additional help topics with
   echo "   ${climah_prog_name} help topics"
-}
-
-show-help-topics() {
-cat <<EOF
-${climah_prog_name} help [<topic>]
-
-topic can be any of:
-EOF
-    list-help-items topic
 }
