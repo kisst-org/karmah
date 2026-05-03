@@ -36,7 +36,7 @@ loggers::init-module() {
     add-flag-option  "" dry-run   "do not execute the actual commands"
 
     help_level=expert
-    add-func-option "" log "logger level" "show all commands without doing much"
+    add-func-option "" log "<cfg> <value>" "set a log config e.g. --log level.cmd verbose"
     append-argparse-func parse-if-multi-verbose-option
 }
 
@@ -52,7 +52,7 @@ increase-log-level() {
 
 parse-if-multi-verbose-option() {
     case $1 in
-        -vv)  increase-log-level 20; argparse_parse_count=1;;
+        -vv)  increase-log-level 20;     argparse_parse_count=1;;
         -vvv) increase-log-level 30; argparse_parse_count=1;;
     esac
 }
@@ -60,9 +60,9 @@ parse-option-verbose()   { increase-log-level 10;      argparse_parse_count=1; }
 parse-option-quiet()     { logger_config[level]=error; argparse_parse_count=1;}
 
 parse-option-log() {
-    local logger=$2 level=$3 # TODO check number of args
-    log-debug logger "setting log-level for $logger to $level"
-    logger_config[level.$logger]=$level
+    local cfg=$2 value=$3
+    echo log-debug logger "setting log-config $cfg to $value"
+    logger_config[$cfg]=$value
     argparse_parse_count=3
 }
 
