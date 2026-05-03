@@ -1,6 +1,6 @@
 climah-init() {
     init-loggers
-    parse-pre-init-loglevels "${@}"
+    parse-pre-init-debug "${@}"
     load-libraries
     declare-all-module-vars
     init-all-modules # TODO: ordering: help logging options render git
@@ -13,10 +13,9 @@ climah-init() {
         printf "no arguments passed, pass at least one path or command\n\n"
         show-short-help
         exit 1
-    else
-        logger_config[level]=info # reset root loglevels, from pre-init
-        argparse-parse-arguments "${@}"
     fi
+    logger_config[level]=info # reset root loglevels, from pre-init-debug
+    argparse-parse-arguments "${@}"
 }
 
 climah-main() {

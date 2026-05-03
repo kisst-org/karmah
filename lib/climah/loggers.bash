@@ -37,6 +37,7 @@ loggers::init-module() {
 
     help_level=expert
     add-func-option "" log "logger level" "show all commands without doing much"
+    append-argparse-func parse-if-multi-verbose-option
 }
 
 increase-log-level() {
@@ -49,19 +50,10 @@ increase-log-level() {
     logger_config[level]=$new_level
 }
 
-parse-pre-init-loglevels() {
-    for arg in "$@"; do
-        parse-if-log-option $arg
-    done
-    log-debug logger "root log-level ${logger_config[level]:-unknown}"
-}
-
-parse-if-log-option() {
+parse-if-multi-verbose-option() {
     case $1 in
-        -v|--verbose) parse-option-verbose;;
-        -q|--quiet)   parse-option-quiet;;
-        -vv)          increase-log-level 20;       argparse_parse_count=1;;
-        -vvv)         increase-log-level 30;       argparse_parse_count=1;;
+        -vv)  increase-log-level 20; argparse_parse_count=1;;
+        -vvv) increase-log-level 30; argparse_parse_count=1;;
     esac
 }
 parse-option-verbose()   { increase-log-level 10;      argparse_parse_count=1; }
