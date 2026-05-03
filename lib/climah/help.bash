@@ -78,7 +78,7 @@ has-help-items() {
 list-help-items() {
     local type=$1
     local item len=1 slen=0
-    for key in ${help_all_items[$type]}; do
+    for key in ${help_all_items[$type]:-}; do
         if $(help-is-visible $key); then
             local lname=${key/*:/}
             local name=${key/*:/}
@@ -91,7 +91,7 @@ list-help-items() {
             if (( $slen < $shortlen)); then slen=$shortlen; fi
         fi
     done
-    for key in ${help_all_items[$type]}; do
+    for key in ${help_all_items[$type]:-}; do
         local name=${key/*:/}
         local lname=$name
         if [[ ! -z ${help_item_params[$key]} ]]; then
