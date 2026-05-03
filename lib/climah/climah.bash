@@ -4,9 +4,9 @@ climah-init() {
     load-libraries
     declare-all-module-vars
     init-all-modules # TODO: ordering: help logging options render git
-    module=commands add-help-topic cmd command "" "show available commands"
-    module=options  add-help-topic opt option  "" "show available options"
-    module=modules  add-help-topic mod module  modules-show "show all modules"
+    module=commands add-help-topic cmd command "show available commands"
+    module=options  add-help-topic opt option  "show available options"
+    module=modules  add-help-topic mod module  "show all modules"
 
     read-config
     if [[ $# == 0 ]]; then

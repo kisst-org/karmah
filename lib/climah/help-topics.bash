@@ -1,12 +1,12 @@
 
 help-topics::init-module() {
-    add-help-topic al  aliases  argparse-show-aliases "show all defined aliases"
-    add-help-topic top topic    show-help-topics "show all help-topics"
+    add-help-topic al  aliases "show all defined aliases"
+    add-help-topic top topics  "show all help-topics"
 }
 
 add-help-topic() {
     # TODO: func is not needed anymore
-    local short=$1 name=$2 func=${3} summary=${4:-no summary}
+    local short=$1 name=$2 summary=${3:-no summary}
     log-trace help "adding help-topic: ${@}"
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     add-help-item $name topic:$name "" "$summary"
@@ -14,8 +14,12 @@ add-help-topic() {
 
 show-help-about-topic() {
     local ignore=$1 type=$2
-    help_show_level=all
-    show-help-section $type
+    if $(function-exists show-help-about-topic-$type); then
+        show-help-about-topic-$type
+    else
+        help_show_level=all
+        show-help-section $type
+    fi
 }
 
 show-help-section() {
@@ -28,8 +32,9 @@ show-help-section() {
 }
 
 
-show-help-topics() {
-cat <<EOF
+show-help-about-topic-topics() {
+    help_show_level=all
+    cat <<EOF
 ${climah_prog_name} help [<topic>]
 
 topic can be any of:

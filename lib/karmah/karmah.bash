@@ -14,14 +14,17 @@ karmah::declare-vars() {
 }
 
 karmah::init-module() {
+    add-command "" version ""  "show version of karmah"
     climah_prog=karmah
-    add-help-topic ver version  karmah-show-version "show version of karmah"
     default_action=render
     help_level=expert
     add-action "" init-karmah "load *.karmah init file(s) and run ::init-target function"
     add-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
 }
+
+run-command-version() { echo karmah version: $karmah_version; }
+
 
 empty::init-target() { verbose using empty karmah_type initializer; }
 
@@ -132,5 +135,3 @@ common-karmah() {
         source $common_karmah_file
     fi
 }
-
-karmah-show-version() { echo karmah version: $karmah_version; }

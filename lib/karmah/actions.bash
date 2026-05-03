@@ -9,12 +9,10 @@ actions::declare-vars() {
 }
 
 actions::init-module() {
-    add-help-topic act action "" "show available actions"
-    add-help-topic flw flow actions-show-flows "show available flows"
+    add-help-topic act action "show available actions"
+    add-help-topic flw flow   "show available flows"
     append-argparse-func parse-if-action
 }
-actions-show-help() { list-help-items action; }
-actions-show-flows() { list-help-items flow; }
 
 add-action() {
     local short=$1 name=$2 summary="$3"

@@ -14,7 +14,7 @@ init-module-system() {
     done
 }
 
-modules-show() {
+show-help-about-topic-modules() {
     cat <<EOF
 $climah_prog_name help [<module>]
 
