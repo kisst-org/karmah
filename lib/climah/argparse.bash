@@ -15,9 +15,14 @@ argparse::declare-vars() {
 append-argparse-func()  { argparse_parse_funcs+=($1); }
 prepend-argparse-func() { argparse_parse_funcs=($1 $argparse_parse_funcs   ); }
 
-add-argparse-alias() {
-    argparse_aliases[$1]="$2";
-    add-help-item $name alias:$name "" "alias for: $2"
+add-argparse-alias() { add-alias "$@"; } # deprecated
+add-alias() {
+    local name=$1 expansion="${@:2}"
+    argparse_aliases[$name]="$expansion";
+    if [[ -z ${module:-} ]]; then
+        module=argparse
+    fi
+    add-help-item $name alias:$name "" "alias for: $expansion"
 }
 
 argparse-replace-aliases() {
