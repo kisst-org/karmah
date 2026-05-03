@@ -2,9 +2,9 @@
 update::init-module() {
     add-module-help "actions to update source files for rendering e.g. (helm values)"
     add-karmah-action u update "update source files with expressions from --update"
-    add-karmah-var    V version ver  "specify version (tag) to use for update or scale"
+    add-karmah-var    V version '<tag>'  "specify version (image tag) to use for update"
     help_level=expert
-    add-func-option u update expr  "apply a custom update"
+    add-func-option u update '<expr>'  "apply a custom update"
 
     declare -ga updates=()
     argparse_aliases[tmp-start]="kube-tmp-scale --replicas default"
