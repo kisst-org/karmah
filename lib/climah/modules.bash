@@ -14,15 +14,6 @@ init-module-system() {
     done
 }
 
-show-help-about-topic-modules() {
-    cat <<EOF
-$climah_prog_name help [<module>]
-
-module can be any of:
-EOF
-    list-help-items module
-}
-
 init-module() {
     local module="$1"
 

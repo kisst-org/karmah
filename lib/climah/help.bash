@@ -65,7 +65,7 @@ help-is-visible() {
 has-help-items() {
     local type=$1
     local item len=1 slen=0
-    for key in ${help_all_items[$type]}; do
+    for key in ${help_all_items[$type]:-}; do
         if $(help-is-visible $key); then
             echo true
             return

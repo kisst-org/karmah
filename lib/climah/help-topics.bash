@@ -1,7 +1,7 @@
 
 help-topics::init-module() {
     add-help-topic al  aliases "show all defined aliases"
-    add-help-topic top topics  "show all help-topics"
+    add-help-topic top topic   "show all help-topics"
 }
 
 add-help-topic() {
@@ -18,7 +18,8 @@ show-help-about-topic() {
         show-help-about-topic-$type
     else
         help_show_level=all
-        show-help-section $type
+        echo "All available ${type}s"
+        list-help-items $type
     fi
 }
 
@@ -29,15 +30,4 @@ show-help-section() {
         list-help-items $type
         echo
     fi
-}
-
-
-show-help-about-topic-topics() {
-    help_show_level=all
-    cat <<EOF
-${climah_prog_name} help [<topic>]
-
-topic can be any of:
-EOF
-    list-help-items topic
 }

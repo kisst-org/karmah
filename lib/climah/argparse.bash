@@ -15,7 +15,10 @@ argparse::declare-vars() {
 append-argparse-func()  { argparse_parse_funcs+=($1); }
 prepend-argparse-func() { argparse_parse_funcs=($1 $argparse_parse_funcs   ); }
 
-add-argparse-alias() { argparse_aliases[$1]="$2"; }
+add-argparse-alias() {
+    argparse_aliases[$1]="$2";
+    add-help-item $name alias:$name "" "alias for: $2"
+}
 
 argparse-replace-aliases() {
     for arg in "${@}"; do
