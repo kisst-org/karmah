@@ -18,13 +18,13 @@ init-loggers() {
     declare -gA logger_config=(
         [level]=info
         [format]="LOG %s\n"
-        [format.error]="ERROR %s\n"
-        [format.warn]="WARN %s\n"
-        [format.info]="# %s\n"
-        [format.verbose]="## %s\n"
-        [format.verbose.cmd]="    %s\n"
-        [format.debug]="### %s\n"
-        [format.trace]="#### %s\n"
+        [format:error]="ERROR %s\n"
+        [format:warn]="WARN %s\n"
+        [format:info]="# %s\n"
+        [format:verbose]="## %s\n"
+        [format:verbose.cmd]="    %s\n"
+        [format:debug]="### %s\n"
+        [format:trace]="#### %s\n"
         [appender]=log-to-console #log-to-console-with-timestamp
     )
 }
@@ -73,9 +73,11 @@ find-logger-config() {
     local path=$type
     #stderr-verbose  type=$type logger=$logger path=$path
     local result="${logger_config[$path]}";
+    sep=:
     for part in ${logger//./ }; do
         #stderr-verbose type=$type logger=$logger path=$path result=$result
-        path="$path.$part"
+        path="$path$sep$part"
+        sep=.
         result="${logger_config[$path]:-$result}"
     done
     echo "$result"
@@ -131,7 +133,7 @@ stderr-trace() { echo >/dev/stderr $@; }  # TODO: better name trace-stderr
 # logging commands to be run
 parse-option-show-script() {
     parse-option-quiet
-    logger_config[level.cmd]=verbose
+    logger_config[level:cmd]=verbose
     set-option-value dry-run true
     parse-option-yes
 }
