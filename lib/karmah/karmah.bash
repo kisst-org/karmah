@@ -5,7 +5,7 @@ karmah-main() {
     default_module_help_level=expert
     basic_help_modules="loggers actions options commands"
     climah-main "$@"
-}    echo XXX $bao_login_options
+}
 
 
 karmah::declare-vars() {
