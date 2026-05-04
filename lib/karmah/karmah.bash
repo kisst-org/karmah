@@ -5,7 +5,8 @@ karmah-main() {
     default_module_help_level=expert
     basic_help_modules="loggers actions options commands"
     climah-main "$@"
-}
+}    echo XXX $bao_login_options
+
 
 karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
@@ -90,6 +91,15 @@ action::init-karmah() {
     fi
     declare -g used_karmah_vars=""
     load-karmah-file
+    log-verbose karmah "calling ${karmah_type}::init-target"
+    ${karmah_type}::init-target
+
+    # TODO: output_dir does not belong here
+    local tmp=$(get-option-value tmp false)
+    output_dir="${to_dir:-tmp/manifests}/${target_name}"
+    if $tmp; then
+        output_dir="${to_dir:-tmp/manifests}/${target_name}"
+    fi
     post_flow_actions+=" clear-karmah"
 }
 action::clear-karmah() {
@@ -116,14 +126,6 @@ load-karmah-file() {
     common-karmah
     use-karmah-var karmah_type
     log-verbose karmah "using karmah-type $karmah_type"
-    ${karmah_type}::init-target
-
-    # TODO: output_dir does not belong here
-    local tmp=$(get-option-value tmp false)
-    output_dir="${to_dir:-tmp/manifests}/${target_name}"
-    if $tmp; then
-        output_dir="${to_dir:-tmp/manifests}/${target_name}"
-    fi
 }
 
 common-karmah() {
