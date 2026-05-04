@@ -7,6 +7,7 @@ bao::init-module() {
 
     add-karmah-action bli bao-login  "login and store the token in a file"
     add-karmah-action blo bao-logout "remove the file with the login token"
+    add-karmah-action blv bao-login-vars  "show the vars you can export"
 
     add-karmah-action bti bao-token-info   "lookup the details of a token"
     add-karmah-action btr bao-token-update "create a new token"
@@ -22,8 +23,12 @@ bao::init-module() {
 
     add-karmah-action bpi  bao-policy-info  "lookup the details of a bao policy"
     add-karmah-action bpc  bao-policy-create  "create a bao policy"
+
+    add-karmah-var "" bao_host "hostname to use for openbao"
 }
 
+#######################
+# login
 action::bao-login() {
     if [[ -f $bao_token_file ]]; then
         local answer
@@ -39,6 +44,13 @@ action::bao-login() {
     chmod 600 ${bao_token_file}
 }
 action::bao-logout() { rm -f $bao_token_file; }
+action::bao-login-vars() {
+    use-karmah-var bao_host
+    log-info bao "export the following vars. This can be done with: eval \$($climah_prog_path $target_path bao-login-vars -q)"
+    echo export VAULT_HOST=${bao_host}
+    echo export VAULT_TOKEN=$(<$bao_token_file)
+}
+
 export-bao-login-token() { export VAULT_TOKEN=$(<$bao_token_file); }
 run-bao() {
     local cmd=$1; shift
