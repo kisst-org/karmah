@@ -69,8 +69,7 @@ action::kube-get() {
     run-cmd-from-action verbose kubectl $(kubectl-options) get $(kube-calc-resource kube-get) ${action_args:-}
 }
 action::kube-watch() {
-    #run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
-    run-cmd-from-action verbose kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
+    run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
 }
 action::kube-exec() {
     run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
