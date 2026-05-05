@@ -31,3 +31,5 @@ parse-if-debug-option() {
         --debug-init-trace)   _set-init-debug-level trace;;
     esac
 }
+
+dbg() { echo DEBUG >/dev/stderr $@; }
