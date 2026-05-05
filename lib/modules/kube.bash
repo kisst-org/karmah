@@ -69,7 +69,8 @@ action::kube-get() {
     run-cmd-from-action verbose kubectl $(kubectl-options) get $(kube-calc-resource kube-get) ${action_args:-}
 }
 action::kube-watch() {
-    run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
+    #run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
+    run-cmd-from-action verbose kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
 }
 action::kube-exec() {
     run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
@@ -132,24 +133,16 @@ _echo_if_func_exsists() {
     return 1
 }
 
-kube-calc-resource-func() {
-    local kube_action=$1
-    local typ=$1; for typ in $(karmah-parents); do
-        if _echo_if_func_exsists $typ::calc-${kube_action}-resource; then return; fi
-        if _echo_if_func_exsists $typ::calc-kube-resource;    then return; fi
-    done
-}
 kube-calc-resource() {
     local kube_action=$1 defaults="${2:-}"
-    local func=$(kube-calc-resource-func $kube_action)
     use-karmah-var resource default
     local result=""
     local res; for res in ${resource//,/ }; do
-        result+=" $($func $res)"
+        result+=" $(call-karmah-method calc-${kube_action}-resource $res)"
     done
-    result=${result# } # trim leading space
+    result=$(echo $result) # trim spaces
     echo ${result// /,}
 }
 
-base::calc-kube-watch-resource() { ifed-combi::calc-kube-get-resource; }
-base::calc-kube-resource() { echo pod,deployment,ingress; }
+base::calc-kube-watch-resource() { call-karmah-method calc-kube-get-resource $1; }
+base::calc-kube-get-resource() { echo pod,deployment,ingress; }

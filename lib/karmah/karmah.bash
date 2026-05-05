@@ -12,7 +12,7 @@ karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
     declare -g default_karmah_type
     declare -gA karmah_var_names=()
-    declare -g parent_karmah_types=""
+    declare -g karmah_parent_classes=""
 }
 
 karmah::init-module() {
@@ -30,14 +30,27 @@ command::version() { echo karmah version: $karmah_version; }
 
 init-parent-karmah() {
     local typ=$1
-    parent_karmah_types+=" $typ"
+    karmah_parent_classes+=" $typ"
     log-verbose karmah "calling ${typ}::init-karmah"
     $typ::init-karmah
 }
 
 base::init-karmah() { log-verbose karmah "using base karmah_type initializer"; }
 
-karmah-parents() { echo ${karmah_parent_types:-} base; }
+karmah-parents() { echo ${karmah_parent_classes:-} base; }
+karmah-classes() { echo $karmah_type ${karmah_parent_classes:-} base; }
+call-karmah-method() {
+    local method=${1:-}; shift
+    local typ; for typ in $(karmah-classes); do
+        if $(function-exists $typ::$method); then
+            $typ::$method "$@"
+            return
+        fi
+    done
+}
+
+
+
 add-karmah-var() {
     local short=$1 name=$2 arg=$3 summary="${4:-}"
     karmah_var_names[$name]=$name
