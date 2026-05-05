@@ -104,7 +104,7 @@ action::kube-scale() {
     for res in $(kube-calc-resource-names all); do
         local repl=$(kube-calc-replicas $res)
         res=${kube_resource_alias[$res]:-$res}
-        run-cmd-from-action verbose kubectl $(kubectl-options) scale $res --replicas ${repl}
+        echo run-kubectl scale $res --replicas ${repl}
     done
 }
 kube-calc-replicas() {
@@ -133,16 +133,15 @@ _echo_if_func_exsists() {
 }
 
 kube-calc-resource-func() {
-    local func=""
-    if   _echo_if_func_exsists $karmah_type::calc-$action-resource; then return
-    elif _echo_if_func_exsists $karmah_type::calc-kube-resource;    then return
-    elif _echo_if_func_exsists        empty::calc-$action-resource; then return
-    elif _echo_if_func_exsists        empty::calc-kube-resource;    then return
-    fi
+    local kube_action=$1
+    local typ=$1; for typ in $(karmah-parents); do
+        if _echo_if_func_exsists $typ::calc-${kube_action}-resource; then return; fi
+        if _echo_if_func_exsists $typ::calc-kube-resource;    then return; fi
+    done
 }
 kube-calc-resource() {
-    local action=$1 defaults="${2:-}"
-    local func=$(kube-calc-resource-func)
+    local kube_action=$1 defaults="${2:-}"
+    local func=$(kube-calc-resource-func $kube_action)
     use-karmah-var resource default
     local result=""
     local res; for res in ${resource//,/ }; do
@@ -151,7 +150,6 @@ kube-calc-resource() {
     result=${result# } # trim leading space
     echo ${result// /,}
 }
-ifed-combi::calc-kube-watch-resource() { ifed-combi::calc-kube-get-resource; }
 
-
-empty::calc-kube-resource() { echo ${kube_resource:-deployment}; }
+base::calc-kube-watch-resource() { ifed-combi::calc-kube-get-resource; }
+base::calc-kube-resource() { echo pod,deployment,ingress; }

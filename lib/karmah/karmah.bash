@@ -12,6 +12,7 @@ karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
     declare -g default_karmah_type
     declare -gA karmah_var_names=()
+    declare -g parent_karmah_types=""
 }
 
 karmah::init-module() {
@@ -19,17 +20,24 @@ karmah::init-module() {
     climah_prog=karmah
     default_action=render
     help_level=expert
-    add-action "" init-karmah "load *.karmah init file(s) and run ::init-target function"
+    add-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
     add-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
-    log-verbose ifed "default_karmah_type=${default_karmah_type:-empty}"
+    log-verbose ifed "default_karmah_type=${default_karmah_type:-base}"
 }
 
 command::version() { echo karmah version: $karmah_version; }
 
+init-parent-karmah() {
+    local typ=$1
+    parent_karmah_types+=" $typ"
+    log-verbose karmah "calling ${typ}::init-karmah"
+    $typ::init-karmah
+}
 
-empty::init-target() { log-verbose karmah "using empty karmah_type initializer"; }
+base::init-karmah() { log-verbose karmah "using base karmah_type initializer"; }
 
+karmah-parents() { echo ${karmah_parent_types:-} base; }
 add-karmah-var() {
     local short=$1 name=$2 arg=$3 summary="${4:-}"
     karmah_var_names[$name]=$name
@@ -92,8 +100,8 @@ action::init-karmah() {
     fi
     declare -g used_karmah_vars=""
     load-karmah-file
-    log-verbose karmah "calling ${karmah_type}::init-target"
-    ${karmah_type}::init-target
+    log-verbose karmah "calling ${karmah_type}::init-karmah"
+    ${karmah_type}::init-karmah
 
     # TODO: output_dir does not belong here
     local tmp=$(get-option-value tmp false)
