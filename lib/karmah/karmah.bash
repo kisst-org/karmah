@@ -10,7 +10,7 @@ karmah-main() {
 
 karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name"
-    declare -g default_karmah_type=empty
+    declare -g default_karmah_type
     declare -gA karmah_var_names=()
 }
 
@@ -22,12 +22,13 @@ karmah::init-module() {
     add-action "" init-karmah "load *.karmah init file(s) and run ::init-target function"
     add-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
+    log-verbose ifed "default_karmah_type=${default_karmah_type:-empty}"
 }
 
 command::version() { echo karmah version: $karmah_version; }
 
 
-empty::init-target() { verbose using empty karmah_type initializer; }
+empty::init-target() { log-verbose karmah "using empty karmah_type initializer"; }
 
 add-karmah-var() {
     local short=$1 name=$2 arg=$3 summary="${4:-}"
