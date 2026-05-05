@@ -12,9 +12,9 @@ targets::init-module() {
     default_command=run-flows
 }
 
-parse-option-subdir() { target_subdirs+=" $2"; argparse_parse_count=2; }
+option::subdir() { target_subdirs+=" $2"; argparse_parse_count=2; }
 action::print-target() { echo $target_path; }
-run-command-run-flows()   { run-func-for-targets run-flow-actions; }
+command::run-flows()   { run-func-for-targets run-flow-actions; }
 
 run-func-for-targets() {
     local target_func=$1

@@ -57,7 +57,7 @@ _add-option() {
     option_func[$name]=$func
     add-help-item --$name option:--$name "$arg" "$summary"
 }
-add-func-option()  { _add-option "$1" $2 "$3" "$4" parse-option-$2; }
+add-func-option()  { _add-option "$1" $2 "$3" "$4" option::$2; }
 add-flag-option()  { _add-option "$1" $2  ""  "$3" parse-flag-option; }
 add-value-option() { _add-option "$1" $2 "$3" "$4" parse-value-option; }
 

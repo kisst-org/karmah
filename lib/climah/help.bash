@@ -103,7 +103,7 @@ list-help-items() {
     done
 }
 
-parse-option-help() { command_to_run=help;  }
+option::help() { command_to_run=help;  }
 
 add-help-item-to-show() {
     local item=$1

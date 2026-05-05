@@ -16,8 +16,8 @@ render::init-module() {
 
 }
 
-parse-option-to()        { to_dir="${2%%/}"; argparse_parse_count=2; }
-parse-option-with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
+option::to()        { to_dir="${2%%/}"; argparse_parse_count=2; }
+option::with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
 
 add-render-action() {
     add-action "${@}"

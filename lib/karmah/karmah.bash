@@ -24,7 +24,7 @@ karmah::init-module() {
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
 }
 
-run-command-version() { echo karmah version: $karmah_version; }
+command::version() { echo karmah version: $karmah_version; }
 
 
 empty::init-target() { verbose using empty karmah_type initializer; }

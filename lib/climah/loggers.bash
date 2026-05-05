@@ -56,10 +56,10 @@ parse-if-multi-verbose-option() {
         -vvv) increase-log-level 30; argparse_parse_count=1;;
     esac
 }
-parse-option-verbose()   { increase-log-level 10;      argparse_parse_count=1; }
-parse-option-quiet()     { logger_config[level]=error; argparse_parse_count=1;}
+option::verbose()   { increase-log-level 10;      argparse_parse_count=1; }
+option::quiet()     { logger_config[level]=error; argparse_parse_count=1;}
 
-parse-option-log() {
+option::log() {
     local cfg=$2 value=$3
     echo log-debug logger "setting log-config $cfg to $value"
     logger_config[$cfg]=$value
@@ -131,11 +131,11 @@ stderr-trace() { echo >/dev/stderr $@; }  # TODO: better name trace-stderr
 
 ##########################
 # logging commands to be run
-parse-option-show-script() {
-    parse-option-quiet
+option::show-script() {
+    option::quiet
     logger_config[level:cmd]=verbose
     set-option-value dry-run true
-    parse-option-yes
+    option::yes
 }
 
 run-and-log-cmd() {

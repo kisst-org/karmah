@@ -9,7 +9,7 @@ deploy::init-module() {
     yes_arg=""
 }
 
-parse-option-yes() { yes_arg="--yes"; }
+option::yes() { yes_arg="--yes"; }
 
 action::ask() {
     if [[  $yes_arg == --yes ]]; then
@@ -41,7 +41,7 @@ action::plan() {
     run-single-actions $actions
 }
 
-run-command-undeploy() {
+action::undeploy() {
     output_dir="${to_dir:-deployed/manifests}/${target_name}"
     local actions=$(add-commas ${undeploy_actions:-render-rm,git-diff,ask,git-commit})
     log-info deploy "undeploying ${target_name} with actions: ${actions}"

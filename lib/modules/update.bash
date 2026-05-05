@@ -13,7 +13,7 @@ update::init-module() {
     argparse_aliases[start]="deploy --replicas default"
 }
 
-parse-option-update()   { updates+=("$2"); argparse_parse_count=2; }
+option::update()   { updates+=("$2"); argparse_parse_count=2; }
 
 action::update() {
     use-karmah-var replicas
