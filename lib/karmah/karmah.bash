@@ -37,17 +37,17 @@ init-parent-karmah() {
 
 base::init-karmah() { log-verbose karmah "using base karmah_type initializer"; }
 
-karmah-parents() { echo ${karmah_parent_classes:-} base; }
+#karmah-parents() { echo ${karmah_parent_classes:-} base; }
 karmah-classes() { echo $karmah_type ${karmah_parent_classes:-} base; }
-call-karmah-method() {
-    local method=${1:-}; shift
-    local typ; for typ in $(karmah-classes); do
-        if $(function-exists $typ::$method); then
-            $typ::$method "$@"
-            return
-        fi
-    done
-}
+#call-karmah-method() {
+#    local method=${1:-}; shift
+#    local typ; for typ in $(karmah-classes); do
+#        if $(function-exists $typ::$method); then
+#            $typ::$method "$@"
+#            return
+#        fi
+#    done
+#}
 
 
 
