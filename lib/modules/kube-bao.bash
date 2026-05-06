@@ -20,7 +20,7 @@ init-bao-token-vars() {
     else
         kube_secret_name=${kube_bao_token_secret_name:-openbao-token-$postfix}
     fi
-    kube_secret_field=${kube_bao_token_secret_field:-token}
+    kube_secret_field=${kube_bao_token_secret_field:-VAULT_TOKEN}
 }
 
 action::kube-bao-token-print() {
@@ -42,9 +42,9 @@ action::kube-bao-token-update() {
 # secret-id
 init-bao-secret-id-vars() {
     if [[ -z ${postfix:-} ]]; then
-        kube_secret_name=${kube_bao_secret_id_secret_name:-openbao-secret-id}
+        kube_secret_name=${kube_bao_secret_id_secret_name:-openbao-approle-secret-id}
     else
-        kube_secret_name=${kube_bao_secret_id_secret_name:-openbao-secret-id-$postfix}
+        kube_secret_name=${kube_bao_secret_id_secret_name:-openbao-approle-secret-id-$postfix}
     fi
     kube_secret_field=${kube_bao_secret_id_secret_field:-secret-id}
 }

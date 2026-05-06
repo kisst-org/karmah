@@ -1,16 +1,15 @@
 bao::init-module() {
     add-module-help "actions to work with bao"
 
-    add-value-option "" ttl duration      "set the ttl voor a token, e.g. 30m of 60d"
+    add-karmah-var "" ttl duration   "set the ttl voor a token, e.g. 30m of 60d"
     # see https://openbao.org/docs/concepts/duration-format/
-    local_vars+=" ttl"
 
     add-karmah-action bli bao-login  "login and store the token in a file"
     add-karmah-action blo bao-logout "remove the file with the login token"
     add-karmah-action blv bao-login-vars  "show the vars you can export"
 
     add-karmah-action bti bao-token-info   "lookup the details of a token"
-    add-karmah-action btr bao-token-update "create a new token"
+    add-karmah-action btc bao-token-update "create a new token"
 
     add-karmah-action bsl  bao-secret-id-list    "list all secret-id's for an approle"
     add-karmah-action bsi  bao-secret-id-info    "lookup the details of a secret-id for an approle in bao"
@@ -24,7 +23,7 @@ bao::init-module() {
     add-karmah-action bpi  bao-policy-info  "lookup the details of a bao policy"
     add-karmah-action bpc  bao-policy-create  "create a bao policy"
 
-    add-karmah-var "" bao_host "hostname to use for openbao"
+    add-karmah-var "" bao_addr "address (url) to use for openbao"
 }
 
 #######################
@@ -45,10 +44,10 @@ action::bao-login() {
 }
 action::bao-logout() { rm -f $bao_token_file; }
 action::bao-login-vars() {
-    use-karmah-var bao_host
+    use-karmah-var bao_addr
     log-info bao "export the following vars. This can be done with:"
     log-info bao "    eval \$($climah_prog_path $target_path bao-login-vars -q)"
-    echo export VAULT_ADDR=${bao_host}
+    echo export VAULT_ADDR=${bao_addr}
     echo export VAULT_TOKEN=$(<$bao_token_file)
     if [[ ! -z ${bao_namespace:-} ]]; then
         echo export VAULT_NAMESPACE=${bao_namespace}
