@@ -124,24 +124,31 @@ kube-calc-resource-names() {
     echo ${result//,/ }
 }
 
-_echo_if_func_exsists() {
-    if  $(function-exists $1); then
-        echo $1
-        return 0
-    fi
-    return 1
-}
 
 kube-calc-resource() {
     local kube_action=$1 defaults="${2:-}"
     use-karmah-var resource default
     local result=""
     local res; for res in ${resource//,/ }; do
-        result+=" $(call-karmah-method calc-${kube_action}-resource $res)"
+        find-karmah-method-output calc-resource-${kube_action} $res
     done
     result=$(echo $result) # trim spaces
     echo ${result// /,}
 }
 
-base::calc-kube-watch-resource() { call-karmah-method calc-kube-get-resource $1; }
-base::calc-kube-get-resource() { echo pod,deployment,ingress; }
+find-karmah-method-output() {
+    local method=$1; shift
+    local cls; for cls in $(karmah-classes); do
+        if $(function-exists $cls::$method); then
+            local val="$($cls::$method "$@")"
+            if [[ ! -z $val ]]; then
+                echo "$val"
+                return
+            fi
+        fi
+    done
+}
+
+base::calc-resource-kube-watch() { find-karmah-method-output calc-resource-kube-get $1; }
+base::calc-resource-kube-get() { find-karmah-method-output calc-resource-kube $1; }
+base::calc-resource-kube() { echo pod,deployment,ingress; }
