@@ -1,6 +1,7 @@
 kube-secret::init-module() {
     add-module-help "actions to work with kubernetes secrets"
     add-karmah-action ksu  kube-secret-update      "update or create a kubernetes secret (kubectl apply)"
+    add-karmah-action ksd  kube-secret-delete      "delete a kubernetes secret (kubectl delete)"
     add-karmah-action ksg  kube-secret-get         "get the value of a kubernetes secret for use in following action"
     add-karmah-action kspf kube-secret-print-field "prints the value of a kubernetes secret"
     add-karmah-action ksd  kube-secret-diff        "prints the changes to a kubernetes secret"
@@ -24,15 +25,14 @@ kind: Secret
 metadata:
     name: ${secret_name}
     namespace: ${kube_namespace}
-    #annotations:
-    #    bao-role-policies: $(bao-role-policies)
 type: Opaque
 EOF
 }
 
 action::kube-secret-update() {
-    log-verbose kube-secret "kubectl $(kubectl-options) apply -f ..."
-    kube-secret-manifest | kubectl $(kubectl-options) apply -f -
+    log-verbose kube-secret "kubectl $(kubectl-options) apply -f -"
+
+    kube-secret-manifest | tee secret.log | kubectl $(kubectl-options) apply -f -
 }
 
 action::kube-secret-get() {
@@ -42,6 +42,10 @@ action::kube-secret-get() {
     log-verbose cmd.kubectl "kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath=\"{.data.${secret_field}}\""
     local val=$(kubectl $(kubectl-options) get secrets  ${secret_name} -o jsonpath="{.data.${secret_field}}")
     secret_value=$(echo -n $val| base64 -d)
+}
+action::kube-secret-delete() {
+    use-karmah-var secret_name
+    run-kubectl $(kubectl-options) delete secret ${secret_name}
 }
 
 action::kube-secret-print-field() { action::kube-secret-get; echo $secret_value; }

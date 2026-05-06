@@ -10,6 +10,7 @@ bao::init-module() {
 
     add-karmah-action bti bao-token-info   "lookup the details of a token"
     add-karmah-action btc bao-token-update "create a new token"
+    add-karmah-action btr bao-token-revoke "revoke an existing token"
 
     add-karmah-action bsl  bao-secret-id-list    "list all secret-id's for an approle"
     add-karmah-action bsi  bao-secret-id-info    "lookup the details of a secret-id for an approle in bao"
@@ -58,20 +59,21 @@ export-bao-login-token() { export VAULT_TOKEN=$(<$bao_token_file); }
 run-bao() {
     local cmd=$1; shift
     export-bao-login-token
-    log-info bao "bao $cmd $bao_options \"${@}\""
+    log-verbose cmd.bao "bao $cmd $bao_options \"${@}\""
     bao $cmd $bao_options "${@}"
 }
 
 #######################
 # tokens
 action::bao-token-info() {
+    use-karmah-var secret_value
     local error
     local token=$secret_value
     exitcode=0
     if $(log-shows-warn); then
         run-bao "token lookup" $token || exitcode=$?
         if [[ $exitcode == 2 ]]; then
-            log-warn bao "bao token lookup exitcode 2: invalid token $token, probably expired token stored in secret"
+            log-warn bao "bao token lookup exitcode 2: invalid token, probably expired token"
         elif [[ $exitcode != 0 ]]; then
             log-warn bao "bao token lookup exitcode $exitcode: maybe permission denied"
         fi
@@ -83,8 +85,15 @@ action::bao-token-info() {
 
 action::bao-token-create() {
     use-karmah-var ttl 30m
-    secret_value=$(run-bao "token create"  -ttl=$ttl -format=yaml | yq .auth.client_token)
+    #bao token create -ttl=$ttl -format=yaml
+    secret_value=$(run-bao "token create"  -ttl=$ttl -format=yaml | tee -a tokens.log | yq .auth.client_token)
 }
+action::bao-token-revoke() {
+    use-karmah-var secret_value
+    run-bao "token revoke" $secret_value
+}
+
+
 
 action::bao-token-update() {
     if $(log-shows-verbose); then

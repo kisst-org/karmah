@@ -6,6 +6,7 @@ kube-bao::init-module() {
     add-karmah-action kbtp kube-bao-token-print  "print the bao token as stored in kubernetes"
     add-karmah-action kbti kube-bao-token-info   "lookup info of the bao token as stored in kubernetes"
     add-karmah-action kbtu kube-bao-token-update "update a new bao token as stored in kubernetes"
+    add-karmah-action kbtr kube-bao-token-revoke "revoke an existing bao token as stored in kubernetes"
 
     add-karmah-action kbsp kube-bao-secret-id-print  "print the bao secret-id as stored in kubernetes"
     add-karmah-action kbsi kube-bao-secret-id-info   "lookup of the bao secret-id as stored in kubernetes"
@@ -37,6 +38,12 @@ action::kube-bao-token-update() {
     if $(log-shows-verbose); then action::kube-secret-get; fi
     run-flow-actions bao-token-update,kube-secret-update
 }
+action::kube-bao-token-revoke() {
+    init-bao-token-vars
+    if $(log-shows-verbose); then action::kube-secret-get; fi
+    run-flow-actions bao-token-revoke # TODO kube-secret-delete
+}
+
 
 #######################
 # secret-id

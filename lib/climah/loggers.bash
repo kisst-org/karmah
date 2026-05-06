@@ -102,7 +102,7 @@ log-shows-debug()   { (( ${log_level_int_value[${logger_config[level]}]} >= ${lo
 log-to-console() {
     local level=$1 logger=$2 message="$3"
     local format="$(find-logger-config format $level.$logger)"
-    printf "$format" "$message"
+    printf "$format" "$message" >/dev/stderr
 }
 log-to-console-with-timestamp() {
     local level=$1 logger=$2 message="$3"
