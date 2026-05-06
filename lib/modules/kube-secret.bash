@@ -32,7 +32,7 @@ EOF
 action::kube-secret-update() {
     log-verbose kube-secret "kubectl $(kubectl-options) apply -f -"
 
-    kube-secret-manifest | tee secret.log | kubectl $(kubectl-options) apply -f -
+    kube-secret-manifest | kubectl $(kubectl-options) apply -f -
 }
 
 action::kube-secret-get() {

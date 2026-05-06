@@ -154,7 +154,7 @@ find-karmah-method-output() {
     done
 }
 
-get-latest-pod-name() { run-kubectl get pods --sort-by .status.startTime -o name "$@"  | tee >(cat 1>&2)| tail -1; }
+get-latest-pod-name() { run-kubectl get pods --sort-by .status.startTime -o name "$@"  | tail -1; }
 
 base::calc-resource-kube-log-follow() { find-karmah-method-output calc-resource-kube-log $1; }
 base::calc-resource-kube-exec-it()    { find-karmah-method-output calc-resource-kube-exec $1; }
