@@ -4,7 +4,8 @@ kube::init-module() {
     add-karmah-var r resource res "specify a resource"
 
     add-karmah-action kw   kube-watch        "watch target resources every 2 seconds"
-    add-karmah-action kl   kube-log          "show logging of a resource"
+    add-karmah-action kl   kube-log          "show logging of a pod"
+    add-karmah-action klf  kube-log-follow   "follow logging of a pod"
     add-karmah-action kg   kube-get          "get current manifests from cluster to --to <path> (default) deployed/manifests"
     add-karmah-action ""   kube-scale        "scale resource(s) without changing source or deployment files"
     add-karmah-action ""   kube-restart      "rollout restart resource(s)"
@@ -87,6 +88,10 @@ action::kube-exec-it() {
 action::kube-log() {
     run-cmd-from-action verbose kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-}
 }
+action::kube-log-follow() {
+    run-cmd-from-action verbose kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-} --follow
+}
+
 action::kube-stern() {
     run-cmd-from-action verbose stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
 }
@@ -149,6 +154,12 @@ find-karmah-method-output() {
     done
 }
 
-base::calc-resource-kube-watch() { find-karmah-method-output calc-resource-kube-get $1; }
-base::calc-resource-kube-get() { find-karmah-method-output calc-resource-kube $1; }
+get-latest-pod-name() { run-kubectl get pods --sort-by .status.startTime -o name "$@"  | tee >(cat 1>&2)| tail -1; }
+
+base::calc-resource-kube-log-follow() { find-karmah-method-output calc-resource-kube-log $1; }
+base::calc-resource-kube-exec-it()    { find-karmah-method-output calc-resource-kube-exec $1; }
+base::calc-resource-kube-watch()      { find-karmah-method-output calc-resource-kube-get $1; }
+base::calc-resource-kube-log()        { find-karmah-method-output calc-resource-kube $1; }
+base::calc-resource-kube-exec()       { find-karmah-method-output calc-resource-kube $1; }
+base::calc-resource-kube-get()        { find-karmah-method-output calc-resource-kube $1; }
 base::calc-resource-kube() { echo pod,deployment,ingress; }
