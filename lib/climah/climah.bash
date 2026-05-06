@@ -23,6 +23,7 @@ climah-main() {
     declare -g climah_prog_path="$0"
     climah-init "${@}"
     run-active-command
+    ${climah_wait_for_jobs:-}
 }
 
 load-lib-config() {
