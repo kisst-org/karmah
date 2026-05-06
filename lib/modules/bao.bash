@@ -46,9 +46,13 @@ action::bao-login() {
 action::bao-logout() { rm -f $bao_token_file; }
 action::bao-login-vars() {
     use-karmah-var bao_host
-    log-info bao "export the following vars. This can be done with: eval \$($climah_prog_path $target_path bao-login-vars -q)"
-    echo export VAULT_HOST=${bao_host}
+    log-info bao "export the following vars. This can be done with:"
+    log-info bao "    eval \$($climah_prog_path $target_path bao-login-vars -q)"
+    echo export VAULT_ADDR=${bao_host}
     echo export VAULT_TOKEN=$(<$bao_token_file)
+    if [[ ! -z ${bao_namespace:-} ]]; then
+        echo export VAULT_NAMESPACE=${bao_namespace}
+    fi
 }
 
 export-bao-login-token() { export VAULT_TOKEN=$(<$bao_token_file); }
