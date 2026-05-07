@@ -5,7 +5,6 @@ log-cmd::init-module() {
 }
 
 option::show-script() {
-    option::quiet
     logger_config[level:cmd]=verbose
     set-option-value dry-run true
     option::yes
