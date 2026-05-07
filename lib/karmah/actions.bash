@@ -12,7 +12,12 @@ actions::init-module() {
     add-help-topic act action "show available actions"
     add-help-topic flw flow   "show available flows"
     append-argparse-func parse-if-action
+    help_level=expert
+    local action_params=...
+    add-action dpav debug-print-action-var "print a variable declaration for debugging purposes"
 }
+
+action::debug-print-action-var() { command::debug-print-var "$@"; }
 
 add-action() {
     local short=$1 name=$2 summary="$3"

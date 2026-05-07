@@ -3,8 +3,19 @@ debug::init-module() {
     append-argparse-func parse-if-debug-option
     help_level=expert
     # TODO add as normal options for help???
+    local action_params=...
+    add-command dpv debug-print-var "" "print a var"
 }
 
+command::debug-print-var() {
+    local var; for var in "$@"; do
+        if [[ -v $var ]]; then
+            declare -p $var
+        else
+            declare -p $var | sed 's/\[/\n\[/g'
+        fi
+    done
+}
 
 parse-pre-init-debug() {
     declare -g debug_init_phase=true
