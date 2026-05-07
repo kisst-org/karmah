@@ -32,9 +32,6 @@ init-loggers() {
 loggers::init-module() {
     add-func-option v  verbose  ""    "give more output"
     add-func-option q  quiet    ""    "show no output"
-    add-func-option S  show-script "" "show all commands without doing much"
-    add-flag-option  "" dry-run   "do not execute the actual commands"
-
     help_level=expert
     add-func-option "" log "<cfg> <value>" "set a log config e.g. --log level.cmd verbose"
     append-argparse-func parse-if-multi-verbose-option
@@ -118,48 +115,10 @@ log-at-level() {
         $appender $level $logger "$message"
     fi
 }
+
 log-error()   { log-at-level error $1 "$2"; }
 log-warn()    { log-at-level warn $1 "$2"; }
 log-info()    { log-at-level info $1 "$2"; }
 log-verbose() { log-at-level verbose $1 "$2"; }
 log-debug()   { log-at-level debug $1 "$2"; }
 log-trace()   { log-at-level trace $1 "$2"; }
-
-
-
-stderr-trace() { echo >/dev/stderr $@; }  # TODO: better name trace-stderr
-
-##########################
-# logging commands to be run
-option::show-script() {
-    option::quiet
-    logger_config[level:cmd]=verbose
-    set-option-value dry-run true
-    option::yes
-}
-
-run-and-log-cmd() {
-    local level=$1 logger=$2 cmd=$3 args
-    local dry_run=$(get-option-value dry-run false)
-    shift 3
-    printf -v args " %s" "$@"
-    log-at-level $level $logger "$cmd $args"
-    if ! ${dry_run:-false}; then
-        $cmd "$@"
-    fi
-}
-
-run-verbose-cmd() {
-    local maincmd=$1 cmd="$@"
-    local dry_run=$(get-option-value dry-run false)
-    log-at-level verbose cmd.$maincmd "${*}"
-    if ! ${dry_run:-false}; then
-        pipe=${cmd/*|/}
-        cmd=${cmd/|*/}
-        if [[ "$pipe" == "$cmd" ]]; then
-            $cmd
-        else
-            $cmd | $pipe
-        fi
-    fi
-}
