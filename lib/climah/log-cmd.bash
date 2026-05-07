@@ -13,8 +13,12 @@ option::simulate() {
 
 run-verbose-cmd() {
     local maincmd=$1 cmd="$@"
+    local logger=cmd.$maincmd
+    if [[ ! -z ${module:-} ]]; then
+        logger+=".${module}"
+    fi
     local dry_run=$(get-option-value dry-run false)
-    log-at-level verbose cmd.$maincmd "${*}"
+    log-at-level verbose $logger "${*}"
     if ! ${dry_run:-false}; then
         pipe=${cmd/*|/}
         cmd=${cmd/|*/}
