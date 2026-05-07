@@ -27,7 +27,6 @@ add-render-action() {
 
 action::render() {
     log-info render "rendering ${target_name} with ${renderer} to ${output_dir}"
-    error-if-action-args
     run-verbose-cmd rm -rf ${output_dir}
     run-verbose-cmd mkdir -p ${output_dir}
     for r in ${renderer//,/ }; do
@@ -38,7 +37,6 @@ action::render() {
 
 action::render-rm() {
     log-info render "removing  ${target_name} manifests in ${output_dir}"
-    warn-if-action-args
     run-verbose-cmd rm -rf ${output_dir}
 }
 

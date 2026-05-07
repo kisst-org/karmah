@@ -133,18 +133,6 @@ run-flows() {
 
 show-actions() { list-help-items action; }
 
-warn-if-action-args() {
-    if [[ ! -z ${action_args:-} ]]; then
-        log-warn actions "action got action_args \"$action_args\" that is not supported"
-    fi
-}
-error-if-action-args() {
-    if [[ ! -z ${action_args:-} ]]; then
-        log-error actions "action got action_args \"$action_args\" that is not supported"
-        exit 1
-    fi
-}
-
 log-from-action() { log-at-level $1 "$module.$action" "$2"; }
 
 show-help-about-action() {
