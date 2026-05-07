@@ -5,7 +5,6 @@ actions::declare-vars() {
     declare -g action_list=""
     declare -gA action_flow=()
     declare -gA action_module=()
-    declare -gA action_pre_hook=()
 }
 
 actions::init-module() {
@@ -35,7 +34,6 @@ parse-if-action() {
     fi
 }
 
-set-action-pre-hook() { action_pre_hook[$1]=$2; }
 set-action-pre-flow() {
     local name actions="$1"
     shift
@@ -47,12 +45,7 @@ set-action-pre-flow() {
 
 run-verbose-action() {
     local action=$1
-    local pre_hook=${action_pre_hook[$action]:-}
     local module=${action_module[$action]:-}
-    if [[ ! -z ${pre_hook}  ]]; then
-        log-info action "running action pre-hook ${pre_hook}"
-        ${pre_hook}
-    fi
     if [[ -z  $argparse_extra_args ]]; then
         log-verbose action "running $action for ${target_name:-$target_path}"
     else
