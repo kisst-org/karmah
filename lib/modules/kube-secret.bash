@@ -1,7 +1,7 @@
 kube-secret::init-module() {
     add-module-help "actions to work with kubernetes secrets"
     add-karmah-action ksu  kube-secret-update      "update or create a kubernetes secret (kubectl apply)"
-    add-karmah-action ksd  kube-secret-delete      "delete a kubernetes secret (kubectl delete)"
+    add-karmah-action ""   kube-secret-delete      "delete a kubernetes secret (kubectl delete)"
     add-karmah-action ksg  kube-secret-get         "get the value of a kubernetes secret for use in following action"
     add-karmah-action kspf kube-secret-print-field "prints the value of a kubernetes secret"
     add-karmah-action ksd  kube-secret-diff        "prints the changes to a kubernetes secret"
