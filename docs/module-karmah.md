@@ -1,5 +1,3 @@
-karmah::show-full-help() {
-cat <<EOF
 karmah: Kubernetes Application Rendered MAnifest Helper (version $karmah_version)
 
 Description:
@@ -25,4 +23,3 @@ Note:
   Options, commands/actions and paths can be mixed freely.
   If multiple commands are given, only last command will be used.
 EOF
-}
