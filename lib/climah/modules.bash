@@ -40,14 +40,14 @@ add-module-help() {
 }
 
 show-help-about-module() {
-    local type=$1 name=$2
-    echo module $name: ${help_item_summary[module:$name]:-no summary}
+    local key=$1 type=$(help-item-type $1) name=$(help-item-name $1) module=$(help-item-module $1)
+    echo module $name: ${help_item_summary[$key]:-no summary}
     help_show_level=all
     help_show_module=$name
-    show-help-section command
-    show-help-section action
+    show-help-section $module::command
+    show-help-section $module::action
     #show-help-section flow
-    show-help-section option
+    show-help-section $module::option
 }
 
 
@@ -63,13 +63,10 @@ show-module-md-text() {
     fi
 }
 show-md-for-help-item() {
-    local type=$1 name=$2
-    local module=${help_item_module[$type:$name]}
+    local key=$1 type=$(help-item-type $1) name=$(help-item-name $1) module=$(help-item-module $1)
     show-module-md-text $module | sed -n "/^## $type $name/,/^## /p" | grep -v '^##' || true
 }
-show-text-for-help-item() {
-    show-md-for-help-item $1 $2 | sed -e '/^```/d'
-}
+show-text-for-help-item() { show-md-for-help-item $1 | sed -e '/^```/d'; }
 
 
 

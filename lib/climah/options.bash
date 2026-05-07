@@ -63,8 +63,8 @@ add-flag-option()  { _add-option "$1" $2  ""  "$3" parse-flag-option; }
 add-value-option() { _add-option "$1" $2 "$3" "$4" parse-value-option; }
 
 show-help-about-option() {
-    local type=$1 name=$2
-    echo $type $name: ${help_item_summary[$type:$name]:-no summary}
+    local key=$1 type=$(help-item-type $1)  name=$(help-item-name $1)
+    echo $type $name: ${help_item_summary[$key]:-no summary}
     echo
-    show-text-for-help-item $type $name
+    show-text-for-help-item $key
 }

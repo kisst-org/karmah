@@ -26,10 +26,8 @@ show-help() {
     log-verbose help "showing help about ${help_items_to_show# }"
     for arg in $help_items_to_show ; do
         for key in ${help_item_map[$arg]:-$arg}; do
-            if [[ $key == command:help ]]; then continue; fi
-            if [[ $key == option:--help ]]; then continue; fi
-            if [[ $key == option:--verbose ]]; then continue; fi
-            find-help-item
+            if [[ $key == help::* ]]; then continue; fi
+            find-help-item $key
         done
     done
     if ! $found; then
@@ -49,10 +47,13 @@ show-help() {
 }
 
 find-help-item() {
+    local key=$1
     if [[ ! -z  $key ]] ; then
         key=${help_item_map[$key]:-$key}
-        local type=${key/:*/}
-        local name=${key/*:/}
+        #local module=${key/::*/}
+        local item=${key/*::/}
+        local type=${item/:*/}
+        #local name=${item/*:/}
         local func=show-help-about-$type
         if ! $(function-exists $func); then
             func=show-type-help
@@ -60,7 +61,7 @@ find-help-item() {
         if $found; then
             echo ----------------------------
         fi
-        $func $type $name
+        $func $key
         found=true
     else
         if [[ ! -e $arg ]]; then # skip files and directories
@@ -70,12 +71,14 @@ find-help-item() {
 }
 
 show-type-help() {
-    local type=$1 name=$2
+    #local type=$1 name=$2
+    local key=$1
+    local key=${help_item_map[$name]:-}
     local short=${argparse_short_lookup[$name]:-}
     if [[ -z $short ]]; then
-        echo "$type $short $name: ${help_item_summary[$type:$name]}"
+        echo "$type $short $name: ${help_item_summary[$key]}"
     else
-        echo "$type $name (or $short): ${help_item_summary[$type:$name]}"
+        echo "$type $name (or $short): ${help_item_summary[$key]}"
     fi
     # TODO: uit help text
 }

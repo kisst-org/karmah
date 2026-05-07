@@ -3,7 +3,7 @@ render::init-module() {
     add-module-help "actions to render manifests"
     local_vars+=" renderer output_dir already_rendered sort_env_vars"
     declare -g to_dir
-    add-karmah-action r render update "render manifests to --to <path> (default tmp/manifests)"
+    add-karmah-action r render "render manifests to --to <path> (default tmp/manifests)"
     add-pre-flow-actions update render
 
     help_level=expert

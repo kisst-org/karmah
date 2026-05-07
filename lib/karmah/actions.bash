@@ -141,10 +141,12 @@ show-actions() { list-help-items action; }
 log-from-action() { log-at-level $1 "$module.$action" "$2"; }
 
 show-help-about-action() {
-    local type=$1 name=$2
-    echo $type $name: ${help_item_summary[$type:$name]:-no summary}
+    local key=$1
+    local item=${key/*::/}
+    local type=${item/:*/}  name=${item/*:/}
+    echo action $name: ${help_item_summary[$key]:-no summary}
     echo
-    show-text-for-help-item $type $name
+    show-text-for-help-item $key
     if $(help-is-verbose); then
         printf "Code:\n"
         type action::$name| tail -n +2

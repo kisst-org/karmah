@@ -2,26 +2,27 @@ help-items::declare-vars() {
     declare -g help_items_to_show=""
     declare -gA help_item_map=()
     declare -gA help_item_summary=()
-    declare -gA help_item_module=()
+    #declare -gA help_item_module=()
     declare -gA help_item_level=()
     declare -gA help_item_type=()
     declare -gA help_item_params=()
-    declare -gA help_all_items=()
+    declare -gA help_item_list=()
 }
 
 
 add-help-item() {
-    local short=$1 key=$2 params=$3 summary=$4
-    if [[ ! -z $short ]]; then
-        help_item_map[$short]+=" $key"
-    fi
-    local type=${key//:*/}
+    local name=$1 item=$2 params=$3 summary=$4
+    local type=${item//:*/}
+    local key=${module}::$item
     help_item_map[$key]=$key
-    if [[ -z ${help_item_module[$key]:-} ]]; then
-        # do not add a second time
-        help_all_items[$type]+=" $key"
+    if [[ ! -z $name ]]; then
+        help_item_map[$name]+=" $key"
     fi
-    help_item_module[$key]=$module
+    #help_item_module[$key]=$module
+    if [[ -z ${help_item_level[$key]:-} ]]; then
+        help_item_list[$module::$type]+=" $key"
+        help_item_list[all::$type]+=" $key"
+    fi
     help_item_level[$key]=$help_level
     help_item_params[$key]=$params
     help_item_summary[$key]=$summary
@@ -35,14 +36,18 @@ parse-if-help-item() {
         argparse_understood_arg=true
     fi
 }
+help-item-module() { echo ${1//::*/}; }
+help-item-type()   { local item=${1/*::/}; echo ${item/:*/}; }
+help-item-name()   { local item=${1/*::/}; echo ${item/*:/}; }
+
 
 help-is-visible() {
     local key=$1
     local lvl=${help_item_level[$key]}
-    local mod=${help_item_module[$key]}
-    if [[ ${help_show_module:-$mod} != $mod ]]; then
-        echo false
-    elif [[ ${help_show_level:-basic} == *${lvl}* || ${help_show_level:-basic} == all ]]; then
+    #local mod=${help_item_module[$key]}
+    #if [[ ${help_show_module:-$mod} != $mod ]]; then
+    #    echo false
+    if [[ ${help_show_level:-basic} == *${lvl}* || ${help_show_level:-basic} == all ]]; then
         echo true
     else
         echo false
@@ -50,9 +55,9 @@ help-is-visible() {
 }
 
 has-help-items() {
-    local type=$1
+    local topic=$1
     local item len=1 slen=0
-    for key in ${help_all_items[$type]:-}; do
+    for key in ${help_item_list[$topic]:-}; do
         if $(help-is-visible $key); then
             echo true
             return
@@ -75,12 +80,12 @@ _param-name() {
 
 
 list-help-items() {
-    local type=$1
+    local topic=$1
     local item len=1 slen=0
-    for key in ${help_all_items[$type]:-}; do
+    for key in ${help_item_list[$topic]:-}; do
         if $(help-is-visible $key); then
-            local lname=${key/*:/}
-            local name=${key/*:/}
+            local name=$(help-item-name $key)
+            local lname=$name
             lname+="$(_param-name $key)"
             if (( $len < ${#lname} )); then len=${#lname}; fi
             local short=${argparse_short_lookup[$name]:-}
@@ -88,8 +93,8 @@ list-help-items() {
             if (( $slen < $shortlen)); then slen=$shortlen; fi
         fi
     done
-    for key in ${help_all_items[$type]:-}; do
-        local name=${key/*:/}
+    for key in ${help_item_list[$topic]:-}; do
+        local name=$(help-item-name $key)
         local lname=$name
         lname+="$(_param-name $key)"
         if $(help-is-visible $key); then

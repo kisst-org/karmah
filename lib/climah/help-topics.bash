@@ -13,7 +13,7 @@ add-help-topic() {
 }
 
 show-help-about-topic() {
-    local ignore=$1 type=$2
+    local type=$(help-item-type $1)
     if $(function-exists show-help-about-topic-$type); then
         show-help-about-topic-$type
     else
@@ -21,15 +21,15 @@ show-help-about-topic() {
         if [[ $type == alias ]]; then plural=aliases; fi
         help_show_level=all
         echo "All available ${plural}"
-        list-help-items $type
+        list-help-items all::$type
     fi
 }
 
 show-help-section() {
-    local type=$1 header=${2:-}
-    if $(has-help-items $type); then
-        echo "${header:-${type}s:}"
-        list-help-items $type
+    local topic=$1 header=${2:-}
+    if $(has-help-items $topic); then
+        echo "${header:-$(help-item-type $topic)s:}"
+        list-help-items $topic
         echo
     fi
 }
