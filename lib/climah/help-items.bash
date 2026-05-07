@@ -31,15 +31,10 @@ parse-if-help-item() {
     local key=${help_item_map[$1]:-$1}
     key=${key# } # TODO: why do we need to strip space???
     if [[ ! -z  ${help_item_module[$key]:-} ]]; then
-        add-help-item-to-show $key
+        help_items_to_show+=" ${help_item_map[$key]:-$key}";
+        argparse_understood_arg=true
     fi
 }
-add-help-item-to-show() {
-    local item=$1
-    help_items_to_show+=" ${help_item_map[$item]:-$item}";
-    argparse_understood_arg=true
-}
-
 
 help-is-visible() {
     local key=$1
