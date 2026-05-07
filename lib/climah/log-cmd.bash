@@ -1,7 +1,7 @@
 
 log-cmd::init-module() {
-    add-func-option S simulate "" "show all commands without doing much"
-    add-flag-option D dry-run     "do not execute the actual commands"
+    add-func-option S show-script "" "show script of commands that would be executed"
+    add-flag-option D dry-run        "do not execute the actual commands"
 }
 
 option::simulate() {
