@@ -58,7 +58,7 @@ option::quiet()     { logger_config[level]=error; argparse_parse_count=1;}
 
 option::log() {
     local cfg=$2 value=$3
-    echo log-debug logger "setting log-config $cfg to $value"
+    log-debug logger "setting log-config $cfg to $value"
     logger_config[$cfg]=$value
     argparse_parse_count=3
 }
