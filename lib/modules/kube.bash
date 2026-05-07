@@ -38,7 +38,7 @@ kubectl-options() {
     echo $opt
 }
 
-run-kubectl() { run-cmd-from-action verbose kubectl $(kubectl-options) "${@}"; }
+run-kubectl() { run-cmd-from-action kubectl $(kubectl-options) "${@}"; }
 
 action::kubectl() {
     log-info kube "kubectl $output_dir"
@@ -47,8 +47,8 @@ action::kubectl() {
 
 action::kube-get-manifests() {
     log-info kube "kube get manifests  ${target_name} to ${output_dir}"
-    run-cmd-from-action verbose rm -rf ${output_dir}
-    run-cmd-from-action verbose mkdir -p ${output_dir}
+    run-cmd-from-action rm -rf ${output_dir}
+    run-cmd-from-action mkdir -p ${output_dir}
     run-verbose-cmd kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml \| split-yaml-items-into-files
     ignore_files=configmap_kube-root-ca.crt.yaml
     ignore_files+=" deployment_ingress-nginx-controller.yaml"
@@ -69,7 +69,7 @@ action::kube-get() {
     run-kubectl get $(kube-calc-resource kube-get) ${action_args:-}
 }
 action::kube-watch() {
-    run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
+    run-cmd-from-action watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
 }
 action::kube-exec() {
     run-kubectl exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
@@ -92,7 +92,7 @@ action::kube-log-follow() {
 }
 
 action::kube-stern() {
-    run-cmd-from-action verbose stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
+    run-cmd-from-action stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
 }
 
 

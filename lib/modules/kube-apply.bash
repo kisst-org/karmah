@@ -19,7 +19,7 @@ action::kube-diff() {
         #KUBECTL_EXTERNAL_DIFF='diff -qr'
         run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir \| filter-kube-diff-quiet #|| true
     elif $(log-shows-verbose); then
-        run-cmd-from-action verbose kubectl diff $(kubectl-options) -f $output_dir || true
+        run-cmd-from-action kubectl diff $(kubectl-options) -f $output_dir || true
     else
         run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir \| filter-kube-diff-output # TODO true
     fi
@@ -27,15 +27,15 @@ action::kube-diff() {
 
 action::kube-diff-delete() {
     log-info kube "kube-diff-delete all resources ${target_name} from ${output_dir}"
-    run-cmd-from-action verbose ls -l $output_dir
+    run-cmd-from-action ls -l $output_dir
 }
 
 action::kube-apply() {
     log-info kube "kube-apply $output_dir"
-    run-cmd-from-action verbose kubectl apply $(kubectl-options) -f $output_dir
+    run-cmd-from-action kubectl apply $(kubectl-options) -f $output_dir
 }
 
 action::kube-delete() {
     log-info kube "kube delete $output_dir"
-    run-cmd-from-action verbose kubectl delete $(kubectl-options) -f $output_dir
+    run-cmd-from-action kubectl delete $(kubectl-options) -f $output_dir
 }
