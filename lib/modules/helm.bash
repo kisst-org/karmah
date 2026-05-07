@@ -44,22 +44,6 @@ add-optional-helm-values-file() {
     fi
 }
 
-helm-calc-command() {
-    local cmd="$*"
-    local chart=$(calc-helm-chart-options)
-    local f
-    : ${helm_release:=$(basename $target_name)}
-    cmd+=" $helm_release"
-    cmd+=" $chart"
-    for f in ${helm_value_files[@]}; do
-        cmd+=" -f ${f}";
-    done
-    if [[ ! -z ${helm_post_renderer:-} ]]; then
-        cmd+=" --post-renderer ${helm_post_renderer}"
-    fi
-    echo $cmd
-}
-
 calc-helm-chart-options() {
     case ${helm_chart_location:-local} in
         local)   echo $helm_chart;;
