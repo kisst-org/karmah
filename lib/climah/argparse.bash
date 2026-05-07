@@ -8,8 +8,9 @@ argparse::declare-vars() {
     declare -gA argparse_short_lookup=()
     declare -g argparse_original_args=""   # remember for help function and others
     declare -g  argparse_parsed_args=""
-    declare -g  argparse_extra_args=""
+    declare -g  argparse_remaining_args=""
     declare -g  argparse_unknown_args=""
+    declare -g  ignore_unknown_args=false
 }
 
 append-argparse-func()  { argparse_parse_funcs+=($1); }
@@ -68,7 +69,7 @@ argparse-parse-arguments() {
             fi
         fi
     done
-    if [[ ! -z $argparse_unknown_args ]]; then
+    if [[ ! -z $argparse_unknown_args ]] && ! ${ignore_unknown_args}; then
         log-error argparse "unknown arguments: $argparse_unknown_args"
         if [[ $command_to_run == help ]]; then
             show-help
@@ -78,8 +79,7 @@ argparse-parse-arguments() {
             return 1
         fi
     fi
-    argparse_extra_args+=" $*"
-    argparse_extra_args=$(echo ${argparse_extra_args}) # trim spaces
+    argparse_remaining_args="$@"
     if [[ ! -z ${argparse_replaced_aliases:-} ]]; then # TODO: why is default needed, it should be declared anyway
         log-verbose argparse "COMMAND $(basename $0) ${argparse_to_parse[@]}"
     fi

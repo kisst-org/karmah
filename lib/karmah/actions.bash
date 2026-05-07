@@ -5,6 +5,7 @@ actions::declare-vars() {
     declare -g action_list=""
     declare -gA action_flow=()
     declare -gA action_module=()
+    declare -gA action_uses_unknown_args=()
 }
 
 actions::init-module() {
@@ -22,7 +23,10 @@ add-action() {
     fi
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     action_module[$name]=$module
-    add-help-item $name action:$name "" "$summary"
+    if [[ ! -z ${action_params:-} ]]; then
+        action_uses_unknown_args[$name]=true
+    fi
+    add-help-item $name action:$name "${action_params:-}" "$summary"
 }
 
 strip-action-prefix() {
@@ -39,6 +43,9 @@ parse-if-action() {
     if [[ ! -z ${action_module[$action]:-} ]]; then
         action_list+=" $1" # keep the prefix
         argparse_parse_count=1
+        if ${action_uses_unknown_args[$action]:-false}; then
+            ignore_unknown_args=true
+        fi
     fi
 }
 
@@ -79,9 +86,14 @@ run-action() {
     action_already_run[$action]=true
 
     local module=${action_module[$action]:-} # This can be used in actions
-    log-verbose action "running $action for ${target_name:-$target_path}"
-    # log-verbose action "running $action\($argparse_extra_args\) for ${target_name:-$target_path}"
-    action::$action
+    local params=""
+    if ${action_uses_unknown_args[$action]:-false}; then
+        params="$argparse_unknown_args $argparse_remaining_args"
+        log-verbose action "running $action for ${target_name:-$target_path} with params $params"
+    else
+        log-verbose action "running $action for ${target_name:-$target_path}"
+    fi
+    action::$action $params
 }
 
 run-single-actions() {

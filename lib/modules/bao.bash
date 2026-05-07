@@ -115,11 +115,9 @@ action::bao-secret-id-create() {
     log-info bao "created secret-id $secret_value"
 }
 action::bao-secret-id-info() {
+    use-karmah-var secret_value
     local error
     exitcode=0
-    if [[ -z ${secret_value:-} ]]; then
-        secret_value=$argparse_extra_args
-    fi
     log-info bao "lookup secret-id: $secret_value # TODO log-sensitive-info"
     if $(log-shows-warn); then
         log-verbose bao "write auth/approle/role/$(bao-role-name)/secret-id/lookup secret_id=$secret_value"

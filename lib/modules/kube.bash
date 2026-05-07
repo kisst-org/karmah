@@ -3,6 +3,7 @@ kube::init-module() {
     add-karmah-var R replicas nr  "specify number of replicas"
     add-karmah-var r resource res "specify a resource"
 
+    local action_params="..."
     add-karmah-action kw   kube-watch        "watch target resources every 2 seconds"
     add-karmah-action kl   kube-log          "show logging of a pod"
     add-karmah-action klf  kube-log-follow   "follow logging of a pod"
@@ -66,13 +67,13 @@ action::kube-get-manifests() {
 }
 
 action::kube-get() {
-    run-kubectl get $(kube-calc-resource kube-get) ${action_args:-}
+    run-kubectl get $(kube-calc-resource kube-get) "${@}"
 }
 action::kube-watch() {
-    run-verbose-cmd watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
+run-verbose-cmd watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) "${@}"
 }
 action::kube-exec() {
-    run-kubectl exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
+    run-kubectl exec $(kube-calc-resource kube-exec) "${@:--- sh}"
 }
 action::kube-env() {
     run-kubectl exec $(kube-calc-resource kube-exec) -- sh -c env
@@ -82,17 +83,17 @@ action::kube-uptime() {
 }
 
 action::kube-exec-it() {
-    run-kubectl exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
+    run-kubectl exec -it $(kube-calc-resource kube-exec-it) "${@:--- sh}"
 }
 action::kube-log() {
-    run-kubectl logs $(kube-calc-resource kube-log) ${action_args:-}
+    run-kubectl logs $(kube-calc-resource kube-log) "${@}"
 }
 action::kube-log-follow() {
-    run-kubectl logs $(kube-calc-resource kube-log) ${action_args:-} --follow
+run-kubectl logs $(kube-calc-resource kube-log) "${@} --follow"
 }
 
 action::kube-stern() {
-    run-verbose-cmd stern $(kubectl-options)  $(kube-calc-resource kube-stern) ${action_args:-}
+    run-verbose-cmd stern $(kubectl-options)  $(kube-calc-resource kube-stern) "${@}"
 }
 
 

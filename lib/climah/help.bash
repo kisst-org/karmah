@@ -74,6 +74,17 @@ has-help-items() {
     echo false
 }
 
+_param-name() {
+    local key=$1
+    local param=${help_item_params[$key]}
+    if [[ ! -z $param ]]; then
+        if [[ $param == ... ]]; then
+            echo " ..."
+        else
+            echo " $param"
+        fi
+    fi
+}
 
 list-help-items() {
     local type=$1
@@ -82,9 +93,7 @@ list-help-items() {
         if $(help-is-visible $key); then
             local lname=${key/*:/}
             local name=${key/*:/}
-            if [[ ! -z ${help_item_params[$key]} ]]; then
-                lname+=" <${help_item_params[$key]}>"
-            fi
+            lname+="$(_param-name $key)"
             if (( $len < ${#lname} )); then len=${#lname}; fi
             local short=${argparse_short_lookup[$name]:-}
             local shortlen=${#short}
@@ -94,9 +103,7 @@ list-help-items() {
     for key in ${help_all_items[$type]:-}; do
         local name=${key/*:/}
         local lname=$name
-        if [[ ! -z ${help_item_params[$key]} ]]; then
-            lname+=" <${help_item_params[$key]}>"
-        fi
+        lname+="$(_param-name $key)"
         if $(help-is-visible $key); then
             printf "  %-${slen}s %-${len}s %s\n" "${argparse_short_lookup[$name]:-}" "$lname" "${help_item_summary[$key]}"
         fi
@@ -113,7 +120,6 @@ add-help-item-to-show() {
 show-help() {
     local found=false
     local unknown_topics=""
-    #for arg in $argparse_parsed_args $argparse_extra_args $argparse_unknown_args ; do
     log-verbose help "showing help about ${help_items_to_show# }"
     for arg in $help_items_to_show ; do
         for key in ${help_item_map[$arg]:-$arg}; do
