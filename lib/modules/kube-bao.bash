@@ -31,17 +31,17 @@ action::kube-bao-token-print() {
 }
 action::kube-bao-token-info() {
     init-bao-token-vars
-    run-flow-actions kube-secret-get,bao-token-info
+    run-single-actions kube-secret-get,bao-token-info
 }
 action::kube-bao-token-update() {
     init-bao-token-vars
     if $(log-shows-verbose); then action::kube-secret-get; fi
-    run-flow-actions bao-token-update,kube-secret-update
+    run-single-actions bao-token-update,kube-secret-update
 }
 action::kube-bao-token-revoke() {
     init-bao-token-vars
     if $(log-shows-verbose); then action::kube-secret-get; fi
-    run-flow-actions bao-token-revoke # TODO kube-secret-delete
+    run-single-actions bao-token-revoke # TODO kube-secret-delete
 }
 
 
@@ -62,10 +62,10 @@ action::kube-bao-secret-id-print() {
 }
 action::kube-bao-secret-id-info() {
     init-bao-secret-id-vars
-    run-flow-actions kube-secret-get,bao-secret-id-info
+    run-single-actions kube-secret-get,bao-secret-id-info
 }
 action::kube-bao-secret-id-update() {
     init-bao-secret-id-vars
     if $(log-shows-verbose); then action::kube-secret-get; fi
-    run-flow-actions bao-secret-id-update,kube-secret-update
+    run-single-actions bao-secret-id-update,kube-secret-update
 }

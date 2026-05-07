@@ -21,7 +21,6 @@ add-action() {
         exit 1
     fi
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
-    : ${action_flow[$name]:=$name}  # default flow is just the action
     action_module[$name]=$module
     add-help-item $name action:$name "" "$summary"
 }
@@ -34,57 +33,72 @@ parse-if-action() {
     fi
 }
 
-set-action-pre-flow() {
-    local name actions="$1"
-    shift
+add-pre-flow-actions() {
+    local name actions="$1"; shift
     for name in "${@//,/ }"; do
-        action_flow[$name]=$actions,$name
-        add-help-item "" flow:$name "" "run actions ${action_flow[$name]:-$name}"
+        local flow=${action_flow[$name]:-}
+        if [[ -z $flow ]]; then
+            action_flow[$name]=$actions
+        else
+            action_flow[$name]=$flow,$actions
+        fi
+        add-help-item "" flow:$name "" "run actions $(get-flow-actions $name)"
     done
 }
-
-run-verbose-action() {
-    local action=$1
-    local module=${action_module[$action]:-}
-    if [[ -z  $argparse_extra_args ]]; then
-        log-verbose action "running $action for ${target_name:-$target_path}"
+get-flow-actions() {
+    local flow=$1
+    local actions=${action_flow[$flow]:-}
+    if [[ -z $actions ]]; then
+        echo $flow
     else
-        log-verbose action "running $action\($argparse_extra_args\) for ${target_name:-$target_path}"
+        # TODO it is currently not possible to have a flow, which does have it self as last action
+        echo $actions,$flow
     fi
+}
+
+
+run-action() {
+    local action=$1
+    if ${action_already_run[$action]:-false}; then
+        log-verbose action "skipping $action because it already has run"
+        return
+    fi
+    action_already_run[$action]=true
+
+    local module=${action_module[$action]:-} # This can be used in actions
+    log-verbose action "running $action for ${target_name:-$target_path}"
+    # log-verbose action "running $action\($argparse_extra_args\) for ${target_name:-$target_path}"
     action::$action
 }
 
 run-single-actions() {
-    declare -a actions=${@:-${action_list:-${default_action}}}
-    local action
-    for action in ${actions//,/ }; do
-        run-verbose-action $action
+    declare -a actions=${@}
+    local act; for act in ${actions//,/ }; do
+        run-action $act
     done
-}
-
-_run-action() {
-    local action=$1
-    if ${action_already_run[$action]:-false}; then
-        log-verbose action "skipping $action because it already has run"
-    else
-        action_already_run[$action]=true
-        run-verbose-action $action
-    fi
 }
 
 run-flow-actions() {
-    declare -a flows=${@:-${action_list:-${default_action}}}
+    local flow=$1
+    local actions=$(get-flow-actions $flow)
+    log-info action "running flow $flow with actions $actions"
+    run-single-actions $actions
+}
+
+run-flows() {
+    local flows=${1:-}
+    if [[ -z $flows ]]; then
+        flows=${action_list:-${default_action}}
+    fi
     declare -A action_already_run=()
-    local action flow
     local post_flow_actions=""
-    log-info action "running flow-actions $flows"
-    for flow in ${flows//,/ }; do
-        flow=${action_flow[$flow]:-$flow}
-        for action in ${flow//,/ }; do _run-action $action; done
+    local flw; for flw in $flows; do
+        run-flow-actions $flw
     done
     log-verbose action "running postflow actions: ${post_flow_actions:-}"
-    for action in ${post_flow_actions:-}; do _run-action $action; done
+    for action in ${post_flow_actions:-}; do run-action $action; done
 }
+
 
 show-actions() { list-help-items action; }
 

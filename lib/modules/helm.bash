@@ -3,7 +3,7 @@ helm::init-module() {
     add-module-help "actions to work with helm"
     add-render-action hd helm-diff           "run diff for target vs helm deployed manifests"
     add-render-action "" helm-upgrade        "run helm upgrade --install for target"
-    add-karmah-action "hpv" helm-print-value  "print the value of a path in  helm values"
+    add-karmah-action hpv helm-print-value  "print the value of a path in  helm values"
     help_level=expert
     add-render-action "" helm-get-diff       "old name for helm-diff (deprecated)"
     add-render-action "" helm-plugin-diff    "run helm diff plugin for target"
@@ -14,9 +14,9 @@ helm::init-module() {
     #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
 
-    set-action-pre-flow init-karmah,update,render,helm-diff,ask         helm-install
-    set-action-pre-flow init-karmah,update,render,helm-diff,ask         helm-upgrade
-    set-action-pre-flow init-karmah,update,render,helm-diff-delete,ask  helm-uninstall
+    add-pre-flow-actions helm-diff,ask         helm-install
+    add-pre-flow-actions helm-diff,ask         helm-upgrade
+    add-pre-flow-actions helm-diff-delete,ask  helm-uninstall
 
     add-karmah-var "" json_path "path" "the path to show from helm values"
     add-flag-option "" bg "run helm-update in the background"

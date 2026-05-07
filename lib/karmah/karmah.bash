@@ -97,8 +97,10 @@ get-karmah-var-from-env() {
 
 
 add-karmah-action() {
+    local name=$2
     add-action "${@}"
-    set-action-pre-flow init-karmah "$2"
+    # The action will not show in help flows, unless extra pre-actions are added
+    action_flow[$name]=init-karmah
 }
 
 action::init-karmah() {
