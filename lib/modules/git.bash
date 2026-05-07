@@ -27,22 +27,24 @@ git-add-message() {
     log-debug git "commmit message is: $git_commit_message"
 }
 
+run-git() { run-cmd-from-action verbose git "$@"; }
+
 action::git-pull() {
     log-info git "running git-pull for $target_name"
-    run-cmd-from-action verbose git pull
+    run-git pull
 }
 
 action::git-diff() {
     local quiet_diff=$(get-option-value quiet-diff false)
     log-info git "git-diff ${target_name} to ${output_dir}"
     if ${quiet_diff}; then
-        run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
+        run-git diff --compact-summary -- ${used_files} ${output_dir} || true
     elif $(log-shows-debug); then
-        run-cmd-from-action verbose git diff -- ${used_files} ${output_dir} || true
+        run-git diff -- ${used_files} ${output_dir} || true
     elif $(log-shows-verbose); then
-        run-cmd-from-action verbose git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
+        run-git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
     else
-        run-cmd-from-action verbose git diff --compact-summary -- ${used_files} ${output_dir} || true
+        run-git diff --compact-summary -- ${used_files} ${output_dir} || true
     fi
 }
 
@@ -53,18 +55,18 @@ action::git-add() {
         return
     fi
     log-info git "git-add ${target_name} to ${output_dir}"
-    run-cmd-from-action verbose git add ${used_files} ${output_dir}
+    run-git add ${used_files} ${output_dir}
 }
 action::git-restore() {
     # TODO: find better way to determine if path is tracked
     if [[ $output_dir == tmp/* ]]; then
         # git restore gives pathspec error on untracked paths
         log-info git "git-restore ${used_files}"
-        run-cmd-from-action verbose git restore ${used_files}
+        run-git restore ${used_files}
     else
         log-info git "git-restore ${used_files} ${output_dir}"
-        run-cmd-from-action verbose git restore ${used_files} ${output_dir}
-        run-cmd-from-action verbose git clean --force ${output_dir}  # remove any files that were not there initially
+        run-git restore ${used_files} ${output_dir}
+        run-git clean --force ${output_dir}  # remove any files that were not there initially
     fi
 }
 
