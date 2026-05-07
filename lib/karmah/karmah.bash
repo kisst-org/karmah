@@ -1,6 +1,7 @@
 # karmah: do stuff based on *.karmah file
 karmah-main() {
     declare -g climah_prog=karmah
+    declare -g used_karmah_vars=""
     # too many actions and options so only show some basic stuff
     default_module_help_level=expert
     basic_help_modules="loggers actions options commands"
@@ -113,7 +114,6 @@ action::init-karmah() {
         # TODO: warn, error or skip_flow
         return 0
     fi
-    declare -g used_karmah_vars=""
     load-karmah-file
     log-verbose karmah "calling ${karmah_type}::init-karmah"
     ${karmah_type}::init-karmah
@@ -127,8 +127,9 @@ action::init-karmah() {
     post_flow_actions+=" clear-karmah"
 }
 action::clear-karmah() {
-    log-debug karmah "clearing karmah-vars: ${used_karmah_vars:-}"
-    unset ${used_karmah_vars:-};
+    local vars_to_clear="${used_karmah_vars:-} ${local_vars:-}"
+    log-debug karmah "clearing karmah-vars: ${vars_to_clear}"
+    unset ${vars_to_clear}
 }
 
 
