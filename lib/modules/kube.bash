@@ -7,10 +7,12 @@ kube::init-module() {
     add-karmah-action kw   kube-watch        "watch target resources every 2 seconds"
     add-karmah-action kl   kube-log          "show logging of a pod"
     add-karmah-action klf  kube-log-follow   "follow logging of a pod"
-    add-karmah-action kg   kube-get          "get current manifests from cluster to --to <path> (default) deployed/manifests"
+    add-karmah-action kg   kube-get          "get a resource"
+    add-karmah-action kdsc kube-describe     "describe a resource"
     add-karmah-action ""   kube-scale        "scale resource(s) without changing source or deployment files"
     add-karmah-action ""   kube-restart      "rollout restart resource(s)"
     add-karmah-action kenv kube-env          "show the environment vars of a pod (run env in a shell)"
+    add-karmah-action kev  kube-events       "show the events of a resource"
     add-karmah-action kup  kube-uptime       "run the uptime commando on a pod"
     help_level=expert
     add-karmah-action k   kubectl            "generic kubectl in the right cluster and namespace of all targets"
@@ -70,6 +72,13 @@ action::kube-get-manifests() {
 action::kube-get() {
     run-kubectl get $(kube-calc-resource kube-get) "${@}"
 }
+action::kube-describe() {
+    run-kubectl describe $(kube-calc-resource kube-describe) "${@}"
+}
+action::kube-events() {
+    run-kubectl events $(kube-calc-resource kube-events) "${@}"
+}
+
 action::kube-watch() {
 run-verbose-cmd watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) "${@}"
 }
@@ -160,6 +169,8 @@ get-latest-pod-name() { run-kubectl get pods --sort-by .status.startTime -o name
 base::calc-resource-kube-log-follow() { find-karmah-method-output calc-resource-kube-log $1; }
 base::calc-resource-kube-exec-it()    { find-karmah-method-output calc-resource-kube-exec $1; }
 base::calc-resource-kube-watch()      { find-karmah-method-output calc-resource-kube-get $1; }
+base::calc-resource-kube-describe()   { find-karmah-method-output calc-resource-kube $1; }
+base::calc-resource-kube-events()     { find-karmah-method-output calc-resource-kube $1; }
 base::calc-resource-kube-log()        { find-karmah-method-output calc-resource-kube $1; }
 base::calc-resource-kube-exec()       { find-karmah-method-output calc-resource-kube $1; }
 base::calc-resource-kube-get()        { find-karmah-method-output calc-resource-kube $1; }
