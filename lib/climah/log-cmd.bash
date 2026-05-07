@@ -4,7 +4,7 @@ log-cmd::init-module() {
     add-flag-option D dry-run        "do not execute the actual commands"
 }
 
-option::simulate() {
+option::show-script() {
     option::quiet
     logger_config[level:cmd]=verbose
     set-option-value dry-run true
