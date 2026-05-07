@@ -3,7 +3,6 @@ commands::declare-vars() {
     declare -g command_to_run=""
     declare -g default_command
     declare -gA command_function=()
-    declare -gA command_params=()
     declare -gA command_alias=()
 }
 commands::init-module() {
@@ -27,11 +26,10 @@ add-command() {
     local func=${3:-command::$name} summary=${4:-no summary}
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     command_function[$name]=$func
-    command_params[$name]=$name
     add-help-item $name command:$name "" "$summary"
 }
 
 run-active-command() {
     local command=${command_to_run:-$default_command}
-    ${command_function[$command]} ${command_params[$command]}
+    ${command_function[$command]} "${argparse_remaining_args}"
 }
