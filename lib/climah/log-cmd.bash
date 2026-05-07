@@ -22,7 +22,11 @@ run-verbose-cmd() {
     if ! ${dry_run:-false}; then
         pipe=${cmd/*|/}
         cmd=${cmd/|*/}
-        if [[ "$pipe" == "$cmd" ]]; then
+        cmd_exit_code=0
+        if ${ignore_cmd_exit_code:-false}; then
+            $cmd || cmd_exit_code=$?
+            ignore_cmd_exit_code=false
+        elif [[ "$pipe" == "$cmd" ]]; then
             $cmd
         else
             $cmd | $pipe

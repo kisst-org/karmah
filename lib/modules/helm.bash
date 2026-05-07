@@ -153,12 +153,9 @@ action::helm-diff() {
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
     log-debug helm "checking for helm release ${release} in namespace $kube_namespace"
-    local cmd="helm status $release $(helm-cluster-options)"
-    log-verbose cmd.helm "$cmd"
-    local tmp_status_failed=false
-    # Note: not using log-verbose-cmd, so is run, even in dry-run
-    $cmd >/dev/null || tmp_status_failed=true
-    if $tmp_status_failed ; then
+    ignore_cmd_exit_code=true
+    run-verbose-cmd helm status $release $(helm-cluster-options) >/dev/null
+    if [[ ${cmd_exit_code:-0} != 0 ]] ; then
         log-info helm "helm release $helm_release does not yet exist in namespace $kube_namespace, skipping helm-diff"
         return 0;
     fi
