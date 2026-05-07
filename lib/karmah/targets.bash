@@ -18,6 +18,7 @@ command::run-flows()   { run-func-for-targets run-flows; }
 
 run-func-for-targets() {
     local target_func=$1
+    # : ${target_paths:=${default_target_paths:-}}
     if [[ -z ${target_paths:-} ]]; then
         log-warn targets "no target paths provided, but needed for $target_func"
         return 0
