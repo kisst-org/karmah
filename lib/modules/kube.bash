@@ -43,7 +43,8 @@ run-kubectl() { run-verbose-cmd kubectl $(kubectl-options) "${@}"; }
 
 action::kubectl() {
     log-info kube "kubectl $output_dir"
-    run-kubectl $action_args
+    # TODO: would be nice if we could use calced resource somewhere
+    run-kubectl "$@"
 }
 
 action::kube-get-manifests() {
