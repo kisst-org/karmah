@@ -42,6 +42,7 @@ parse-value-option() {
 parse-if-option() {
     local arg=${1#--}
     if [[ $arg == $1 ]]; then return 0; fi  # not an argument starting with --...
+    if [[ -z  $arg ]]; then return 0; fi  # ignore -- option
 
     local option_name=${arg/=*/}
     local func=${option_func[$option_name]:-}
