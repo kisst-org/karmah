@@ -37,13 +37,12 @@ kubectl-options() {
     opt+="--context ${kube_context} -n $kube_namespace"
     echo $opt
 }
-run-kubectl() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) "${@}"
-}
+
+run-kubectl() { run-cmd-from-action verbose kubectl $(kubectl-options) "${@}"; }
 
 action::kubectl() {
     log-info kube "kubectl $output_dir"
-    run-cmd-from-action verbose kubectl $(kubectl-options) $action_args
+    run-kubectl $action_args
 }
 
 action::kube-get-manifests() {
@@ -67,29 +66,29 @@ action::kube-get-manifests() {
 }
 
 action::kube-get() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) get $(kube-calc-resource kube-get) ${action_args:-}
+    run-kubectl get $(kube-calc-resource kube-get) ${action_args:-}
 }
 action::kube-watch() {
     run-cmd-from-action verbose watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) ${action_args:-}
 }
 action::kube-exec() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
+    run-kubectl exec $(kube-calc-resource kube-exec) ${action_args:--- sh}
 }
 action::kube-env() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) -- sh -c env
+    run-kubectl exec $(kube-calc-resource kube-exec) -- sh -c env
 }
 action::kube-uptime() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) exec $(kube-calc-resource kube-exec) -- uptime
+    run-kubectl exec $(kube-calc-resource kube-exec) -- uptime
 }
 
 action::kube-exec-it() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
+    run-kubectl exec -it $(kube-calc-resource kube-exec-it) ${action_args:--- sh}
 }
 action::kube-log() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-}
+    run-kubectl logs $(kube-calc-resource kube-log) ${action_args:-}
 }
 action::kube-log-follow() {
-    run-cmd-from-action verbose kubectl $(kubectl-options) logs $(kube-calc-resource kube-log) ${action_args:-} --follow
+    run-kubectl logs $(kube-calc-resource kube-log) ${action_args:-} --follow
 }
 
 action::kube-stern() {
@@ -101,7 +100,7 @@ action::kube-restart() {
     local res
     for res in ${kube_resource_list//,/ }; do
         res=${kube_resource_alias[$res]:-$res}
-        run-cmd-from-action verbose kubectl $(kubectl-options) rollout restart $res
+        run-kubectl rollout restart $res
     done
 }
 action::kube-scale() {
