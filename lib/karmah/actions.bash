@@ -25,10 +25,19 @@ add-action() {
     add-help-item $name action:$name "" "$summary"
 }
 
+strip-action-prefix() {
+    local action=$1
+    case $action in
+        always:*) echo ${action#always:} ;;
+        single:*) echo ${action#single:} ;;
+        *)        echo $action;;
+    esac
+}
+
 parse-if-action() {
-    local action_name=$1
-    if [[ ! -z ${action_module[$action_name]:-} ]]; then
-        action_list+=" $action_name"
+    local action=$(strip-action-prefix $1)
+    if [[ ! -z ${action_module[$action]:-} ]]; then
+        action_list+=" $1" # keep the prefix
         argparse_parse_count=1
     fi
 }
@@ -58,10 +67,14 @@ get-flow-actions() {
 
 
 run-action() {
-    local action=$1
+    local action=$(strip-action-prefix $1)
     if ${action_already_run[$action]:-false}; then
-        log-verbose action "skipping $action because it already has run"
-        return
+        if [[ $1 == always:$action ]]; then
+            log-verbose action "running $action again, because of always:prefix"
+        else
+            log-verbose action "skipping $action because it already has run"
+            return
+        fi
     fi
     action_already_run[$action]=true
 
@@ -79,9 +92,14 @@ run-single-actions() {
 }
 
 run-flow-actions() {
-    local flow=$1
-    local actions=$(get-flow-actions $flow)
-    log-info action "running flow $flow with actions $actions"
+    local flow=$(strip-action-prefix $1)
+    if [[ $1 == single:$flow ]]; then
+        log-verbose action "running flow $flow without any actions because of single: prefix"
+        local actions=$flow
+    else
+        local actions=$(get-flow-actions $flow)
+        log-verbose action "running flow $flow with actions $actions"
+    fi
     run-single-actions $actions
 }
 
@@ -92,6 +110,7 @@ run-flows() {
     fi
     declare -A action_already_run=()
     local post_flow_actions=""
+    log-info action "running flow(s) $flows"
     local flw; for flw in $flows; do
         run-flow-actions $flw
     done

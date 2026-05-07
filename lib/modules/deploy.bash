@@ -4,7 +4,7 @@ deploy::init-module() {
     add-karmah-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
     add-karmah-action "" plan   "show what deploy action would do"
     help_level=expert
-    add-karmah-action "" ask "ask for confirmation (unless --yes is specified)"
+    add-action     "" ask    "ask for confirmation (unless --yes is specified)"
     add-func-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
 }
@@ -22,6 +22,7 @@ action::ask() {
         log-info deploy "Stopping karmah"
         exit 1
     fi
+    action_already_run[ask]=false # will be asked again if flow has multiple asks
 }
 
 action::deploy() {
