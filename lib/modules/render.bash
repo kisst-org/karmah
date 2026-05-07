@@ -28,8 +28,8 @@ add-render-action() {
 action::render() {
     log-info render "rendering ${target_name} with ${renderer} to ${output_dir}"
     error-if-action-args
-    run-cmd-from-action rm -rf ${output_dir}
-    run-cmd-from-action mkdir -p ${output_dir}
+    run-verbose-cmd rm -rf ${output_dir}
+    run-verbose-cmd mkdir -p ${output_dir}
     for r in ${renderer//,/ }; do
         render-$r
     done
@@ -39,7 +39,7 @@ action::render() {
 action::render-rm() {
     log-info render "removing  ${target_name} manifests in ${output_dir}"
     warn-if-action-args
-    run-cmd-from-action rm -rf ${output_dir}
+    run-verbose-cmd rm -rf ${output_dir}
 }
 
 
@@ -47,7 +47,7 @@ action::compare() {
     olddir=${output_dir}
     local newdir=${with_dir:-deployed/manifests}/${target_name}
     log-info render "comparing ${target_name}: ${output_dir} with ${newdir}"
-    run-cmd-from-action diff -r $newdir $olddir || true
+    run-verbose-cmd diff -r $newdir $olddir || true
 }
 
 sort-env-vars() {
@@ -59,5 +59,5 @@ sort-env-vars() {
 
 render-copy-files() {
     files_list="$karmah_dir"/files/*.yaml
-    run-cmd-from-action cp -f ${files_list} ${output_dir}
+    run-verbose-cmd cp -f ${files_list} ${output_dir}
 }

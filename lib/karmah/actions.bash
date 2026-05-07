@@ -108,11 +108,6 @@ error-if-action-args() {
 }
 
 log-from-action() { log-at-level $1 "$module.$action" "$2"; }
-run-cmd-from-action() {
-    local cmd=$1
-    shift 1
-    run-and-log-cmd verbose cmd.$module.$cmd $cmd "$@"
-}
 
 show-help-about-action() {
     local type=$1 name=$2

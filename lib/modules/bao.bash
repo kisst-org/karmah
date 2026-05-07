@@ -160,7 +160,7 @@ action::bao-secret-id-update() {
 
 action::bao-secret-id-create() {
     if $(log-shows-verbose); then
-        run-cmd-from-action bao write -force auth/approle/role/$(bao-role-name)/secret-id
+        run-verbose-cmd bao write -force auth/approle/role/$(bao-role-name)/secret-id
     else
         echo $(bao-secret-create)
     fi
@@ -197,6 +197,6 @@ action::bao-policy-create() {
 EOF
 }
 
-action::bao-policy-info() { run-cmd-from-action bao policy read read-kv-$postfix; }
+action::bao-policy-info() { run-verbose-cmd bao policy read read-kv-$postfix; }
 
 # TODO: action::bao-role-login() { bao write auth/approle/login role_id= secret_id=... }

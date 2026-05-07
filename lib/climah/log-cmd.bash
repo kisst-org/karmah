@@ -11,17 +11,6 @@ option::simulate() {
     option::yes
 }
 
-run-and-log-cmd() {
-    local level=$1 logger=$2 cmd=$3 args
-    local dry_run=$(get-option-value dry-run false)
-    shift 3
-    printf -v args " %s" "$@"
-    log-at-level $level $logger "$cmd $args"
-    if ! ${dry_run:-false}; then
-        $cmd "$@"
-    fi
-}
-
 run-verbose-cmd() {
     local maincmd=$1 cmd="$@"
     local dry_run=$(get-option-value dry-run false)

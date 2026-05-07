@@ -91,7 +91,7 @@ action::helm-pull() {
     if [[ -d $dir ]]; then
         if ${force_pull}; then
             log-verbose helm "$dir already exists, removing it"
-            run-cmd-from-action rm -rf $dir
+            run-verbose-cmd rm -rf $dir
         else
             log-verbose helm "$dir already exists, skipping helm-pull (use --force-pull to override)"
             return 0
@@ -101,12 +101,12 @@ action::helm-pull() {
     if [[ -f $tarfile && ${force_pull} == false ]]; then
         log-verbose helm "$tarfile already exists, skipping helm-pull (use --force-pull to override)"
     else
-        run-cmd-from-action mkdir -p $(dirname $tarfile)
+        run-verbose-cmd mkdir -p $(dirname $tarfile)
         local cmd="helm pull --repo ${helm_chart_repo} ${helm_chart_name} --version ${helm_chart_version} --destination $(dirname $tarfile)"
-        run-cmd-from-action ${cmd}
+        run-verbose-cmd ${cmd}
     fi
-    run-cmd-from-action mkdir -p $dir
-    run-cmd-from-action tar xfz $tarfile --dir $dir --strip-components 1
+    run-verbose-cmd mkdir -p $dir
+    run-verbose-cmd tar xfz $tarfile --dir $dir --strip-components 1
 }
 
 
@@ -143,8 +143,8 @@ action::helm-uninstall() {
 action::helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
     log-info helm "getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
-    run-cmd-from-action rm -rf ${output_dir}
-    run-cmd-from-action mkdir -p ${output_dir}
+    run-verbose-cmd rm -rf ${output_dir}
+    run-verbose-cmd mkdir -p ${output_dir}
     run-verbose-cmd helm get manifest $release $(helm-cluster-options) \| split-yaml-docs-into-files
 }
 
@@ -170,7 +170,7 @@ action::helm-diff() {
     action::helm-get-manifests
     log-info helm "comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}"
     # The sed script is to make missing or added manifests stand out more clearly
-    run-cmd-from-action diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
+    run-verbose-cmd diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }
 
 action::helm-print-value() {
@@ -203,7 +203,7 @@ helm-update-value-path() {
     local path="$1" value="$2"
     local val_file=${helm_value_files[@]:(-1)}
     log-verbose helm "updating $path to \"$value\""
-    run-cmd-from-action yq -i $path=\"$value\"   $val_file
+    run-verbose-cmd yq -i $path=\"$value\"   $val_file
 }
 
 helm-cluster-options() {

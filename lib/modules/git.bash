@@ -27,7 +27,7 @@ git-add-message() {
     log-debug git "commmit message is: $git_commit_message"
 }
 
-run-git() { run-cmd-from-action git "$@"; }
+run-git() { run-verbose-cmd git "$@"; }
 
 action::git-pull() {
     log-info git "running git-pull for $target_name"
@@ -89,6 +89,6 @@ action::git-commit() {
     if git diff-index --quiet HEAD; then
         log-info git "Nothing added to commit"
     else
-        run-cmd-from-action git commit -m "${git_commit_message}" ${used_files} ${output_dir}
+        run-verbose-cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
     fi
 }
