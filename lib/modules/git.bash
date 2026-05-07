@@ -86,6 +86,7 @@ action::git-commit() {
         git-add-message "$message"
     fi
     log-info git "running git-commit for $target_name with message \"$git_commit_message\""
+    # TODO: simulate ???
     if git diff-index --quiet HEAD; then
         log-info git "Nothing added to commit"
     else
