@@ -19,10 +19,10 @@ run-verbose-cmd() {
     fi
     local dry_run=$(get-option-value dry-run false)
     log-at-level verbose $logger "${*}"
+    cmd_exit_code=0
     if ! ${dry_run:-false}; then
         pipe=${cmd/*|/}
         cmd=${cmd/|*/}
-        cmd_exit_code=0
         if ${ignore_cmd_exit_code:-false}; then
             $cmd || cmd_exit_code=$?
             ignore_cmd_exit_code=false
