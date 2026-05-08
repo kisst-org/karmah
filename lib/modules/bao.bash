@@ -1,8 +1,10 @@
 bao::init-module() {
     add-module-help "actions to work with bao"
 
-    add-karmah-var "" ttl duration   "set the ttl voor a token, e.g. 30m of 60d"
     # see https://openbao.org/docs/concepts/duration-format/
+    add-karmah-var "" ttl      duration   "set the ttl voor a token, e.g. 30m of 60d"
+    add-karmah-var "" bao_addr url        "address (url) to use for openbao"
+    add-karmah-var g  grep     pat        "get/grep a pattern/field from the lookup info"
 
     add-karmah-action bli bao-login  "login and store the token in a file"
     add-karmah-action blo bao-logout "remove the file with the login token"
@@ -25,8 +27,6 @@ bao::init-module() {
 
     add-karmah-action bpi  bao-policy-info  "lookup the details of a bao policy"
     add-karmah-action bpc  bao-policy-create  "create a bao policy"
-
-    add-karmah-var "" bao_addr "address (url) to use for openbao"
 }
 
 #######################
@@ -100,10 +100,15 @@ action::bao-token-revoke() {
 action::bao-token-list() { run-bao list auth/token/accessors | tail -n +3; }
 action::bao-token-list-info() {
     local accessors=$(action::bao-token-list)
+    use-karmah-var grep
     local acc; for acc in $accessors; do
         echo ======= $acc
         #run-bao "token lookup" -accessor $acc 2>/dev/null || exitcode=$?
-        action::bao-token-info "-accessor $acc"
+        if [[ -z $grep ]]; then
+            action::bao-token-info "-accessor $acc"
+        else
+            action::bao-token-info "-accessor $acc" | grep $grep
+        fi
     done
 }
 
