@@ -100,7 +100,11 @@ action::bao-token-revoke() {
         use-karmah-var secret_value
         token=$secret_value
     fi
-    run-bao "token revoke" $secret_value
+    if [[ -z $token ]]; then
+        echo "WARNING: No token specfied. This will revoke your login tokin."
+        action::ask
+    fi
+    run-bao "token revoke" $token
 }
 action::bao-token-list() { run-bao list auth/token/accessors | tail -n +3; }
 action::bao-token-list-info() {
