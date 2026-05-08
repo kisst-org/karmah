@@ -8,9 +8,11 @@ bao::init-module() {
     add-karmah-action blo bao-logout "remove the file with the login token"
     add-karmah-action blv bao-login-vars  "show the vars you can export"
 
-    add-karmah-action bti bao-token-info   "lookup the details of a token"
-    add-karmah-action btc bao-token-update "create a new token"
-    add-karmah-action btr bao-token-revoke "revoke an existing token"
+    add-karmah-action bti  bao-token-info       "lookup the details of a token"
+    add-karmah-action btc  bao-token-update     "create a new token"
+    add-karmah-action btr  bao-token-revoke     "revoke an existing token"
+    add-karmah-action btl  bao-token-list       "list all token accessor"
+    add-karmah-action btld bao-token-list-info  "list details of all token accessor"
 
     add-karmah-action bsl  bao-secret-id-list    "list all secret-id's for an approle"
     add-karmah-action bsi  bao-secret-id-info    "lookup the details of a secret-id for an approle in bao"
@@ -66,10 +68,13 @@ run-bao() {
 #######################
 # tokens
 action::bao-token-info() {
-    use-karmah-var secret_value
+    local token=${1:-}
+    if [[ -z ${token} ]]; then
+        use-karmah-var secret_value
+        token=$secret_value
+    fi
     local error
-    local token=$secret_value
-    exitcode=0
+    local exitcode=0
     if $(log-shows-warn); then
         run-bao "token lookup" $token || exitcode=$?
         if [[ $exitcode == 2 ]]; then
@@ -91,6 +96,15 @@ action::bao-token-create() {
 action::bao-token-revoke() {
     use-karmah-var secret_value
     run-bao "token revoke" $secret_value
+}
+action::bao-token-list() { run-bao list auth/token/accessors | tail -n +3; }
+action::bao-token-list-info() {
+    local accessors=$(action::bao-token-list)
+    local acc; for acc in $accessors; do
+        echo ======= $acc
+        #run-bao "token lookup" -accessor $acc 2>/dev/null || exitcode=$?
+        action::bao-token-info "-accessor $acc"
+    done
 }
 
 
