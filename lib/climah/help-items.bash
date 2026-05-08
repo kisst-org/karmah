@@ -98,7 +98,7 @@ list-help-items() {
         local lname=$name
         lname+="$(_param-name $key)"
         if $(help-is-visible $key); then
-            printf "  %-${slen}s %-${len}s %s\n" "${argparse_short_lookup[$name]:-}" "$lname" "${help_item_summary[$key]}"
+            printf "  %-${slen}s %-${len}s   %s\n" "${argparse_short_lookup[$name]:-}" "$lname" "${help_item_summary[$key]}"
         fi
     done
 }
