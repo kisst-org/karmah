@@ -63,8 +63,7 @@ export-bao-login-token() { export VAULT_TOKEN=$(<$bao_token_file); }
 run-bao() {
     local cmd=$1; shift
     export-bao-login-token
-    log-verbose cmd.bao "bao $cmd $bao_options \"${@}\""
-    bao $cmd $bao_options "${@}"
+    run-verbose-cmd bao $cmd $bao_options ${*}
 }
 
 #######################
