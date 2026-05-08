@@ -10,9 +10,11 @@ bao::init-module() {
     add-karmah-action blo bao-logout "remove the file with the login token"
     add-karmah-action blv bao-login-vars  "show the vars you can export"
 
+    local action_params="[token/accessor]"
     add-karmah-action bti  bao-token-info       "lookup the details of a token"
     add-karmah-action btc  bao-token-update     "create a new token"
     add-karmah-action btr  bao-token-revoke     "revoke an existing token"
+    action_params=""
     add-karmah-action btl  bao-token-list       "list all token accessor"
     add-karmah-action btld bao-token-list-info  "list details of all token accessor"
 
@@ -68,7 +70,7 @@ run-bao() {
 #######################
 # tokens
 action::bao-token-info() {
-    local token=${1:-}
+    local token="${*:-}"
     if [[ -z ${token} ]]; then
         use-karmah-var secret_value
         token=$secret_value
@@ -94,7 +96,11 @@ action::bao-token-create() {
     secret_value=$(run-bao "token create" -orphan -ttl=$ttl -format=yaml | yq .auth.client_token)
 }
 action::bao-token-revoke() {
-    use-karmah-var secret_value
+    local token=${*:-}
+    if [[ -z ${token} ]]; then
+        use-karmah-var secret_value
+        token=$secret_value
+    fi
     run-bao "token revoke" $secret_value
 }
 action::bao-token-list() { run-bao list auth/token/accessors | tail -n +3; }
@@ -111,8 +117,6 @@ action::bao-token-list-info() {
         fi
     done
 }
-
-
 
 action::bao-token-update() {
     if $(log-shows-verbose); then
