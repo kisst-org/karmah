@@ -91,7 +91,7 @@ action::bao-token-info() {
 action::bao-token-create() {
     use-karmah-var ttl 30m
     #bao token create -ttl=$ttl -format=yaml
-    secret_value=$(run-bao "token create"  -ttl=$ttl -format=yaml | yq .auth.client_token)
+    secret_value=$(run-bao "token create" -orphan -ttl=$ttl -format=yaml | yq .auth.client_token)
 }
 action::bao-token-revoke() {
     use-karmah-var secret_value
