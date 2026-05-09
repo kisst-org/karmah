@@ -7,7 +7,7 @@ bao-token::init-module() {
     add-karmah-action btr  bao-token-revoke     "revoke an existing token"
     action_params=""
     add-karmah-action btl  bao-token-list       "list all token accessor"
-    add-karmah-action btld bao-token-list-info  "list details of all token accessor"
+    add-karmah-action btli bao-token-list-info  "list details of all token accessor"
 }
 
 action::bao-token-info() {

@@ -22,10 +22,12 @@ action::bao-login() {
             exit 1
         fi
     fi
-    local token=$(bao login $bao_options $bao_login_options  -no-store -field token  $bao_login_params )
+    echo "Enter password for ${bao_login_params} (will not been shown):"
+    local token=$(run-verbose-cmd bao login $bao_options $bao_login_options  -no-store -field token  $bao_login_params 2>/dev/null)
     mkdir -p $(dirname ${bao_token_file})
-    echo $token >${bao_token_file}
-    chmod 600 ${bao_token_file}
+    run-verbose-cmd echo $token \| tee ${bao_token_file}
+    run-verbose-cmd chmod 600 ${bao_token_file}
+    log-info bao "token saved to $bao_token_file"
 }
 
 action::bao-logout() { rm -f $bao_token_file; } # TODO: revoke token
