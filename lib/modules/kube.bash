@@ -14,6 +14,7 @@ kube::init-module() {
     add-karmah-action kenv kube-env          "show the environment vars of a pod (run env in a shell)"
     add-karmah-action kev  kube-events       "show the events of a resource"
     add-karmah-action kup  kube-uptime       "run the uptime commando on a pod"
+    add-karmah-action kes  kube-es-sync      "sync external secrets"
     help_level=expert
     add-karmah-action k   kubectl            "generic kubectl in the right cluster and namespace of all targets"
     #add-karmah-action ks  kube-status    "show status of relevant resources"
@@ -99,8 +100,13 @@ action::kube-log() {
     run-kubectl logs $(kube-calc-resource kube-log) "${@}"
 }
 action::kube-log-follow() {
-run-kubectl logs $(kube-calc-resource kube-log) "${@} --follow"
+    run-kubectl logs $(kube-calc-resource kube-log) "${@} --follow"
 }
+action::kube-es-sync() {
+    # see https://external-secrets.io/latest/introduction/faq/
+    run-kubectl annotate es force-sync=$(date +%s) --overwrite $(kube-calc-resource kube-es-sync) "${@} --follow"
+}
+
 
 action::kube-stern() {
     run-verbose-cmd stern $(kubectl-options)  $(kube-calc-resource kube-stern) "${@}"
