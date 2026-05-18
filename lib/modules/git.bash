@@ -89,9 +89,6 @@ action::git-commit() {
     if git diff-index --quiet HEAD; then
         log-info git "Nothing added to commit"
     else
-        log-at-level verbose cmd.git "git commit -m \"${git_commit_message}\" ${used_files} ${output_dir}"
-        if ! ${dry_run:-false}; then
-            git commit -m "${git_commit_message}" ${used_files} ${output_dir}
-        fi
+        run-verbose-cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
     fi
 }

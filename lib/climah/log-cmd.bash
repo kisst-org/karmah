@@ -17,7 +17,9 @@ run-verbose-cmd() {
         logger+=".${module}"
     fi
     local dry_run=$(get-option-value dry-run false)
-    log-at-level verbose $logger "${*}"
+    local logmsg
+    printf -v logmsg "%q " "$@"
+    log-at-level verbose $logger "$logmsg"
     cmd_exit_code=0
     if ! ${dry_run:-false}; then
         pipe=${cmd/*|/}
@@ -26,8 +28,9 @@ run-verbose-cmd() {
             $cmd || cmd_exit_code=$?
             ignore_cmd_exit_code=false
         elif [[ "$pipe" == "$cmd" ]]; then
-            $cmd
+            "$@"
         else
+            # TODO: if cmd/pipe had arguments with spaces, this will not work
             $cmd | $pipe
         fi
     fi
