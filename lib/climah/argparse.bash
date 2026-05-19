@@ -26,18 +26,6 @@ add-alias() {
     add-help-item "" $name alias:$name "" "alias for: $expansion"
 }
 
-argparse-replace-aliases() {
-    for arg in "${@}"; do
-        local al="${argparse_aliases[$arg]:-none}"
-        if [[ "$al" != none ]]; then
-            argparse_replaced_aliases+=($al)
-            argparse_to_parse+=($al)
-        else
-            argparse_to_parse+=("$arg")
-        fi
-    done
-}
-
 argparse-parse-funcs() {
     for func in ${argparse_parse_funcs[@]}; do
         $func "$@"
@@ -49,10 +37,13 @@ argparse-parse-funcs() {
 
 argparse-parse-arguments() {
     argparse_original_args="${@}"
-    declare -a argparse_to_parse=()            # after alias subsitution is done
-    argparse-replace-aliases "${@}"
-    set -- "${argparse_to_parse[@]}"
     while [[ $# > 0 ]]; do
+        local alias="${argparse_aliases[$1]:-}"
+        if [[ ! -z $alias ]]; then
+            log-debug argparse "replacing alias $1 with \"$alias\""
+            shift
+            set - $alias "$@"
+        fi
         arg=${argparse_short_map[$1]:-$1}
         shift
         local argparse_parse_count=0 argparse_understood_arg=false
@@ -80,9 +71,6 @@ argparse-parse-arguments() {
         fi
     fi
     argparse_remaining_args="$@"
-    if [[ ! -z ${argparse_replaced_aliases:-} ]]; then # TODO: why is default needed, it should be declared anyway
-        log-verbose argparse "COMMAND $(basename $0) ${argparse_to_parse[@]}"
-    fi
 }
 
 argparse-show-aliases() {
