@@ -1,8 +1,4 @@
 
-git::declare-vars() {
-    declare -g git_pulled=false
-}
-
 git::init-module() {
     add-module-help "actions to work with git"
     help_level=expert
