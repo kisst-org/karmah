@@ -36,7 +36,7 @@ require-modules() {
 
 add-module-help() {
     local summary="${1:-info about module $module}" key
-    add-help-item $module module:$module "" "$summary"
+    add-help-item "" $module module:$module "" "$summary"
 }
 
 show-help-about-module() {

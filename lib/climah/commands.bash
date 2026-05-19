@@ -26,7 +26,7 @@ add-command() {
     local func=${3:-command::$name} summary=${4:-no summary}
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     command_function[$name]=$func
-    add-help-item $name command:$name "" "$summary"
+    add-help-item "$short" $name command:$name "" "$summary"
 }
 
 run-active-command() {

@@ -9,7 +9,7 @@ add-help-topic() {
     local short=$1 name=$2 summary=${3:-no summary}
     log-trace help "adding help-topic: ${@}"
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
-    add-help-item $name topic:$name "" "$summary"
+    add-help-item "$short" $name topic:$name "" "$summary"
 }
 
 show-help-about-topic() {

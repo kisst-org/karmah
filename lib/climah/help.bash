@@ -74,7 +74,7 @@ show-type-help() {
     #local type=$1 name=$2
     local key=$1
     local key=${help_item_map[$name]:-}
-    local short=${argparse_short_lookup[$name]:-}
+    local short=${help_item_short[$key]:-}
     if [[ -z $short ]]; then
         echo "$type $short $name: ${help_item_summary[$key]}"
     else

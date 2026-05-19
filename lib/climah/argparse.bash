@@ -5,7 +5,7 @@ argparse::declare-vars() {
     declare -ga argparse_parse_funcs=(parse-if-help-item)
     declare -ga argparse_replaced_aliases=()   # remember for help function
     declare -gA argparse_short_map=()
-    declare -gA argparse_short_lookup=()
+    #declare -gA argparse_short_lookup=()
     declare -g argparse_original_args=""   # remember for help function and others
     declare -g  argparse_parsed_args=""
     declare -g  argparse_remaining_args=""
@@ -23,7 +23,7 @@ add-alias() {
     if [[ -z ${module:-} ]]; then
         module=argparse
     fi
-    add-help-item $name alias:$name "" "alias for: $expansion"
+    add-help-item "" $name alias:$name "" "alias for: $expansion"
 }
 
 argparse-replace-aliases() {
@@ -95,7 +95,6 @@ argparse-show-aliases() {
 argparse-redefine-short() {
     local short=$1 long=$2
     argparse_short_map[$short]=$long
-    argparse_short_lookup[$long]=$short
 }
 argparse-add-short() {
     local short=$1 long=$2
@@ -103,8 +102,8 @@ argparse-add-short() {
         log-verbose argparse "WARN redefining short $short ==> $long"
     elif [[ ! -z ${argparse_short_map[$short]:-} ]]; then
         log-warn argparse "short $short ==> $long already defined to ${argparse_short_map[$short]}"
-    elif [[ ! -z ${argparse_short_lookup[$long]:-} ]]; then
-        log-warn argparse "short $short ==> $long clashes with existing short ${argparse_short_lookup[$long]}"
+    #elif [[ ! -z ${argparse_short_lookup[$long]:-} ]]; then
+        #log-warn argparse "short $short ==> $long clashes with existing short ${argparse_short_lookup[$long]}"
     fi
     argparse-redefine-short $short $long
 }
@@ -115,6 +114,6 @@ argparse-clear-short() {
         log-warn argparse "attempting to clearing unset short $short"
     else
         unset argparse_short_map[$short]
-        unset argparse_short_lookup[$long]
+        #unset argparse_short_lookup[$long]
     fi
 }

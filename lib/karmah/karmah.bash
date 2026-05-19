@@ -56,7 +56,7 @@ add-karmah-var() {
     local short=$1 name=$2 arg=$3 summary="${4:-}"
     karmah_var_names[$name]=$name
     #karmah_var_names[$module:$name]=$name
-    #add-help-item karmah-var "$name" "$arg" "$summary"
+    #add-help-item "$short" karmah-var "$name" "$arg" "$summary"
     add-value-option "$short" ${name//_/-} "${arg:-'<val>'}" "${summary:- set karmah-var $name}"
     used_karmah_vars+=" $name"
 }

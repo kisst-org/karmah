@@ -54,9 +54,12 @@ parse-if-option() {
 
 _add-option() {
     local short=$1 name=$2 arg=$3 summary="$4" func=$5
-    if [[ ! -z $short ]]; then argparse-add-short -$short --$name; fi
+    if [[ ! -z $short ]]; then
+        short=-$short
+        argparse-add-short $short --$name;
+    fi
     option_func[$name]=$func
-    add-help-item --$name option:--$name "$arg" "$summary"
+    add-help-item "$short" --$name option:--$name "$arg" "$summary"
 }
 add-func-option()  { _add-option "$1" $2 "$3" "$4" option::$2; }
 add-flag-option()  { _add-option "$1" $2  ""  "$3" parse-flag-option; }

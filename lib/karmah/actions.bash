@@ -31,7 +31,7 @@ add-action() {
     if [[ ! -z ${action_params:-} ]]; then
         action_uses_unknown_args[$name]=true
     fi
-    add-help-item $name action:$name "${action_params:-}" "$summary"
+    add-help-item "$short" $name action:$name "${action_params:-}" "$summary"
 }
 
 strip-action-prefix() {
@@ -63,7 +63,7 @@ add-pre-flow-actions() {
         else
             action_flow[$name]=$flow,$actions
         fi
-        add-help-item "" flow:$name "" "run actions $(get-flow-actions $name)"
+        add-help-item "" $name flow:$name "" "run actions $(get-flow-actions $name)"
     done
 }
 get-flow-actions() {

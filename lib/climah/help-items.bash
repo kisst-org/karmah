@@ -1,6 +1,7 @@
 help-items::declare-vars() {
     declare -g help_items_to_show=""
     declare -gA help_item_map=()
+    declare -gA help_item_short=()
     declare -gA help_item_summary=()
     #declare -gA help_item_module=()
     declare -gA help_item_level=()
@@ -11,10 +12,13 @@ help-items::declare-vars() {
 
 
 add-help-item() {
-    local name=$1 item=$2 params=$3 summary=$4
+    local short=$1 name=$2 item=$3 params=$4 summary=$5
     local type=${item//:*/}
     local key=${module}::$item
     help_item_map[$key]=$key
+    if [[ ! -z $short ]]; then
+        help_item_short[$key]="$short"
+    fi
     if [[ ! -z $name ]]; then
         help_item_map[$name]+=" $key"
     fi
@@ -78,7 +82,6 @@ _param-name() {
     fi
 }
 
-
 list-help-items() {
     local topic=$1
     local item len=1 slen=0
@@ -88,7 +91,7 @@ list-help-items() {
             local lname=$name
             lname+="$(_param-name $key)"
             if (( $len < ${#lname} )); then len=${#lname}; fi
-            local short=${argparse_short_lookup[$name]:-}
+            local short=${help_item_short[$key]:-}
             local shortlen=${#short}
             if (( $slen < $shortlen)); then slen=$shortlen; fi
         fi
@@ -98,7 +101,7 @@ list-help-items() {
         local lname=$name
         lname+="$(_param-name $key)"
         if $(help-is-visible $key); then
-            printf "  %-${slen}s %-${len}s   %s\n" "${argparse_short_lookup[$name]:-}" "$lname" "${help_item_summary[$key]}"
+            printf "  %-${slen}s %-${len}s   %s\n" "${help_item_short[$key]:-}" "$lname" "${help_item_summary[$key]}"
         fi
     done
 }
