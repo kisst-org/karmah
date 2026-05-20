@@ -102,7 +102,7 @@ action::kube-log() {
     run-kubectl logs $(kube-calc-resource kube-log) "${@}"
 }
 action::kube-log-follow() {
-    run-kubectl logs $(kube-calc-resource kube-log) "${@} --follow"
+    run-kubectl logs $(kube-calc-resource kube-log) "${@}" --follow
 }
 action::kube-es-sync() {
     # see https://external-secrets.io/latest/introduction/faq/
