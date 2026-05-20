@@ -106,7 +106,7 @@ action::kube-log-follow() {
 }
 action::kube-es-sync() {
     # see https://external-secrets.io/latest/introduction/faq/
-    run-kubectl annotate es force-sync=$(date +%s) --overwrite $(kube-calc-resource kube-es-sync) "${@} --follow"
+    run-kubectl annotate es force-sync=$(date +%s) --overwrite $(kube-calc-resource kube-es-sync) "${@}"
 }
 
 
