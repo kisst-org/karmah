@@ -111,11 +111,11 @@ run-single-actions() {
 run-flow-actions() {
     local flow=$(strip-action-prefix $1)
     if [[ $1 == single:$flow ]]; then
-        log-verbose action "running flow $flow without any actions because of single: prefix"
+        log-info action "running flow $flow without any actions because of single: prefix"
         local actions=$flow
     else
         local actions=$(get-flow-actions $flow)
-        log-verbose action "running flow $flow with actions $actions"
+        log-info action "running flow $flow with actions $actions"
     fi
     run-single-actions $actions
 }
@@ -127,7 +127,7 @@ run-flows() {
     fi
     declare -A action_already_run=()
     local post_flow_actions=""
-    log-info action "running flow(s) $flows"
+    log-verbose action "running flow(s) $flows"
     local flw; for flw in $flows; do
         run-flow-actions $flw
     done
