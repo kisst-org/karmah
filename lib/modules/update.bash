@@ -20,20 +20,20 @@ action::update() {
     use-karmah-var version
     local any_updates=false
     if [[ ! -z ${version:-} ]]; then
-        #info update $target_name version to $version
+        log-info update "update $target_name version to $version"
         ${karmah_type}::update-target-version ${version}
         any_updates=true
         git-add-message "version ${version}"
     fi
     if [[ ! -z ${replicas:-} ]]; then
-        #info update $target_name replicas to $replicas
+        log-info update "update $target_name replicas to $replicas"
         ${karmah_type}::update-target-replicas $replicas
         any_updates=true
         git-add-message "replicas ${replicas}"
     fi
     local u
     for u in "${updates[@]}"; do
-        log-verbose update "custom update function $custom_update_function"
+        log-info update "custom update function $custom_update_function"
         ${karmah_type}::update-target "$u"
         git-add-message "update ${u}"
     done
