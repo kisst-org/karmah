@@ -92,7 +92,9 @@ action::kube-env() {
 action::kube-uptime() {
     run-kubectl exec $(kube-calc-resource kube-exec) -- uptime
 }
-
+action::kube-restart() {
+    run-kubectl rollout restart $(kube-calc-resource kube-restart)
+}
 action::kube-exec-it() {
     run-kubectl exec -it $(kube-calc-resource kube-exec-it) "${@:--- sh}"
 }
@@ -112,14 +114,6 @@ action::kube-stern() {
     run-verbose-cmd stern $(kubectl-options)  $(kube-calc-resource kube-stern) "${@}"
 }
 
-
-action::kube-restart() {
-    local res
-    for res in ${kube_resource_list//,/ }; do
-        res=${kube_resource_alias[$res]:-$res}
-        run-kubectl rollout restart $res
-    done
-}
 action::kube-scale() {
     local res
     for res in $(kube-calc-resource-names all); do
@@ -180,4 +174,5 @@ base::calc-resource-kube-events()     { find-karmah-method-output calc-resource-
 base::calc-resource-kube-log()        { find-karmah-method-output calc-resource-kube $1; }
 base::calc-resource-kube-exec()       { find-karmah-method-output calc-resource-kube $1; }
 base::calc-resource-kube-get()        { find-karmah-method-output calc-resource-kube $1; }
+base::calc-resource-kube-restart()    { find-karmah-method-output calc-resource-kube $1; }
 base::calc-resource-kube() { echo pod,deployment,ingress; }
