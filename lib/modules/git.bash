@@ -13,7 +13,13 @@ git::init-module() {
     local_vars+=" used_paths changed_paths git_commit_message"
 }
 
-change-paths() { changed_paths+=" $*"; }
+change-paths() {
+    local p; for p in "$@"; do
+        if [[ ! $p == tmp/* ]]; then
+            changed_paths+=" $p"
+        fi
+    done
+}
 use-paths()    { used_paths+=" $*"; }
 
 git-add-message() {
@@ -67,7 +73,7 @@ action::git-restore() {
     # TODO: find way to determine if path is tracked
     log-info git "git-restore ${changed_paths}"
     run-git restore ${changed_paths}
-    run-git clean --force ${output_dir}  # remove any files that were not there initially
+    # TODO run-git clean --force ${manifest_dir}  # remove any files that were not there initially
 }
 
 action::git-status() {

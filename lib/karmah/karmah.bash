@@ -119,13 +119,6 @@ action::init-karmah() {
     load-karmah-file
     log-verbose karmah "calling ${karmah_type}::init-karmah"
     ${karmah_type}::init-karmah
-
-    # TODO: output_dir does not belong here
-    local tmp=$(get-option-value tmp false)
-    output_dir="${to_dir:-tmp/manifests}/${target_name}"
-    if $tmp; then
-        output_dir="${to_dir:-tmp/manifests}/${target_name}"
-    fi
 }
 action::clear-karmah() {
     local vars_to_clear="${used_karmah_vars:-} ${local_vars:-}"

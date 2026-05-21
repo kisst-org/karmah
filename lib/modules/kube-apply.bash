@@ -13,31 +13,31 @@ filter-kube-diff-quiet() { filter-kube-diff-output | grep -E ^--- | sed -e 's|--
 action::kube-diff() {
     run-actions render
     local quiet_diff=$(get-option-value quiet-diff false)
-    log-info kube "kube-diff ${target_name} to ${output_dir}"
+    log-info kube "kube-diff ${target_name} to ${manifest_dir}"
     if ${quiet_diff}; then
         #KUBECTL_EXTERNAL_DIFF='diff -qr'
-        run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir \| filter-kube-diff-quiet #|| true
+        run-verbose-cmd kubectl diff $(kubectl-options) -f $manifest_dir \| filter-kube-diff-quiet #|| true
     elif $(log-shows-verbose); then
-        run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir || true
+        run-verbose-cmd kubectl diff $(kubectl-options) -f $manifest_dir || true
     else
-        run-verbose-cmd kubectl diff $(kubectl-options) -f $output_dir \| filter-kube-diff-output # TODO true
+        run-verbose-cmd kubectl diff $(kubectl-options) -f $manifest_dir \| filter-kube-diff-output # TODO true
     fi
 }
 
 action::kube-diff-delete() {
     run-actions render
-    log-info kube "kube-diff-delete all resources ${target_name} from ${output_dir}"
-    run-verbose-cmd ls -l $output_dir
+    log-info kube "kube-diff-delete all resources ${target_name} from ${manifest_dir}"
+    run-verbose-cmd ls -l $manifest_dir
 }
 
 action::kube-apply() {
     run-actions render,kube-diff,ask
-    log-info kube "kube-apply $output_dir"
-    run-verbose-cmd kubectl apply $(kubectl-options) -f $output_dir
+    log-info kube "kube-apply $manifest_dir"
+    run-verbose-cmd kubectl apply $(kubectl-options) -f $manifest_dir
 }
 
 action::kube-delete() {
     run-actions render,kube-diff-delete,ask
-    log-info kube "kube delete $output_dir"
-    run-verbose-cmd kubectl delete $(kubectl-options) -f $output_dir
+    log-info kube "kube delete $manifest_dir"
+    run-verbose-cmd kubectl delete $(kubectl-options) -f $manifest_dir
 }

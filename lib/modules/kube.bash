@@ -45,24 +45,24 @@ kubectl-options() {
 run-kubectl() { run-verbose-cmd kubectl $(kubectl-options) "${@}"; }
 
 action::kubectl() {
-    log-info kube "kubectl $output_dir"
+    log-info kube "kubectl $manifest_dir"
     # TODO: would be nice if we could use calced resource somewhere
     run-kubectl "$@"
 }
 
 action::kube-get-manifests() {
-    log-info kube "kube get manifests  ${target_name} to ${output_dir}"
-    run-verbose-cmd rm -rf ${output_dir}
-    run-verbose-cmd mkdir -p ${output_dir}
+    log-info kube "kube get manifests  ${target_name} to ${manifest_dir}"
+    run-verbose-cmd rm -rf ${manifest_dir}
+    run-verbose-cmd mkdir -p ${manifest_dir}
     run-verbose-cmd kubectl $(kubectl-options) get deploy,svc,sts,cm,ingress -o yaml \| split-yaml-items-into-files
     ignore_files=configmap_kube-root-ca.crt.yaml
     ignore_files+=" deployment_ingress-nginx-controller.yaml"
     ignore_files+=" service_ingress-nginx-controller-admission.yaml"
     ignore_files+=" service_ingress-nginx-controller.yaml"
     for f in ${ignore_files}; do
-        rm -f "${output_dir}/$f"
+        rm -f "${manifest_dir}/$f"
     done
-    for f in "${output_dir}"/*.yaml; do
+    for f in "${manifest_dir}"/*.yaml; do
          yq -i 'del(.metadata.annotations.["kubectl.kubernetes.io/last-applied-configuration"])' "${f}"
          yq -i 'del(.metadata.uid)' "${f}"
          yq -i 'del(.metadata.resourceVersion)' "${f}"

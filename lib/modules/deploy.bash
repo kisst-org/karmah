@@ -26,11 +26,11 @@ action::ask() {
 }
 
 action::deploy() {
-    output_dir=deployed/manifests/$target_name
+    manifest_dir=deployed/manifests/$target_name
     local deploy_actions=$(add-commas ${deploy_actions:-render,git-diff,ask,git-commit})
-    log-verbose deploy "deploy ${output_dir} with actions: ${deploy_actions}"
+    log-verbose deploy "deploy ${manifest_dir} with actions: ${deploy_actions}"
     git-add-message "deploy $target_name"
-    # TODO: output_dir is different for actions before this action
+    # TODO: manifest_dir is different for actions before this action
     # should be first (only) action
     log-info deploy "deploying $target_name with actions ${deploy_actions// /,}"
     run-actions $deploy_actions # This is depends on karmah_type
@@ -43,7 +43,7 @@ action::plan() {
 }
 
 action::undeploy() {
-    output_dir="${to_dir:-deployed/manifests}/${target_name}"
+    manifest_dir="${to_dir:-deployed/manifests}/${target_name}"
     local actions=$(add-commas ${undeploy_actions:-render-rm,git-diff,ask,git-commit})
     log-info deploy "undeploying ${target_name} with actions: ${actions}"
     run-actions $actions

@@ -127,9 +127,9 @@ action::helm-uninstall() {
 
 action::helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
-    log-info helm "helm-get-manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
-    run-verbose-cmd rm -rf ${output_dir}
-    run-verbose-cmd mkdir -p ${output_dir}
+    log-info helm "helm-get-manifests from helm release ${release} in namespace $kube_namespace to ${manifest_dir}"
+    run-verbose-cmd rm -rf ${manifest_dir}
+    run-verbose-cmd mkdir -p ${manifest_dir}
     run-verbose-cmd helm get manifest $release $(helm-cluster-options) \| split-yaml-docs-into-files
 }
 
@@ -148,8 +148,8 @@ action::helm-diff() {
 
     local render_dir=tmp/manifests/${target_name}
     local get_dir=${with_dir:-tmp/get}/${target_name}
-    local output_dir=$render_dir
-    local output_dir=$get_dir
+    local manifest_dir=$render_dir
+    local manifest_dir=$get_dir
     log-info helm "helm-diff ${get_dir} with rendered ${render_dir}"
     run-actions helm-get-manifests
     # The sed script is to make missing or added manifests stand out more clearly
