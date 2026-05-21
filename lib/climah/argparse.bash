@@ -14,7 +14,6 @@ argparse::declare-vars() {
 }
 
 append-argparse-func()  { argparse_parse_funcs+=($1); }
-prepend-argparse-func() { argparse_parse_funcs=($1 $argparse_parse_funcs   ); }
 
 add-argparse-alias() { add-alias "$@"; } # deprecated
 add-alias() {
@@ -51,8 +50,6 @@ argparse-parse-arguments() {
         if [[ "$argparse_parse_count" > 0 ]]; then
             argparse_parsed_args+=" $arg"
             shift $(( "$argparse_parse_count" - 1))
-        elif [[ -f ${arg} ]]; then target_paths+=" ${arg}"
-        elif [[ -d ${arg} ]]; then target_paths+=" ${arg%/}" # remove a possible trailing /
         elif [[ $arg == "--" ]]; then break
         else
             if ! $argparse_understood_arg; then

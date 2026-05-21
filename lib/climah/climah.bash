@@ -1,4 +1,6 @@
 climah-init() {
+    declare -g climah_prog_name=$(basename $0)
+    declare -g climah_prog_path="$0"
     init-loggers
     parse-pre-init-debug "${@}"
     load-libraries
@@ -7,8 +9,10 @@ climah-init() {
     module=commands add-help-topic cmd command "show available commands"
     module=options  add-help-topic opt option  "show available options"
     module=modules  add-help-topic mod module  "show all modules"
-
     read-config
+}
+
+climah-parse-args() {
     if [[ $# == 0 ]]; then
         printf "no arguments passed, pass at least one path or command\n\n"
         show-short-help
@@ -18,10 +22,7 @@ climah-init() {
     argparse-parse-arguments "${@}"
 }
 
-climah-main() {
-    declare -g climah_prog_name=$(basename $0)
-    declare -g climah_prog_path="$0"
-    climah-init "${@}"
+climah-run() {
     run-active-command
     ${climah_wait_for_jobs:-}
 }

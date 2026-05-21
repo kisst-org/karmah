@@ -1,11 +1,14 @@
 # karmah: do stuff based on *.karmah file
 karmah-main() {
-    declare -g climah_prog=karmah
     declare -g used_karmah_vars=""
     # too many actions and options so only show some basic stuff
     default_module_help_level=expert
     basic_help_modules="loggers actions options commands"
-    climah-main "$@"
+    climah-init "$@"
+    climah_prog=karmah
+    append-argparse-func parse-if-target
+    climah-parse-args "$@"
+    climah-run
 }
 
 
