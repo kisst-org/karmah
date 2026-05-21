@@ -26,7 +26,7 @@ action::ask() {
 }
 
 action::deploy() {
-    manifest_dir=deployed/manifests/$target_name
+    #manifest_dir=deployed/manifests/$target_name
     local deploy_actions=$(add-commas ${deploy_actions:-render,git-diff,ask,git-commit})
     log-verbose deploy "deploy ${manifest_dir} with actions: ${deploy_actions}"
     git-add-message "deploy $target_name"
