@@ -3,23 +3,21 @@
 actions::declare-vars() {
     declare -g tmp=false
     declare -g action_list=""
-    declare -gA action_flow=()
     declare -gA action_module=()
     declare -gA action_uses_unknown_args=()
 }
 
 actions::init-module() {
     add-help-topic act action "show available actions"
-    add-help-topic flw flow   "show available flows"
     append-argparse-func parse-if-action
     help_level=expert
     local action_params=...
-    add-action dpav debug-print-action-var "print a variable declaration for debugging purposes"
+    declare-action dpav debug-print-action-var "print a variable declaration for debugging purposes"
 }
 
 action::debug-print-action-var() { command::debug-print-var "$@"; }
 
-add-action() {
+declare-action() {
     local short=$1 name=$2 summary="$3"
     log-trace actions "adding action: ${@}"
     if ! $(function-exists action::$name) ; then
@@ -54,30 +52,6 @@ parse-if-action() {
     fi
 }
 
-add-pre-flow-actions() {
-    local name actions="$1"; shift
-    for name in "${@//,/ }"; do
-        local flow=${action_flow[$name]:-}
-        if [[ -z $flow ]]; then
-            action_flow[$name]=$actions
-        else
-            action_flow[$name]=$flow,$actions
-        fi
-        add-help-item "" $name flow:$name "" "run actions $(get-flow-actions $name)"
-    done
-}
-get-flow-actions() {
-    local flow=$1
-    local actions=${action_flow[$flow]:-}
-    if [[ -z $actions ]]; then
-        echo $flow
-    else
-        # TODO it is currently not possible to have a flow, which does have it self as last action
-        echo $actions,$flow
-    fi
-}
-
-
 run-action() {
     local action=$(strip-action-prefix $1)
     if ${action_already_run[$action]:-false}; then
@@ -101,38 +75,11 @@ run-action() {
     action::$action $params
 }
 
-run-single-actions() {
+run-actions() {
     declare -a actions=${@}
     local act; for act in ${actions//,/ }; do
         run-action $act
     done
-}
-
-run-flow-actions() {
-    local flow=$(strip-action-prefix $1)
-    if [[ $1 == single:$flow ]]; then
-        log-info action "running flow $flow without any actions because of single: prefix"
-        local actions=$flow
-    else
-        local actions=$(get-flow-actions $flow)
-        log-info action "running flow $flow with actions $actions"
-    fi
-    run-single-actions $actions
-}
-
-run-flows() {
-    local flows=${1:-}
-    if [[ -z $flows ]]; then
-        flows=${action_list:-${default_action}}
-    fi
-    declare -A action_already_run=()
-    local post_flow_actions=""
-    log-verbose action "running flow(s) $flows"
-    local flw; for flw in $flows; do
-        run-flow-actions $flw
-    done
-    log-verbose action "running postflow actions: ${post_flow_actions:-}"
-    for action in ${post_flow_actions:-}; do run-action $action; done
 }
 
 

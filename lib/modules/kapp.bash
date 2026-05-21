@@ -2,10 +2,10 @@
 kapp::init-module() {
     add-module-help "actions to work with kapp"
     help_level=expert
-    add-render-action "" kapp-plan    "show what resources will be updated"
-    add-render-action "" kapp-diff    "show what resources will be updated, including detailed diffs"
-    add-render-action "" kapp-deploy  "deploy the application with kapp"
-    add-render-action "" kapp-delete  "delete the application with kapp"
+    declare-action "" kapp-plan    "show what resources will be updated"
+    declare-action "" kapp-diff    "show what resources will be updated, including detailed diffs"
+    declare-action "" kapp-deploy  "deploy the application with kapp"
+    declare-action "" kapp-delete  "delete the application with kapp"
 }
 
 kapp-options() {
@@ -19,14 +19,17 @@ kapp-options() {
 }
 
 action::kapp-diff() {
+    run-actions render
     run-verbose-cmd kapp deploy $(kapp-options) --diff-run --diff-changes
 }
 
 action::kapp-plan() {
+    run-actions render
     run-verbose-cmd kapp deploy $(kapp-options) --diff-run
 }
 
 action::kapp-deploy() {
+    run-actions render
     if ! kubectl $(kubectl_options) get ns $kube_namespace >/dev/null 2>&1; then
         run-verbose-cmd kubectl $(kubectl_options) create ns $kube_namespace
     fi

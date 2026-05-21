@@ -3,12 +3,11 @@ render::init-module() {
     add-module-help "actions to render manifests"
     local_vars+=" renderer output_dir already_rendered sort_env_vars"
     declare -g to_dir
-    add-karmah-action r render "render manifests to --to <path> (default tmp/manifests)"
-    add-pre-flow-actions update render
+    declare-action r render "render manifests to --to <path> (default tmp/manifests)"
 
     help_level=expert
-    add-render-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
-    add-render-action rm render-rm "remove all rendered manifests"
+    declare-action "" compare   "render manifests to --to <path> (default tmp/manifests) and then compare with --with path (default deployed/manifests)"
+    declare-action rm render-rm "remove all rendered manifests"
 
     add-func-option "" to       path  "other path to render to (default is tmp/manifests)"
     add-func-option "" with     path  used for comparison between two manifest trees
@@ -19,13 +18,8 @@ render::init-module() {
 option::to()        { to_dir="${2%%/}"; argparse_parse_count=2; }
 option::with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
 
-add-render-action() {
-    add-action "${@}"
-    add-pre-flow-actions init-karmah,update,render "$2"
-}
-
-
 action::render() {
+    run-actions update
     log-info render "rendering ${target_name} with ${renderer} to ${output_dir}"
     run-verbose-cmd rm -rf ${output_dir}
     run-verbose-cmd mkdir -p ${output_dir}

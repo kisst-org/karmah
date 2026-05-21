@@ -46,7 +46,6 @@ show-help-about-module() {
     help_show_module=$name
     show-help-section $module::command
     show-help-section $module::action
-    #show-help-section flow
     show-help-section $module::option
 }
 

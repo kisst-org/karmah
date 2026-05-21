@@ -5,16 +5,13 @@ targets::declare-vars() {
 }
 
 targets::init-module() {
-    add-action pt print-target "print all target paths"
-    add-command run run-flows "" "run one or more (flow) actions for all targets"
+    declare-action pt print-target "print all target paths"
     help_level=expert
     add-func-option s subdir dir "add subdir to list of subdirs (can be comma separated list)"
-    default_command=run-flows
 }
 
 option::subdir() { target_subdirs+=" $2"; argparse_parse_count=2; }
 action::print-target() { echo $target_path; }
-command::run-flows()   { run-func-for-targets run-flows; }
 
 run-func-for-targets() {
     local target_func=$1

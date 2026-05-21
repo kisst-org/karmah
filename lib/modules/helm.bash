@@ -1,22 +1,18 @@
 
 helm::init-module() {
     add-module-help "actions to work with helm"
-    add-render-action hd helm-diff           "run diff for target vs helm deployed manifests"
-    add-render-action "" helm-upgrade        "run helm upgrade --install for target"
-    add-karmah-action hpv helm-print-value  "print the value of a path in  helm values"
+    declare-action hd helm-diff           "run diff for target vs helm deployed manifests"
+    declare-action "" helm-upgrade        "run helm upgrade --install for target"
+    declare-action hpv helm-print-value  "print the value of a path in  helm values"
     help_level=expert
-    add-render-action "" helm-get-diff       "old name for helm-diff (deprecated)"
-    add-render-action "" helm-plugin-diff    "run helm diff plugin for target"
-    add-render-action "" helm-install        "deprecated: run helm upgrade --install for target"
-    add-render-action "" helm-uninstall      "run helm uninstall for target"
-    add-render-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
-    add-render-action "" helm-get-manifests  "download helm manifests from cluster"
+    declare-action "" helm-get-diff       "old name for helm-diff (deprecated)"
+    declare-action "" helm-plugin-diff    "run helm diff plugin for target"
+    declare-action "" helm-install        "deprecated: run helm upgrade --install for target"
+    declare-action "" helm-uninstall      "run helm uninstall for target"
+    declare-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
+    declare-action "" helm-get-manifests  "download helm manifests from cluster"
     #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
-
-    add-pre-flow-actions helm-diff,ask         helm-install
-    add-pre-flow-actions helm-diff,ask         helm-upgrade
-    add-pre-flow-actions helm-diff-delete,ask  helm-uninstall
 
     add-karmah-var "" json_path "path" "the path to show from helm values"
     add-flag-option "" bg "run helm-update in the background"
@@ -95,11 +91,13 @@ action::helm-pull() {
 
 
 action::helm-plugin-diff() {
+    run-actions render
     log-info helm "running helm-plugin-diff for $target_name"
     run-helm diff upgrade
 }
 
 action::helm-upgrade() {
+    run-actions helm-diff,ask
     local bg=$(get-option-value bg false)
     log-info helm "running helm-upgrade for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
@@ -113,11 +111,13 @@ action::helm-upgrade() {
 }
 
 action::helm-install() {
+    run-actions helm-diff,ask
     log-info helm "running helm-install for $target_name"
     run-helm install --create-namespace
 }
 
 action::helm-uninstall() {
+    run-actions helm-diff-delete,ask
     log-info helm "running helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall"
@@ -134,6 +134,7 @@ action::helm-get-manifests() {
 
 action::helm-get-diff() { action::helm-diff; } # TODO: deprecated
 action::helm-diff() {
+    run-actions render
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
     log-debug helm "checking for helm release ${release} in namespace $kube_namespace"

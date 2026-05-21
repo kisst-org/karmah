@@ -18,16 +18,23 @@ karmah::declare-vars() {
 
 karmah::init-module() {
     add-command "" version ""  "show version of karmah"
+    add-command run run-karmah-actions "" "run one or more actions for all targets"
     climah_prog=karmah
     default_action=render
     help_level=expert
-    add-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
-    add-action "" clear-karmah "clear all karmah-vars"
+    declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
+    declare-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
     log-verbose ifed "default_karmah_type=${default_karmah_type:-base}"
+    default_command=run-karmah-actions
 }
 
 command::version() { echo karmah version: $karmah_version; }
+command::run-karmah-actions() { run-func-for-targets run-karmah-actions; }
+run-karmah-actions() {
+    declare -A action_already_run=()
+    run-actions "init-karmah,$action_list,clear-karmah"
+}
 
 init-parent-karmah() {
     local typ=$1
@@ -96,14 +103,6 @@ get-karmah-var-from-env() {
     echo $result
 }
 
-
-add-karmah-action() {
-    local name=$2
-    add-action "${@}"
-    # The action will not show in help flows, unless extra pre-actions are added
-    action_flow[$name]=init-karmah
-}
-
 action::init-karmah() {
     if [[ -f $target_path ]]; then
         karmah_file=$target_path
@@ -111,7 +110,7 @@ action::init-karmah() {
         karmah_file=($target_path/*.karmah) # use array for globbing
     else
         log-info karmah "skipping $target_path"
-        # TODO: warn, error or skip_flow
+        # TODO: warn, error or skip
         return 0
     fi
     load-karmah-file
@@ -124,7 +123,6 @@ action::init-karmah() {
     if $tmp; then
         output_dir="${to_dir:-tmp/manifests}/${target_name}"
     fi
-    post_flow_actions+=" clear-karmah"
 }
 action::clear-karmah() {
     local vars_to_clear="${used_karmah_vars:-} ${local_vars:-}"

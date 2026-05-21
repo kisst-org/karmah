@@ -1,18 +1,17 @@
 kube-apply::init-module() {
     add-module-help "actions to work with kubernetes apply"
-    add-render-action kd kube-diff     "compare rendered manifests with cluster (kubectl diff)"
-    add-render-action "" kube-apply    "apply rendered manifests with cluster (kubectl apply)"
+    declare-action kd kube-diff     "compare rendered manifests with cluster (kubectl diff)"
+    declare-action "" kube-apply    "apply rendered manifests with cluster (kubectl apply)"
     help_level=expert
-    add-render-action "" kube-delete   "delete all manifests from cluster (kubectl delete)"
-    #add-karmah-action "" kube-diff-del "show resources that will be deleted with kube-delete"
-    add-pre-flow-actions kube-diff,ask         kube-apply
-    add-pre-flow-actions kube-diff-delete,ask  kube-delete
+    declare-action "" kube-delete   "delete all manifests from cluster (kubectl delete)"
+    #declare-action "" kube-diff-del "show resources that will be deleted with kube-delete"
 }
 
 filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation: [0-9]*$'; }
 filter-kube-diff-quiet() { filter-kube-diff-output | grep -E ^--- | sed -e 's|--- /tmp/LIVE-[0-9]*/||' -e 's/[ \t].*$//' -e 's/^/  changed: /'; }
 
 action::kube-diff() {
+    run-actions render
     local quiet_diff=$(get-option-value quiet-diff false)
     log-info kube "kube-diff ${target_name} to ${output_dir}"
     if ${quiet_diff}; then
@@ -26,16 +25,19 @@ action::kube-diff() {
 }
 
 action::kube-diff-delete() {
+    run-actions render
     log-info kube "kube-diff-delete all resources ${target_name} from ${output_dir}"
     run-verbose-cmd ls -l $output_dir
 }
 
 action::kube-apply() {
+    run-actions render,kube-diff,ask
     log-info kube "kube-apply $output_dir"
     run-verbose-cmd kubectl apply $(kubectl-options) -f $output_dir
 }
 
 action::kube-delete() {
+    run-actions render,kube-diff-delete,ask
     log-info kube "kube delete $output_dir"
     run-verbose-cmd kubectl delete $(kubectl-options) -f $output_dir
 }

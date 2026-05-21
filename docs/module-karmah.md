@@ -10,7 +10,7 @@ Description:
   - helper info, e.g. how to inspect, scale and change versions
 
 Usage:
-  ${climah_prog_name} [ option | command/flow | target ]...
+  ${climah_prog_name} [ option | command | action | target ]...
 
 $(show-short-help)
 

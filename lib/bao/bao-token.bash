@@ -2,12 +2,12 @@ bao-token::init-module() {
     add-module-help "actions to work with bao tokens"
 
     local action_params="[tok/acc]"
-    add-karmah-action btc  bao-token-create     "create a new token"
-    add-karmah-action bti  bao-token-info       "lookup the details of a token"
-    add-karmah-action btr  bao-token-revoke     "revoke an existing token"
+    declare-action btc  bao-token-create     "create a new token"
+    declare-action bti  bao-token-info       "lookup the details of a token"
+    declare-action btr  bao-token-revoke     "revoke an existing token"
     action_params=""
-    add-karmah-action btl  bao-token-list       "list all token accessor"
-    add-karmah-action btli bao-token-list-info  "list details of all token accessor"
+    declare-action btl  bao-token-list       "list all token accessor"
+    declare-action btli bao-token-list-info  "list details of all token accessor"
 }
 
 action::bao-token-info() {

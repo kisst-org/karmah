@@ -3,17 +3,17 @@ bao-approle::init-module() {
     add-karmah-var a  accessor  uid "bao secret-id/token accessor"
     add-karmah-var "" secret_id uid "bao secret-id"
 
-    add-karmah-action bsl  bao-secret-id-list    "list all secret-id's for an approle"
-    add-karmah-action bsi  bao-secret-id-info    "lookup the details of a secret-id for an approle in bao"
-    add-karmah-action bsc  bao-secret-id-create  "create a new secret-id for an approle in bao"
-    #add-karmah-action ""   bao-secret-id-rm-all  "remove all known approle secret-id's"
+    declare-action bsl  bao-secret-id-list    "list all secret-id's for an approle"
+    declare-action bsi  bao-secret-id-info    "lookup the details of a secret-id for an approle in bao"
+    declare-action bsc  bao-secret-id-create  "create a new secret-id for an approle in bao"
+    #declare-action ""   bao-secret-id-rm-all  "remove all known approle secret-id's"
 
-    add-karmah-action brl  bao-role-list      "list all approles"
-    add-karmah-action bri  bao-role-info      "lookup the info of an approle"
-    add-karmah-action brc  bao-role-create    "create a new approle"
+    declare-action brl  bao-role-list      "list all approles"
+    declare-action bri  bao-role-info      "lookup the info of an approle"
+    declare-action brc  bao-role-create    "create a new approle"
 
-    add-karmah-action bpi  bao-policy-info  "lookup the details of a bao policy"
-    add-karmah-action bpc  bao-policy-create  "create a bao policy"
+    declare-action bpi  bao-policy-info  "lookup the details of a bao policy"
+    declare-action bpc  bao-policy-create  "create a bao policy"
 
 
 }

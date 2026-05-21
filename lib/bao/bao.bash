@@ -6,9 +6,9 @@ bao::init-module() {
     add-karmah-var "" bao_addr url        "address (url) to use for openbao"
     add-karmah-var g  grep     pat        "get/grep a pattern/field from the lookup info"
 
-    add-karmah-action bli bao-login  "login and store the token in a file"
-    add-karmah-action blo bao-logout "remove the file with the login token"
-    add-karmah-action blv bao-login-vars  "show the vars you can export"
+    declare-action bli bao-login  "login and store the token in a file"
+    declare-action blo bao-logout "remove the file with the login token"
+    declare-action blv bao-login-vars  "show the vars you can export"
 }
 
 #######################

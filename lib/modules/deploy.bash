@@ -1,10 +1,10 @@
 
 deploy::init-module() {
     add-module-help "actions to work with deploy/plan"
-    add-karmah-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
-    add-karmah-action "" plan   "show what deploy action would do"
+    declare-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
+    declare-action "" plan   "show what deploy action would do"
     help_level=expert
-    add-action     "" ask    "ask for confirmation (unless --yes is specified)"
+    declare-action     "" ask    "ask for confirmation (unless --yes is specified)"
     add-func-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
     yes_arg=""
 }
@@ -22,7 +22,7 @@ action::ask() {
         log-info deploy "Stopping karmah"
         exit 1
     fi
-    action_already_run[ask]=false # will be asked again if flow has multiple asks
+    action_already_run[ask]=false # will be asked again if ask is run multiple times
 }
 
 action::deploy() {
@@ -33,18 +33,18 @@ action::deploy() {
     # TODO: output_dir is different for actions before this action
     # should be first (only) action
     log-info deploy "deploying $target_name with actions ${actions// /,}"
-    run-single-actions $actions
+    run-actions $actions
 }
 
 action::plan() {
     local actions=$(add-commas ${plan_actions:-render,git-diff})
     log-info deploy "planning deploy $target_name with actions: ${actions// /,}"
-    run-single-actions $actions
+    run-actions $actions
 }
 
 action::undeploy() {
     output_dir="${to_dir:-deployed/manifests}/${target_name}"
     local actions=$(add-commas ${undeploy_actions:-render-rm,git-diff,ask,git-commit})
     log-info deploy "undeploying ${target_name} with actions: ${actions}"
-    run-single-actions $actions
+    run-actions $actions
 }

@@ -2,14 +2,13 @@
 git::init-module() {
     add-module-help "actions to work with git"
     help_level=expert
-    add-render-action gd git-diff     "shows the changes to source and rendered manifests with git"
-    add-render-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
-    add-render-action gc git-commit   "commits the changes to source and rendered manifests to git"
-    add-render-action gr git-restore  "restores the changed files (source and rendered manifests)"
-    add-render-action "" git-pull     "pull the latest version of the repo"
+    declare-action gd git-diff     "shows the changes to source and rendered manifests with git"
+    declare-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
+    declare-action gc git-commit   "commits the changes to source and rendered manifests to git"
+    declare-action gr git-restore  "restores the changed files (source and rendered manifests)"
+    declare-action "" git-pull     "pull the latest version of the repo"
     add-value-option m   message        msg   "set message to use with git commit"
     add-flag-option Q quiet-diff "do not show the output of diff"
-    add-pre-flow-actions git-add   git-commit
     local_vars+=" used_files git_commit_message"
 }
 
@@ -70,6 +69,7 @@ action::git-status() {
 }
 
 action::git-commit() {
+    run-actions git-add
     local tmp=$(get-option-value tmp false)
     local message=$(get-option-value message)
     if $tmp; then
