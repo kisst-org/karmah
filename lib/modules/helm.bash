@@ -67,7 +67,7 @@ run-helm() {
 action::helm-pull() {
     local force_pull=$(get-option-value force-pull false)
     local dir=helm/charts/$helm_chart_name-$helm_chart_version
-    log-info helm "running helm-pull for $helm_chart_name $helm_chart_version to $dir"
+    log-info helm "helm-pull for $helm_chart_name $helm_chart_version to $dir"
     if [[ -d $dir ]]; then
         if ${force_pull}; then
             log-verbose helm "$dir already exists, removing it"
@@ -92,14 +92,14 @@ action::helm-pull() {
 
 action::helm-plugin-diff() {
     run-actions render
-    log-info helm "running helm-plugin-diff for $target_name"
+    log-info helm "helm-plugin-diff for $target_name"
     run-helm diff upgrade
 }
 
 action::helm-upgrade() {
     run-actions helm-diff,ask
     local bg=$(get-option-value bg false)
-    log-info helm "running helm-upgrade for $target_name"
+    log-info helm "helm-upgrade release $helm_release"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     if $bg; then
         climah_wait_for_jobs="fg %%"
@@ -112,13 +112,13 @@ action::helm-upgrade() {
 
 action::helm-install() {
     run-actions helm-diff,ask
-    log-info helm "running helm-install for $target_name"
+    log-info helm "helm-install for $target_name"
     run-helm install --create-namespace
 }
 
 action::helm-uninstall() {
     run-actions helm-diff-delete,ask
-    log-info helm "running helm-uninstall for $target_name"
+    log-info helm "helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall"
     run-helm uninstall ${helm_atomic_wait}
@@ -126,7 +126,7 @@ action::helm-uninstall() {
 
 action::helm-get-manifests() {
     local release=${helm_release:=$(basename $target_name)}
-    log-info helm "getting manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
+    log-info helm "helm-get-manifests from helm release ${release} in namespace $kube_namespace to ${output_dir}"
     run-verbose-cmd rm -rf ${output_dir}
     run-verbose-cmd mkdir -p ${output_dir}
     run-verbose-cmd helm get manifest $release $(helm-cluster-options) \| split-yaml-docs-into-files
@@ -149,8 +149,8 @@ action::helm-diff() {
     local get_dir=${with_dir:-tmp/get}/${target_name}
     local output_dir=$render_dir
     local output_dir=$get_dir
-    action::helm-get-manifests
-    log-info helm "comparing ${target_name}: helm-get ${get_dir} with rendered ${render_dir}"
+    log-info helm "helm-diff ${get_dir} with rendered ${render_dir}"
+    run-actions helm-get-manifests
     # The sed script is to make missing or added manifests stand out more clearly
     run-verbose-cmd diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }

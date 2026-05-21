@@ -24,13 +24,13 @@ git-add-message() {
 run-git() { run-verbose-cmd git "$@"; }
 
 action::git-pull() {
-    log-info git "running git-pull for $target_name"
+    log-info git "git-pull"
     run-git pull
 }
 
 action::git-diff() {
     local quiet_diff=$(get-option-value quiet-diff false)
-    log-info git "git-diff ${target_name} to ${output_dir}"
+    log-info git "git-diff ${output_dir} ..."
     if ${quiet_diff}; then
         run-git diff --compact-summary -- ${used_files} ${output_dir} || true
     elif $(log-shows-debug); then
@@ -48,7 +48,7 @@ action::git-add() {
         log-info git "skipping git-add because --tmp specfied"
         return
     fi
-    log-info git "git-add ${target_name} to ${output_dir}"
+    log-info git "git-add ${output_dir} ..."
     run-git add ${used_files} ${output_dir}
 }
 action::git-restore() {
@@ -80,7 +80,7 @@ action::git-commit() {
     if [[ ! -z $message ]]; then
         git-add-message "$message"
     fi
-    log-info git "running git-commit for $target_name with message \"$git_commit_message\""
+    log-info git "git-commit with message \"$git_commit_message\""
     # TODO: simulate ???
     if git diff-index --quiet HEAD; then
         log-info git "Nothing added to commit"

@@ -20,7 +20,7 @@ option::with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
 
 action::render() {
     run-actions update
-    log-info render "rendering ${target_name} with ${renderer} to ${output_dir}"
+    log-info render "render with ${renderer} to ${output_dir}"
     run-verbose-cmd rm -rf ${output_dir}
     run-verbose-cmd mkdir -p ${output_dir}
     for r in ${renderer//,/ }; do
