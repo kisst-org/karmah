@@ -33,8 +33,10 @@ loggers::init-module() {
     add-func-option v  verbose  ""    "give more output"
     add-func-option q  quiet    ""    "show no output"
     help_level=expert
-    add-func-option "" log "<cfg> <value>" "set a log config e.g. --log level.cmd verbose"
+    add-help-item "" --log option:--log "<cfg> <value>"  "set a log config e.g. --log level:cmd verbose"
+    add-help-item "" ""   "option:--log-<cfg>" "<value>" "set a log config e.g. --log-level:cmd verbose"
     append-argparse-func parse-if-multi-verbose-option
+    append-argparse-func parse-if-log
 }
 
 increase-log-level() {
@@ -56,11 +58,19 @@ parse-if-multi-verbose-option() {
 option::verbose()   { increase-log-level 10;      argparse_parse_count=1; }
 option::quiet()     { logger_config[level]=error; argparse_parse_count=1;}
 
-option::log() {
-    local cfg=$2 value=$3
+parse-if-log() {
+    local arg=$1
+    if [[ $arg == --log ]]; then
+        local cfg=$2 value=$3
+        argparse_parse_count=3
+    elif [[ $arg == --log-* ]]; then
+        local cfg=${arg#--log-} value=$2
+        argparse_parse_count=2
+    else
+        return 0
+    fi
     log-debug logger "setting log-config $cfg to $value"
     logger_config[$cfg]=$value
-    argparse_parse_count=3
 }
 
 find-logger-level()  { find-logger-config level $1; }
