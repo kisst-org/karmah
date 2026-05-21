@@ -23,6 +23,7 @@ action::render() {
     log-info render "render with ${renderer} to ${output_dir}"
     run-verbose-cmd rm -rf ${output_dir}
     run-verbose-cmd mkdir -p ${output_dir}
+    change-paths $output_dir
     for r in ${renderer//,/ }; do
         render-$r
     done

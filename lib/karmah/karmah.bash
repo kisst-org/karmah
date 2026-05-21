@@ -153,10 +153,11 @@ load-karmah-file() {
 
 common-karmah() {
     local force_karmah_type=$(get-option-value force-karmah-type) # TODO karmah_var will do this
-    used_files=${karmah_dir}
+    use-paths ${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
         log-verbose karmah "loading $common_karmah_file"
         source $common_karmah_file
+        use-paths $common_karmah_file
     fi
 }

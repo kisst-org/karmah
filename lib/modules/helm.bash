@@ -28,6 +28,7 @@ helm::init-module() {
     local_vars+=" helm_release"
     local_vars+=" helm_wait_timeout"
     local_vars+=" helm_post_renderer"
+    local_vars+=" helm_value_already_updated"
 }
 
 add-optional-helm-values-file() {
@@ -161,7 +162,7 @@ action::helm-print-value() {
 }
 
 render-helm() {
-    used_files+=" ${helm_value_files[@]}"
+    use-paths ${helm_value_files[@]}
     run-helm template \| split-yaml-docs-into-files
 }
 
@@ -186,6 +187,10 @@ helm-update-value-path() {
     local val_file=${helm_value_files[@]:(-1)}
     log-verbose helm "updating $path to \"$value\""
     run-verbose-cmd yq -i $path=\"$value\"   $val_file
+    if ! ${helm_value_already_updated:-false}; then
+        change-paths $val_file
+        helm_value_already_updated=true
+    fi
 }
 
 helm-cluster-options() {

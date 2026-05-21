@@ -9,8 +9,12 @@ git::init-module() {
     declare-action "" git-pull     "pull the latest version of the repo"
     add-value-option m   message        msg   "set message to use with git commit"
     add-flag-option Q quiet-diff "do not show the output of diff"
-    local_vars+=" used_files git_commit_message"
+    add-flag-option U commit-used-paths "also commit any files that might have been used"
+    local_vars+=" used_paths changed_paths git_commit_message"
 }
+
+change-paths() { changed_paths+=" $*"; }
+use-paths()    { used_paths+=" $*"; }
 
 git-add-message() {
     if [[ -z ${git_commit_message:-} ]] then
@@ -30,38 +34,40 @@ action::git-pull() {
 
 action::git-diff() {
     local quiet_diff=$(get-option-value quiet-diff false)
-    log-info git "git-diff ${output_dir} ..."
+    log-info git "git-diff ${changed_paths} ..."
     if ${quiet_diff}; then
-        run-git diff --compact-summary -- ${used_files} ${output_dir} || true
+        run-git diff --compact-summary -- ${changed_paths} || true
     elif $(log-shows-debug); then
-        run-git diff -- ${used_files} ${output_dir} || true
+        run-git diff -- ${changed_paths} || true
     elif $(log-shows-verbose); then
-        run-git diff -- ${used_files} ${output_dir} | grep -E '^[+-]|^---' || true
+        run-git diff -- ${changed_paths} | grep -E '^[+-]|^---' || true
     else
-        run-git diff --compact-summary -- ${used_files} ${output_dir} || true
+        run-git diff --compact-summary -- ${changed_paths} || true
     fi
 }
 
 action::git-add() {
+    local commit_used_paths=$(get-option-value commit-used-paths false)
+    local paths_to_add="$changed_paths"
+    local params=""
+    if $commit_used_paths; then
+        paths_to_add+=" $used_paths"
+        # only show ellipses to keep log short
+        params=" ..."
+    fi
     local tmp=$(get-option-value tmp false)
     if $tmp; then
         log-info git "skipping git-add because --tmp specfied"
         return
     fi
-    log-info git "git-add ${output_dir} ..."
-    run-git add ${used_files} ${output_dir}
+    log-info git "git-add ${changed_paths}$params"
+    run-git add ${paths_to_add}
 }
 action::git-restore() {
-    # TODO: find better way to determine if path is tracked
-    if [[ $output_dir == tmp/* ]]; then
-        # git restore gives pathspec error on untracked paths
-        log-info git "git-restore ${used_files}"
-        run-git restore ${used_files}
-    else
-        log-info git "git-restore ${used_files} ${output_dir}"
-        run-git restore ${used_files} ${output_dir}
-        run-git clean --force ${output_dir}  # remove any files that were not there initially
-    fi
+    # TODO: find way to determine if path is tracked
+    log-info git "git-restore ${changed_paths}"
+    run-git restore ${changed_paths}
+    run-git clean --force ${output_dir}  # remove any files that were not there initially
 }
 
 action::git-status() {
@@ -85,6 +91,6 @@ action::git-commit() {
     if git diff-index --quiet HEAD; then
         log-info git "Nothing added to commit"
     else
-        run-verbose-cmd git commit -m "${git_commit_message}" ${used_files} ${output_dir}
+        run-verbose-cmd git commit -m "${git_commit_message}"
     fi
 }
