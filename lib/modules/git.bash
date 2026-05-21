@@ -54,10 +54,10 @@ action::git-diff() {
 
 action::git-add() {
     local commit_used_paths=$(get-option-value commit-used-paths false)
-    local paths_to_add="$changed_paths"
+    local paths_to_add="${changed_paths:-}"
     local params=""
     if $commit_used_paths; then
-        paths_to_add+=" $used_paths"
+        paths_to_add+=" ${used_paths:-}"
         # only show ellipses to keep log short
         params=" ..."
     fi
@@ -66,12 +66,20 @@ action::git-add() {
         log-info git "skipping git-add because --tmp specfied"
         return
     fi
-    log-info git "git-add ${changed_paths}$params"
+    log-info git "git-add ${changed_paths:-}$params"
+    if [[ -z ${paths_to_add:-} ]]; then
+        log-warn git "no paths specified to add"
+        return 0;
+    fi
     run-git add ${paths_to_add}
 }
 action::git-restore() {
     # TODO: find way to determine if path is tracked
-    log-info git "git-restore ${changed_paths}"
+    log-info git "git-restore ${changed_paths:-}"
+    if [[ -z ${changed_paths:-} ]]; then
+        log-warn git "no paths specfied to restore"
+        return 0;
+    fi
     run-git restore ${changed_paths}
     # TODO run-git clean --force ${manifest_dir}  # remove any files that were not there initially
 }
