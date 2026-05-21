@@ -40,7 +40,11 @@ action::git-pull() {
 
 action::git-diff() {
     local quiet_diff=$(get-option-value quiet-diff false)
-    log-info git "git-diff ${changed_paths} ..."
+    log-info git "git-diff ${changed_paths:-} ..."
+    if [[ -z ${changed_paths:-} ]]; then
+        log-warn git "no paths specfied to diff"
+        return 0;
+    fi
     if ${quiet_diff}; then
         run-git diff --compact-summary -- ${changed_paths} || true
     elif $(log-shows-debug); then
