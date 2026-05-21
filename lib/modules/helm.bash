@@ -146,11 +146,10 @@ action::helm-diff() {
         return 0;
     fi
 
-    local render_dir=tmp/manifests/${target_name}
+    local render_dir=$manifest_dir
     local get_dir=${with_dir:-tmp/get}/${target_name}
-    local manifest_dir=$render_dir
-    local manifest_dir=$get_dir
     log-info helm "helm-diff ${get_dir} with rendered ${render_dir}"
+    local manifest_dir=$get_dir
     run-actions helm-get-manifests
     # The sed script is to make missing or added manifests stand out more clearly
     run-verbose-cmd diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
