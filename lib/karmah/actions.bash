@@ -94,6 +94,8 @@ show-help-about-action() {
     echo action $name: ${help_item_summary[$key]:-no summary}
     echo
     show-text-for-help-item $key
+    type action::$name| grep run-actions
+
     if $(help-is-verbose); then
         printf "Code:\n"
         type action::$name| tail -n +2
