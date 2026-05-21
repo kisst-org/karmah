@@ -88,7 +88,7 @@ show-basic-help() {
   options-show-help
   echo
   echo see additional help topics with
-  echo "   ${climah_prog_name} help topics"
+  echo "   ${climah_prog_name} help topic"
 }
 
 show-short-help() {
@@ -101,5 +101,5 @@ show-short-help() {
   list-help-items action
   echo
   echo see additional help topics with
-  echo "   ${climah_prog_name} help topics"
+  echo "   ${climah_prog_name} help topic"
 }
