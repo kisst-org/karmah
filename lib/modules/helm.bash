@@ -107,7 +107,7 @@ action::helm-upgrade() {
         log-info helm "Putting helm upgrade in background job, so commands like kube-log or kube-watch kan run"
         run-helm upgrade --install ${helm_atomic_wait} &
     else
-        run-helm upgrade --install ${helm_atomic_wait}
+        run-helm upgrade --install --create-namespace ${helm_atomic_wait}
     fi
 }
 
@@ -118,7 +118,7 @@ action::helm-install() {
 }
 
 action::helm-uninstall() {
-    run-actions helm-diff-delete,ask
+    run-actions ask # helm-diff-delete,ask
     log-info helm "helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall"
