@@ -36,7 +36,11 @@ command::version() { echo karmah version: $karmah_version; }
 command::run-karmah-actions() { run-func-for-targets run-karmah-actions; }
 run-karmah-actions() {
     declare -A action_already_run=()
-    run-actions "init-karmah,$action_list,clear-karmah"
+    if [[ -e $target_path ]]; then
+        run-actions "init-karmah,$action_list,clear-karmah"
+    else
+        log-info karmah "skipping non existing path $target_path"
+    fi
 }
 
 init-parent-karmah() {
@@ -111,7 +115,8 @@ action::init-karmah() {
         karmah_file=$target_path
     elif [[ -d ${target_path:-} ]]; then
         karmah_file=($target_path/*.karmah) # use array for globbing
-    else
+    fi
+    if [[ ! -f ${karmah_file:-} ]]; then
         log-info karmah "skipping $target_path"
         # TODO: warn, error or skip
         return 0
