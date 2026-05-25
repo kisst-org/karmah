@@ -115,17 +115,13 @@ action::kube-stern() {
 }
 
 action::kube-scale() {
-    local res
-    for res in $(kube-calc-resource-names all); do
-        local repl=$(kube-calc-replicas $res)
-        res=${kube_resource_alias[$res]:-$res}
-        echo run-kubectl scale $res --replicas ${repl}
-    done
+    run-kubectl scale $(kube-calc-resource kube-scale) --replicas $(kube-calc-replicas)
 }
+
 kube-calc-replicas() {
     use-karmah-var replicas
     if [[  $replicas == default ]]; then
-        ${karmah_type}::kube-default-replicas $1
+        ${karmah_type}::kube-default-replicas
     else
         echo $replicas
     fi
