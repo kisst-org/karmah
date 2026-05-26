@@ -13,7 +13,7 @@ karmah-main() {
 
 
 karmah::declare-vars() {
-    declare -g local_vars="karmah_type target_name"
+    declare -g local_vars="karmah_type target_name disable_target"
     declare -g default_karmah_type
     declare -gA karmah_var_names=()
     declare -g karmah_parent_classes=""
@@ -122,6 +122,11 @@ action::init-karmah() {
         return 0
     fi
     load-karmah-file
+    if ${disable_target:-false}; then
+        abort_actions=true
+        log-info actions "skipping $target_path, because disable_target is set to true"
+        return
+    fi
     log-verbose karmah "calling ${karmah_type}::init-karmah"
     ${karmah_type}::init-karmah
 }

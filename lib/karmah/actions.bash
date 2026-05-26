@@ -77,8 +77,12 @@ run-action() {
 
 run-actions() {
     declare -a actions=${@}
+    local abort_actions=false
     local act; for act in ${actions//,/ }; do
         run-action $act
+        if $abort_actions; then
+            return # TODO: should this be non 0 return code?
+        fi
     done
 }
 
