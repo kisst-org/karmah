@@ -44,7 +44,7 @@ add-optional-helm-values-file() {
 calc-helm-chart-options() {
     case ${helm_chart_location:-local} in
         local)   echo $helm_chart;;
-        remote)  echo "$helm_chart_name --repo $helm_chart_repo  --version helm_chart_version";;
+        remote)  echo "$helm_chart_name --repo $helm_chart_repo  --version $helm_chart_version";;
         pulled)  echo helm/charts/$helm_chart_name-$helm_chart_version ;;
         *) log-error helm "unknow helm_chart_location $helm_chart_location"; exit 1;;
     esac
