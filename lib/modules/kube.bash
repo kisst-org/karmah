@@ -3,6 +3,7 @@ kube::init-module() {
     add-karmah-var R replicas nr  "specify number of replicas"
     add-karmah-var r resource res "specify a resource"
 
+
     local action_params="..."
     declare-action kw   kube-watch        "watch target resources every 2 seconds"
     declare-action kl   kube-log          "show logging of a pod"
@@ -15,6 +16,7 @@ kube::init-module() {
     declare-action kev  kube-events       "show the events of a resource"
     declare-action kup  kube-uptime       "run the uptime commando on a pod"
     declare-action kes  kube-es-sync      "sync external secrets"
+    declare-action kpip kube-pod-ip       "show pods with IP"
     help_level=expert
     declare-action k   kubectl            "generic kubectl in the right cluster and namespace of all targets"
     #declare-action ks  kube-status    "show status of relevant resources"
@@ -107,6 +109,9 @@ action::kube-log-follow() {
 action::kube-es-sync() {
     # see https://external-secrets.io/latest/introduction/faq/
     run-kubectl annotate $(kube-calc-resource kube-es-sync) force-sync=$(date +%s) --overwrite  "${@}"
+}
+action::kube-pod-ip() {
+    run-kubectl get pods $extra_opts -o custom-columns='NAME:metadata.name,IP:status.podIP'
 }
 
 
