@@ -17,6 +17,7 @@ kube::init-module() {
     declare-action kup  kube-uptime       "run the uptime commando on a pod"
     declare-action kes  kube-es-sync      "sync external secrets"
     declare-action kpip kube-pod-ip       "show pods with IP"
+    declare-action kpn  kube-pod-node     "show pods with node"
     help_level=expert
     declare-action k   kubectl            "generic kubectl in the right cluster and namespace of all targets"
     #declare-action ks  kube-status    "show status of relevant resources"
@@ -119,6 +120,9 @@ action::kube-es-sync() {
 }
 action::kube-pod-ip() {
     run-kubectl get pods -o custom-columns='NAME:metadata.name,IP:status.podIP'
+}
+action::kube-pod-node() {
+    run-kubectl get pods -o custom-columns='NAME:metadata.name,IP:spec.nodeName'
 }
 
 
