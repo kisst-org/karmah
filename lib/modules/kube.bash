@@ -29,6 +29,7 @@ kube::init-module() {
     add-karmah-var "" kube_context "ctx"  "The kube context"
     add-karmah-var "" kube_namespace "ns" "The kube namespace"
     #local_vars+=" kube_config kube_context kube_namespace"
+    add-flag-option A all-namespaces  "search all namespaces"
 }
 
 kubectl-options() {
@@ -44,7 +45,13 @@ kubectl-options() {
     echo $opt
 }
 
-run-kubectl() { run-verbose-cmd kubectl $(kubectl-options) "${@}"; }
+run-kubectl() {
+    if $(get-option-value all-namespaces false); then
+        run-verbose-cmd kubectl $(kubectl-options) "${@}" --all-namespaces
+    else
+        run-verbose-cmd kubectl $(kubectl-options) "${@}"
+    fi
+}
 
 action::kubectl() {
     log-info kube "kubectl $manifest_dir"
@@ -111,7 +118,7 @@ action::kube-es-sync() {
     run-kubectl annotate $(kube-calc-resource kube-es-sync) force-sync=$(date +%s) --overwrite  "${@}"
 }
 action::kube-pod-ip() {
-    run-kubectl get pods $extra_opts -o custom-columns='NAME:metadata.name,IP:status.podIP'
+    run-kubectl get pods -o custom-columns='NAME:metadata.name,IP:status.podIP'
 }
 
 
