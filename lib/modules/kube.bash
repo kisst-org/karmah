@@ -9,6 +9,7 @@ kube::init-module() {
     declare-action kl   kube-log          "show logging of a pod"
     declare-action klf  kube-log-follow   "follow logging of a pod"
     declare-action kg   kube-get          "get a resource"
+    declare-action kbak kube-backup       "backup specified resources"
     declare-action kdsc kube-describe     "describe a resource"
     declare-action ""   kube-scale        "scale resource(s) without changing source or deployment files"
     declare-action ""   kube-restart      "rollout restart resource(s)"
@@ -77,6 +78,23 @@ action::kube-get-manifests() {
          yq -i 'del(.metadata.uid)' "${f}"
          yq -i 'del(.metadata.resourceVersion)' "${f}"
          yq -i 'del(.metadata.creationTimestamp)' "${f}"
+    done
+}
+
+action::kube-backup() {
+    use-karmah-var resource
+    local manifest_dir="$(get-option-value to "tmp/backup-$(date -Idate)/$kube_context")" # TODO: better option than context
+    local res; for res in ${resource//,/ }; do
+        log-info kube.backup "backing up $res to $manifest_dir"
+        run-kubectl get $res "${@}" -o yaml| split-yaml-items-into-files
+    done
+    for f in "${manifest_dir}"/*.yaml; do
+        log-info kube.backup "cleaning up $f"
+        yq -i 'del(.metadata.annotations.["kubectl.kubernetes.io/last-applied-configuration"])' "${f}"
+        yq -i 'del(.metadata.uid)' "${f}"
+        yq -i 'del(.metadata.resourceVersion)' "${f}"
+        yq -i 'del(.metadata.creationTimestamp)' "${f}"
+        yq -i 'del(.status)' "${f}"
     done
 }
 
