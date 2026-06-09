@@ -11,6 +11,7 @@ helm::init-module() {
     declare-action "" helm-uninstall      "run helm uninstall for target"
     declare-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
     declare-action "" helm-get-manifests  "download helm manifests from cluster"
+    declare-action "" helm-import         "annotate the resources as if they are managed by helm"
     #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
 
@@ -163,6 +164,13 @@ action::helm-print-value() {
 render-helm() {
     use-paths ${helm_value_files[@]}
     run-helm template \| split-yaml-docs-into-files
+}
+
+action::helm-import() {
+    log-info helm "helm-import for $target_name"
+    # based on https://github.com/jzbruno/helm-import/blob/main/helm-import.sh
+    run-helm template \| run-kubectl annotate -f- "meta.helm.sh/release-name=${helm_release}" "meta.helm.sh/release-namespace=${kube_namespace}" --overwrite || true
+    run-helm template \| run-kubectl label -f- "app.kubernetes.io/managed-by=Helm" --overwrite || true
 }
 
 # this function will iterate over all helm_value_files
