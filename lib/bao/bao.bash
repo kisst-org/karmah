@@ -45,6 +45,11 @@ action::bao-login-vars() {
 
 run-bao() {
     local cmd=$1; shift
-    export VAULT_TOKEN=$(<$bao_token_file)
+    if [[ ! -z ${bao_token_var:-} ]]; then
+        export VAULT_TOKEN=${!bao_token_var}
+    else
+        # use token from login mechanism
+        export VAULT_TOKEN=$(<$bao_token_file)
+    fi
     run-verbose-cmd bao $cmd $bao_options ${*}
 }
