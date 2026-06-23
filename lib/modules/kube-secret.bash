@@ -39,8 +39,7 @@ action::kube-secret-get() {
     use-karmah-var secret_name
     use-karmah-var secret_field
     # TODO: use function that handles dry-run
-    log-verbose cmd.kubectl "kubectl $(kubectl-options) get secrets ${secret_name} -o jsonpath=\"{.data.${secret_field}}\""
-    local val=$(kubectl $(kubectl-options) get secrets  ${secret_name} -o jsonpath="{.data.${secret_field}}")
+    local val=$(run-kubectl get secrets  ${secret_name} -o jsonpath="{.data.${secret_field}}")
     secret_value=$(echo -n $val| base64 -d)
 }
 action::kube-secret-delete() {
@@ -56,7 +55,7 @@ action::kube-secret-save-files() {
     use-karmah-var secret_name
     local dir="${to_dir:-tmp}"
     log-info kube-secret "getting file(s) from secret $secret_name to directory $dir"
-    local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
+    local data=$(run-kubectl get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
         log-error kube-secret "no secret found with name $secret_name"
         exit 1
@@ -74,7 +73,7 @@ action::kube-secret-save-files() {
 action::kube-secret-print-yaml() {
     use-karmah-var secret_name
     log-info kube-secret "getting file(s) from secret $secret_name"
-    local data=$(kubectl $(kubectl-options) get secret $secret_name -o yaml | yq .data)
+    local data=$(run-kubectl get secret $secret_name -o yaml | yq .data)
     if [[ $data == null ]]; then
         log-error kube-secret "no secret found with name $secret_name"
         exit 1
