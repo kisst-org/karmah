@@ -6,6 +6,7 @@ bao-approle::init-module() {
     declare-action bsl  bao-secret-id-list    "list all secret-id's for an approle"
     declare-action bsi  bao-secret-id-info    "lookup the details of a secret-id for an approle in bao"
     declare-action bsc  bao-secret-id-create  "create a new secret-id for an approle in bao"
+    declare-action bsd  bao-secret-id-destroy "destroy a new secret-id for an approle in bao"
     #declare-action ""   bao-secret-id-rm-all  "remove all known approle secret-id's"
 
     declare-action brl  bao-role-list      "list all approles"
@@ -39,7 +40,6 @@ action::bao-secret-id-info() {
         log-info bao "lookup $field: $key"
     fi
     if $(log-shows-warn); then
-        log-verbose bao "write auth/approle/role/$(bao-role-name)/$field/lookup ${field//-/_}=$key"
         run-bao write auth/approle/role/$(bao-role-name)/$field/lookup ${field//-/_}=$key || exitcode=$?
         if [[ $exitcode == 2 ]]; then
             log-warn bao "bao token lookup exitcode 2: invalid $field $key, probably expired secret-id"
@@ -60,6 +60,10 @@ action::bao-secret-id-list()   {
         done
     fi
 }
+action::bao-secret-id-destroy() {
+    use-karmah-var accessor
+    run-bao write auth/approle/role/$(bao-role-name)/secret-id-accessor/destroy secret_id_accessor=$accessor
+}
 action::bao-secret-id-update() {
     if $(log-shows-verbose); then
         echo ======== OLD SECRET_ID ============
@@ -67,7 +71,7 @@ action::bao-secret-id-update() {
         echo ==== creating new token in Secret
     fi
     secret_value=$(bao-create-secret-id)
-    log-verbose bao "created secret-id $secret_value"
+    log-info bao "created secret-id $secret_value"
     action::bao-secret-update
     if $(log-shows-verbose); then
         echo ======== NEW TOKEN ============
