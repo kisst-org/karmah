@@ -42,16 +42,8 @@ action::bao-token-create() {
     secret_value=$(run-bao "token create" -orphan -ttl=$ttl -format=yaml | yq .auth.client_token)
 }
 action::bao-token-revoke() {
-    local token=${*:-}
-    if [[ -z ${token} ]]; then
-        use-karmah-var secret_value
-        token=$secret_value
-    fi
-    if [[ -z $token ]]; then
-        echo "WARNING: No token specfied. This will revoke your login tokin."
-        action::ask
-    fi
-    run-bao "token revoke" $token
+    use-karmah-var accessor
+    run-bao "token revoke" -accessor $accessor
 }
 action::bao-token-list() { run-bao list auth/token/accessors | tail -n +3; }
 action::bao-token-list-info() {
