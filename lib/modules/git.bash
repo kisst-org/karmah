@@ -93,7 +93,7 @@ action::git-status() {
 }
 
 action::git-commit() {
-    run-actions git-add
+    run-pre-actions git-add
     local tmp=$(get-option-value tmp false)
     local message=$(get-option-value message)
     if $tmp; then

@@ -19,7 +19,7 @@ option::to()        { to_dir="${2%%/}"; argparse_parse_count=2; }
 option::with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
 
 action::render() {
-    run-actions update
+    run-pre-actions update
     local tmp=$(get-option-value tmp false)
     if $tmp; then
         manifest_dir="${to_dir:-tmp/manifests}/${target_name}"

@@ -93,13 +93,13 @@ action::helm-pull() {
 
 
 action::helm-plugin-diff() {
-    run-actions render
+    run-pre-actions render
     log-info helm "helm-plugin-diff for $target_name"
     run-helm diff upgrade
 }
 
 action::helm-upgrade() {
-    run-actions helm-diff,ask
+    run-pre-actions helm-diff,ask
     local bg=$(get-option-value bg false)
     log-info helm "helm-upgrade release $helm_release"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
@@ -113,13 +113,13 @@ action::helm-upgrade() {
 }
 
 action::helm-install() {
-    run-actions helm-diff,ask
+    run-pre-actions helm-diff,ask
     log-info helm "helm-install for $target_name"
     run-helm install --create-namespace
 }
 
 action::helm-uninstall() {
-    run-actions ask # helm-diff-delete,ask
+    run-pre-actions ask # helm-diff-delete,ask
     log-info helm "helm-uninstall for $target_name"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
     local default_cmd="helm uninstall"
@@ -136,7 +136,7 @@ action::helm-get-manifests() {
 
 action::helm-get-diff() { action::helm-diff; } # TODO: deprecated
 action::helm-diff() {
-    run-actions render
+    run-pre-actions render
     # do a check status to see if the release exists
     local release=${helm_release:=$(basename $target_name)}
     log-debug helm "checking for helm release ${release} in namespace $kube_namespace"
@@ -151,7 +151,7 @@ action::helm-diff() {
     local get_dir=${with_dir:-tmp/get}/${target_name}
     log-info helm "helm-diff ${get_dir} with rendered ${render_dir}"
     local manifest_dir=$get_dir
-    run-actions helm-get-manifests
+    run-pre-actions helm-get-manifests
     # The sed script is to make missing or added manifests stand out more clearly
     run-verbose-cmd diff -r $get_dir $render_dir | sed 's/^Only in /<> ONLY IN /' || true
 }

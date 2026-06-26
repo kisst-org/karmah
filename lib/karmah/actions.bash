@@ -13,6 +13,7 @@ actions::init-module() {
     help_level=expert
     local action_params=...
     declare-action dpav debug-print-action-var "print a variable declaration for debugging purposes"
+    add-flag-option P skip-pre-actions  "do not execute any pre-actions"
 }
 
 action::debug-print-action-var() { command::debug-print-var "$@"; }
@@ -85,7 +86,13 @@ run-actions() {
         fi
     done
 }
-
+run-pre-actions() {
+    if $(get-option-value skip-pre-actions false); then
+        log-verbose actions "skipping pre-actions $*"
+    else
+      run-actions "$@"
+    fi
+}
 
 show-actions() { list-help-items action; }
 

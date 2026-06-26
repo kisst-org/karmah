@@ -19,17 +19,17 @@ kapp-options() {
 }
 
 action::kapp-diff() {
-    run-actions render
+    run-pre-actions render
     run-verbose-cmd kapp deploy $(kapp-options) --diff-run --diff-changes
 }
 
 action::kapp-plan() {
-    run-actions render
+    run-pre-actions render
     run-verbose-cmd kapp deploy $(kapp-options) --diff-run
 }
 
 action::kapp-deploy() {
-    run-actions render
+    run-pre-actions render
     if ! kubectl $(kubectl_options) get ns $kube_namespace >/dev/null 2>&1; then
         run-verbose-cmd kubectl $(kubectl_options) create ns $kube_namespace
     fi

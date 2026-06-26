@@ -11,7 +11,7 @@ filter-kube-diff-output() { grep -E '^[+-] |^---' | grep -vE '^[+-]  generation:
 filter-kube-diff-quiet() { filter-kube-diff-output | grep -E ^--- | sed -e 's|--- /tmp/LIVE-[0-9]*/||' -e 's/[ \t].*$//' -e 's/^/  changed: /'; }
 
 action::kube-diff() {
-    run-actions render
+    run-pre-actions render
     local quiet_diff=$(get-option-value quiet-diff false)
     log-info kube "kube-diff ${target_name} to ${manifest_dir}"
     if ${quiet_diff}; then
@@ -25,19 +25,19 @@ action::kube-diff() {
 }
 
 action::kube-diff-delete() {
-    run-actions render
+    run-pre-actions render
     log-info kube "kube-diff-delete all resources ${target_name} from ${manifest_dir}"
     run-verbose-cmd ls -l $manifest_dir
 }
 
 action::kube-apply() {
-    run-actions render,kube-diff,ask
+    run-pre-actions render,kube-diff,ask
     log-info kube "kube-apply $manifest_dir"
     run-verbose-cmd kubectl apply $(kubectl-options) -f $manifest_dir
 }
 
 action::kube-delete() {
-    run-actions render,kube-diff-delete,ask
+    run-pre-actions render,kube-diff-delete,ask
     log-info kube "kube delete $manifest_dir"
     run-verbose-cmd kubectl delete $(kubectl-options) -f $manifest_dir
 }
