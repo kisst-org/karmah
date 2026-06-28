@@ -43,13 +43,25 @@ action::bao-login-vars() {
     fi
 }
 
+# run-bao() {
+#     local cmd=$1; shift
+#     if [[ ! -z ${bao_token_var:-} ]]; then
+#         export VAULT_TOKEN=${!bao_token_var}
+#     else
+#         # use token from login mechanism
+#         export VAULT_TOKEN=$(<$bao_token_file)
+#     fi
+#     run-verbose-cmd bao $cmd $bao_options ${*}
+# }
+
+
 run-bao() {
     local cmd=$1; shift
-    if [[ ! -z ${bao_token_var:-} ]]; then
-        export VAULT_TOKEN=${!bao_token_var}
+    local bao_addr bao_token_var bao_namespace bao_prefix bao_postfix
+    ${karmah_type}::calc-bao-vars $bao_vault
+    if [[ -z ${bao_namespace:-} ]]; then
+        VAULT_TOKEN=${!bao_token_var} run-verbose-cmd bao $cmd -address=$bao_addr "$@"
     else
-        # use token from login mechanism
-        export VAULT_TOKEN=$(<$bao_token_file)
+        VAULT_TOKEN=${!bao_token_var} run-verbose-cmd bao $cmd -address=$bao_addr -ns=$bao_namespace "$@"
     fi
-    run-verbose-cmd bao $cmd $bao_options ${*}
 }
