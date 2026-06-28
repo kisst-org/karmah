@@ -7,61 +7,42 @@ bao-mirror::init-module() {
     declare-action be bao-export  "export all keys from bao_from vault to a file"
     declare-action bi bao-import  "import all keys from a file to bao_to vault"
 
-    add-karmah-var  ""  bao_from_addr            "the addres of the vault to copy/compare from"
-    add-karmah-var  ""  bao_from_token_var         "the environment var containing a token to authenticate in the vault to copy/compare from"
-    add-karmah-var  ""  bao_from_namespace       "the namespace of the vault to copy/compare from"
-    add-karmah-var  ""  bao_from_path            "the path in the from_vault"
-    add-karmah-var  ""  bao_from_postfix       "a postfix to remove from each path in the from_vault"
-    add-karmah-var  ""  bao_to_addr              "the addres of the vault to copy/compare to"
-    add-karmah-var  ""  bao_to_token_var         "the environment var containing a token to authenticate in the vault to copy/compare to"
-    add-karmah-var  ""  bao_to_namespace         "the namespace of the vault to copy/compare to"
-    add-karmah-var  ""  bao_to_path              "the path in the to_vault"
-    add-karmah-var  ""  bao_to_postfix          "a postfix to add to each path in the to_vault"
-    add-karmah-var  ""  bao_to_postfix          "a postfix to add to each path in the to_vault"
     add-karmah-var  ""  bao_path                "a path to copy or diff"
 }
 
-run-bao-from() {
-    local cmd=$1; shift
-    if [[ -z ${bao_from_namespace:-} ]]; then
-        VAULT_TOKEN=${!bao_from_token_var} run-verbose-cmd bao $cmd -address=$bao_from_addr "$@"
-    else
-        VAULT_TOKEN=${!bao_from_token_var} run-verbose-cmd bao $cmd -address=$bao_from_addr -ns=$bao_from_namespace "$@"
-    fi
-}
-run-bao-to() {
-    local cmd=$1; shift
-    if [[ -z ${bao_to_namespace:-} ]]; then
-        VAULT_TOKEN=${!bao_to_token_var} run-verbose-cmd bao $cmd -address=$bao_to_addr "$@"
-    else
-        VAULT_TOKEN=${!bao_to_token_var} run-verbose-cmd bao $cmd -address=$bao_to_addr -ns=$bao_to_namespace "$@"
-    fi
-}
 action::bao-diff() {
     use-karmah-var bao_path
-
-    local from_paths=$bao_path
-    if [[ -z $from_paths ]]; then
-        from_paths=$(run-bao-from "kv list" $bao_from_path | tail -n +3 | sort)
+    if [[ -z $bao_path ]]; then
+        run-bao-diff $(run-bao "kv list" $bao_prefix| tail -n +3 | sort)
+    else
+        run-bao-diff $bao_path
     fi
-    run-bao-diff
 }
 
 run-bao-diff() {
+    local paths="$@"
     local result=""
-    local p
-    for p in $from_paths; do
-        local json_from="$(run-bao-from "kv get" -format=json -field=data $bao_from_path/$p/$bao_from_postfix)"
+    local _orig_vault=$bao_vault
+    local p; for p in $paths; do
+        local bao_vault=$_orig_vault
+        local path1=$bao_prefix/$p
+        # TODO $bao_postfix handling
+        local json_from="$(run-bao "kv get" -format=json -field=data $path1)"
         if [[ -z $json_from ]]; then
             log-verbose bao-diff "skipping $p"
         else
             result+=" $p"
-            local json_to="$(run-bao-to "kv get" -format=json -field=data $bao_to_path/$p/$bao_to_postfix)"
-            if [[ "$json_to" == "$json_from" ]]; then
-                log-verbose bao-diff "identical $p"
+            bao_vault=$bao_other_vault
+            local path2=$bao_other_prefix/$p
+            if [[ ! -z $bao_other_postfix ]]; then
+                path2=$path2/$bao_other_postfix
+            fi
+            local json_other="$(run-bao "kv get" -format=json -field=data $path2)"
+            if [[ "$json_other" == "$json_from" ]]; then
+                log-verbose bao-diff "identical $p and $path2"
             else
-                echo changes found in path $p
-                diff <(printf "%s\n" "${json_from}") <(printf "%s\n" "${json_to}") || true
+                echo changes found between path $p and $path2
+                diff <(printf "%s\n" "${json_from}") <(printf "%s\n" "${json_other}") || true
             fi
         fi
     done
