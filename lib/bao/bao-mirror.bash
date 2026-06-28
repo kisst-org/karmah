@@ -19,8 +19,6 @@ bao-mirror::init-module() {
     add-karmah-var  ""  bao_to_postfix          "a postfix to add to each path in the to_vault"
     add-karmah-var  ""  bao_to_postfix          "a postfix to add to each path in the to_vault"
     add-karmah-var  ""  bao_path                "a path to copy or diff"
-    # add-karmah-var  ""  bao_map_entire_path      ""
-    # add-karmah-var  ""  bao_map_stripped_path    ""
 }
 
 run-bao-from() {
@@ -39,14 +37,6 @@ run-bao-to() {
         VAULT_TOKEN=${!bao_to_token_var} run-verbose-cmd bao $cmd -address=$bao_to_addr -ns=$bao_to_namespace "$@"
     fi
 }
-# run-bao-to() {
-#     if [[ -z ${bao_to_namespace:-} ]]; then
-#         VAULT_TOKEN=${!bao_to_token_var} VAULT_ADDR=$bao_to_addr run-verbose-cmd bao "$@"
-#     else
-#         log-verbose bao "VAULT_TOKEN=${!bao_to_token_var} VAULT_ADDR=$bao_to_addr VAULT_NAMESPACE=$bao_to_namespace run-verbose-cmd bao \"$@\""
-#         VAULT_TOKEN=${!bao_to_token_var} VAULT_ADDR=$bao_to_addr VAULT_NAMESPACE=$bao_to_namespace run-verbose-cmd bao "$@"
-#     fi
-# }
 action::bao-diff() {
     use-karmah-var bao_path
 
@@ -71,22 +61,13 @@ run-bao-diff() {
                 log-verbose bao-diff "identical $p"
             else
                 echo changes found in path $p
-                # local eol=$'\n'
                 diff <(printf "%s\n" "${json_from}") <(printf "%s\n" "${json_to}") || true
-                # printf "FROM %s" "${json_from}"
             fi
         fi
     done
-    #echo "$result"
 }
 
 
-# action::bao-diff() {
-#     local from_paths=$(get-bao-from-paths)
-#     local to_paths=$(run-bao-to kv list $bao_to_path | tail -n +3 | sort)
-#     echo FROM $from_paths
-#     echo TO $to_paths
-# }
 action::bao-copy() {
     echo TODO
 }
