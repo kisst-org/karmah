@@ -37,8 +37,11 @@ run-bao-diff() {
             if [[ ! -z $bao_other_postfix ]]; then
                 path2=$path2/$bao_other_postfix
             fi
+            # ignore_cmd_exit_code=true
             local json_other="$(run-bao "kv get" -format=json -field=data $path2)"
-            if [[ "$json_other" == "$json_from" ]]; then
+            if [[ -z $json_other ]]; then
+                echo missing $path2
+            elif [[ "$json_other" == "$json_from" ]]; then
                 log-verbose bao-diff "identical $p and $path2"
             else
                 echo changes found between path $p and $path2
