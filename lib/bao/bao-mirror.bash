@@ -2,12 +2,52 @@
 bao-mirror::init-module() {
     add-module-help "actions to copy and compare keys in two bao vaults"
 
-    declare-action bd bao-diff    "diff all keys between bao_from vault and bao_to vault"
-    declare-action bc bao-copy    "copy all keys from bao_from vault to bao_to vault"
-    declare-action be bao-export  "export all keys from bao_from vault to a file"
-    declare-action bi bao-import  "import all keys from a file to bao_to vault"
+    declare-action bd  bao-diff      "diff all keys between bao_from vault and bao_to vault"
+    declare-action BCF bao-copy-from "copy all keys from other vault"
+    # declare-action BCT bao-copy-to   "copy all keys to other vault"
+    # declare-action be  bao-export    "export all keys from vault to a file"
+    # declare-action bi  bao-import    "import all keys from a file to vault"
 
-    add-karmah-var  ""  bao_path                "a path to copy or diff"
+    add-karmah-var  ""  bao_path         "a path to copy or diff"
+    add-karmah-var  ""  bao_other_vault  "the other vault to copy from or comapre with"
+    add-karmah-var  ""  bao_keys         "selection of keys to be used"
+}
+
+bao::get-json() { local path=$1; run-bao "kv get" -format=json -field=data $path; }
+bao::put-json() { local path=$1; run-bao "kv put" $path -; }
+bao::postfix-exists() {
+    local path=$1 postfix=$2
+    local list=$(run-bao "kv list" $path | grep "^$postfix\$" || true)
+    [[ ! -z $list ]]
+}
+
+
+
+action::bao-copy-from () {
+    use-karmah-var bao_other_vault
+    use-karmah-var bao_keys
+    declare -A map="${bao_map_path:-}"
+    local map_list=${bao_map_keys:-}
+    local m; for m in ${map_list//,/ }; do
+        map[${m//:*/}]=${m//*:/}
+    done
+    local paths=${bao_keys//,/ };
+    if [[ -z $paths ]];then
+        paths=$(bao_vault=$bao_other_vault run-bao "kv list" $bao_other_prefix| tail -n +3 | sort)
+    fi
+    local p; for p in $paths; do
+        p=${p%/}
+        local from=$bao_other_prefix/$p
+        local to=$bao_prefix/${map[$p]:-$p}
+        if [[ $to == "$bao_prefix/IGNORE" ]]; then
+            log-info bao "ignoring $from because of mapping"
+        elif $(bao_vault=$bao_other_vault bao::postfix-exists $from "$bao_other_postfix"); then
+            log-info bao "copying $from/$bao_other_postfix ==> $to"
+            bao_vault=$bao_other_vault bao::get-json $from/$bao_other_postfix | bao::put-json $to
+        else
+            log-info bao "skipping $from because there is nog $bao_other_postfix subpath"
+        fi
+    done
 }
 
 action::bao-diff() {
@@ -49,15 +89,4 @@ run-bao-diff() {
             fi
         fi
     done
-}
-
-
-action::bao-copy() {
-    echo TODO
-}
-action::bao-import() {
-    echo TODO
-}
-action::bao-export() {
-    echo TODO
 }
