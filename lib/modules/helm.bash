@@ -176,7 +176,7 @@ action::helm-import() {
 # and get the latest of a certain path
 helm-get-path-value() {
     local path=$1
-    local f result
+    local f result=""
     if [[ -f ${helm_chart}/values.yaml ]]; then
         # TODO: this only works for local charts
         local helm_chart_values_file=${helm_chart}/values.yaml
