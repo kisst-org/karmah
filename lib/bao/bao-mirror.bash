@@ -17,11 +17,16 @@ bao::get-json() { local path=$1; run-bao "kv get" -format=json -field=data $path
 bao::put-json() { local path=$1; run-bao "kv put" $path -; }
 bao::postfix-exists() {
     local path=$1 postfix=$2
-    local list=$(run-bao "kv list" $path | grep "^$postfix\$" || true)
+    local list=$(bao-list-path $path | grep "^$postfix\$" || true)
     [[ ! -z $list ]]
 }
 
 
+bao-list-path() {
+    local path=$1
+    run_in_check_mode=true
+    run-bao "kv list" $path| tail -n +3 | sort
+}
 
 action::bao-copy-from () {
     use-karmah-var bao_other_vault
@@ -33,7 +38,7 @@ action::bao-copy-from () {
     done
     local paths=${bao_keys//,/ };
     if [[ -z $paths ]];then
-        paths=$(bao_vault=$bao_other_vault run-bao "kv list" $bao_other_prefix| tail -n +3 | sort)
+        paths=$(bao_vault=$bao_other_vault bao-list-path $bao_other_prefix)
     fi
     local p; for p in $paths; do
         p=${p%/}
@@ -45,7 +50,7 @@ action::bao-copy-from () {
             log-info bao "copying $from/$bao_other_postfix ==> $to"
             bao_vault=$bao_other_vault bao::get-json $from/$bao_other_postfix | bao::put-json $to
         else
-            log-info bao "skipping $from because there is nog $bao_other_postfix subpath"
+            log-info bao "skipping $from because there is no $bao_other_postfix subpath"
         fi
     done
 }
