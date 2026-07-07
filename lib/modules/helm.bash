@@ -2,12 +2,11 @@
 helm::init-module() {
     add-module-summary "actions to work with helm"
     declare-action hd helm-diff           "run diff for target vs helm deployed manifests"
-    declare-action "" helm-upgrade        "run helm upgrade --install for target"
+    declare-action HU helm-upgrade        "run helm upgrade --install for target"
     declare-action hpv helm-print-value  "print the value of a path in  helm values"
     help_level=expert
-    declare-action "" helm-get-diff       "old name for helm-diff (deprecated)"
     declare-action "" helm-plugin-diff    "run helm diff plugin for target"
-    declare-action "" helm-install        "deprecated: run helm upgrade --install for target"
+    declare-action HI helm-install        "deprecated: run helm upgrade --install for target"
     declare-action "" helm-uninstall      "run helm uninstall for target"
     declare-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
     declare-action "" helm-get-manifests  "download helm manifests from cluster"
