@@ -1,6 +1,6 @@
 
 helm::init-module() {
-    add-module-help "actions to work with helm"
+    add-module-summary "actions to work with helm"
     declare-action hd helm-diff           "run diff for target vs helm deployed manifests"
     declare-action "" helm-upgrade        "run helm upgrade --install for target"
     declare-action hpv helm-print-value  "print the value of a path in  helm values"

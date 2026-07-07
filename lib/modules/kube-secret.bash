@@ -1,5 +1,5 @@
 kube-secret::init-module() {
-    add-module-help "actions to work with kubernetes secrets"
+    add-module-summary "actions to work with kubernetes secrets"
     declare-action ksu  kube-secret-update      "update or create a kubernetes secret (kubectl apply)"
     declare-action ""   kube-secret-delete      "delete a kubernetes secret (kubectl delete)"
     declare-action ksg  kube-secret-get         "get the value of a kubernetes secret for use in following action"

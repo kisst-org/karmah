@@ -1,6 +1,6 @@
 
 bao-mirror::init-module() {
-    add-module-help "actions to copy and compare keys in two bao vaults"
+    add-module-summary "actions to copy and compare keys in two bao vaults"
 
     declare-action bd  bao-diff      "diff all keys between bao_from vault and bao_to vault"
     declare-action BCF bao-copy-from "copy all keys from other vault"

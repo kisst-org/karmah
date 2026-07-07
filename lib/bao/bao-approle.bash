@@ -1,5 +1,5 @@
 bao-approle::init-module() {
-    add-module-help "actions to work with bao approles and secret-id's"
+    add-module-summary "actions to work with bao approles and secret-id's"
     add-karmah-var a  accessor  uid "bao secret-id/token accessor"
     add-karmah-var "" secret_id uid "bao secret-id"
 

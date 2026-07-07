@@ -1,5 +1,5 @@
 bao::init-module() {
-    add-module-help "actions to work with bao"
+    add-module-summary "actions to work with bao"
 
     # see https://openbao.org/docs/concepts/duration-format/
     add-karmah-var "" ttl      duration   "set the ttl voor a token, e.g. 30m of 60d"

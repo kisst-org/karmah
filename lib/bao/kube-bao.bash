@@ -1,5 +1,5 @@
 kube-bao::init-module() {
-    add-module-help "actions to work with kubernetes secrets from bao"
+    add-module-summary "actions to work with kubernetes secrets from bao"
     #declare-action kbsd kube-bao-secret-diff     "prints the changes to a kubernetes secret"
     #declare-action kbsm kube-bao-secret-manifest "prints the manifest of the secret to be created"
 

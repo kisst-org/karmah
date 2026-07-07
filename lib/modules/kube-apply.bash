@@ -1,5 +1,5 @@
 kube-apply::init-module() {
-    add-module-help "actions to work with kubernetes apply"
+    add-module-summary "actions to work with kubernetes apply"
     declare-action kd kube-diff     "compare rendered manifests with cluster (kubectl diff)"
     declare-action "" kube-apply    "apply rendered manifests with cluster (kubectl apply)"
     help_level=expert

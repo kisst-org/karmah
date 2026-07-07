@@ -34,7 +34,8 @@ require-modules() {
     done
 }
 
-add-module-help() {
+add-module-help() { add-module-summary "$@"; } # TODO: deprecated
+add-module-summary() {
     local summary="${1:-info about module $module}" key
     add-help-item "" $module module:$module "" "$summary"
 }

@@ -1,5 +1,5 @@
 kube::init-module() {
-    add-module-help "helper actions to work with kubernetes"
+    add-module-summary "helper actions to work with kubernetes"
     add-karmah-var R replicas nr  "specify number of replicas"
     add-karmah-var r resource res "specify a resource"
 

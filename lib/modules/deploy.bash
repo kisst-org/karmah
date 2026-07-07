@@ -1,6 +1,6 @@
 
 deploy::init-module() {
-    add-module-help "actions to work with deploy/plan"
+    add-module-summary "actions to work with deploy/plan"
     declare-action "" deploy "render to deployed/manifests and optionally deploy to kubernetes"
     declare-action "" plan   "show what deploy action would do"
     help_level=expert

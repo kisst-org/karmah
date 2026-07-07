@@ -1,6 +1,6 @@
 
 git::init-module() {
-    add-module-help "actions to work with git"
+    add-module-summary "actions to work with git"
     help_level=expert
     declare-action gd git-diff     "shows the changes to source and rendered manifests with git"
     declare-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"

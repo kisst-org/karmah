@@ -1,6 +1,6 @@
 
 kapp::init-module() {
-    add-module-help "actions to work with kapp"
+    add-module-summary "actions to work with kapp"
     help_level=expert
     declare-action "" kapp-plan    "show what resources will be updated"
     declare-action "" kapp-diff    "show what resources will be updated, including detailed diffs"

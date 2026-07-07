@@ -1,5 +1,5 @@
 bao-token::init-module() {
-    add-module-help "actions to work with bao tokens"
+    add-module-summary "actions to work with bao tokens"
 
     local action_params="[tok/acc]"
     declare-action btc  bao-token-create     "create a new token"
