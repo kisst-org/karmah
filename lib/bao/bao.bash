@@ -11,6 +11,7 @@ bao::init-module() {
     declare-action blv bao-login-vars  "show the vars you can export"
     declare-action bgy bao-get-yaml    "get the values of path and show in yaml format"
     declare-action bgx bao-get-export  "get the values of path and show in format to export env vars"
+    declare-action bsd bao-secret-diff  "compare the values with another vault"
 }
 
 #######################
@@ -54,7 +55,7 @@ calc-bao-token() {
     bao_token_var=${bao_token_var^^}
     if [[ ! -z ${!bao_token_var:-} ]]; then
         log-debug bao "using token var $bao_token_var"
-        echo {!bao_token_var}
+        echo ${!bao_token_var}
     elif [[ -f ${bao_token_file:-.} ]]; then # the . dir is never a file
         log-debug bao "using token file  $bao_token_file"
         # use token from login mechanism
@@ -80,4 +81,12 @@ action::bao-get-export() {
     log-info bao "export the following vars. This can be done with:"
     log-info bao "    eval \$($climah_prog_path $target_path bao-get-export -q)"
     run-bao "kv get" -field=data -format=yaml $bao_path | sed -e "s/: /='/" -e 's/^/export /' -e "s/$/'/"
+}
+
+action::bao-secret-diff() {
+    local yaml1=$(run-bao "kv get" -field=data -format=yaml $bao_path)
+    local yaml2=$(bao_vault=$bao_other_vault run-bao "kv get" -field=data -format=yaml $bao_other_path)
+    log-verbose bao "diff $yaml1"
+    log-verbose bao "with $yaml2"
+    diff -r <(printf "%s\n" "$yaml1") <(printf "%s\n" "$yaml2")
 }
