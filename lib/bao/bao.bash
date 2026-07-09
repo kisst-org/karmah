@@ -9,6 +9,8 @@ bao::init-module() {
     declare-action bli bao-login  "login and store the token in a file"
     declare-action blo bao-logout "remove the file with the login token"
     declare-action blv bao-login-vars  "show the vars you can export"
+    declare-action bgy bao-get-yaml    "get the values of path and show in yaml format"
+    declare-action bgx bao-get-export  "get the values of path and show in format to export env vars"
 }
 
 #######################
@@ -70,4 +72,13 @@ run-bao() { VAULT_TOKEN=$(${calc_bao_token_func:-calc-bao-token} $bao_vault) run
 run-bao-tokenless() {
     local cmd=$1; shift  # the cmd can be multiple words, like "kv list" that need to come before the options
     run-verbose-cmd bao $cmd $($bao_calc_vault_options_func $bao_vault) "$@"
+}
+
+
+action::bao-get-yaml() { run-bao "kv get" -field=data -format=yaml $bao_path; }
+
+action::bao-get-export() {
+    log-info bao "export the following vars. This can be done with:"
+    log-info bao "    eval \$($climah_prog_path $target_path bao-get-export -q)"
+    run-bao "kv get" -field=data -format=yaml $bao_path | sed -e "s/: /='/" -e 's/^/export /' -e "s/$/'/"
 }
