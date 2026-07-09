@@ -2,7 +2,7 @@
 bao-mirror::init-module() {
     add-module-summary "actions to copy and compare keys in two bao vaults"
 
-    declare-action bd  bao-diff      "diff all keys between bao_from vault and bao_to vault"
+    declare-action bda bao-diff-all      "diff all keys between bao_from vault and bao_to vault"
     declare-action BCF bao-copy-from "copy all keys from other vault"
     # declare-action BCT bao-copy-to   "copy all keys to other vault"
     # declare-action be  bao-export    "export all keys from vault to a file"
@@ -55,7 +55,7 @@ action::bao-copy-from () {
     done
 }
 
-action::bao-diff() {
+action::bao-diff-all() {
     use-karmah-var bao_path
     if [[ -z $bao_path ]]; then
         run-bao-diff $(run-bao "kv list" $bao_prefix| tail -n +3 | sort)
