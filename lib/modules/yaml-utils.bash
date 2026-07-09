@@ -1,4 +1,18 @@
 
+yaml::init-module() {
+    add-module-summary "commands to work with yaml"
+    add-command  ym   yaml-merge           "" "yaml stdin yaml documents into 1 yaml doc"
+    add-command  ysk  yaml-sort-keys       "" "sort yaml keys on all levels from stdin"
+    add-command  ysm  yaml-split-manifests "" "split yaml kubernetes manifests in separate-files "
+}
+
+command::yaml-merge() { yq eval-all '. as $item ireduce ({}; . * $item)' | yq -P 'sort_keys(..)'; }
+command::yaml-sort-keys()  { yq -P 'sort-keys(..)'; }
+command::yaml-split-manifests() {
+    local to=$(get-option-value to tmp)
+    yq -s \"$to/\"' + (.kind | downcase) + "_" + .metadata.name + ".yaml"'
+}
+
 split-yaml-docs-into-files() {
     # Cleans the stdin yaml to a normalized format
     # - pretty print with normalized indents
