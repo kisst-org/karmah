@@ -11,6 +11,8 @@ helm::init-module() {
     declare-action "" helm-pull           "pull a helm chart from a remote repo to helm/charts"
     declare-action "" helm-get-manifests  "download helm manifests from cluster"
     declare-action "" helm-import         "annotate the resources as if they are managed by helm"
+    declare-action hl  helm-ls             "list the helm releases in a namespace"
+    declare-action hh  helm-history        "show the history of the helm release"
     #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
 
@@ -50,9 +52,15 @@ calc-helm-chart-options() {
     esac
 }
 
+run-helm-simple() {
+    local subcmd=$1 args=${@:2}
+    local opts="$(helm-cluster-options)"
+    run-verbose-cmd helm $subcmd $opts $args
+}
+
 run-helm() {
     local subcmd=$1 args=${@:2}
-    : ${helm_release:=$(basename $target_name)}
+    # : ${helm_release:=$(basename $target_name)} # TODO: remove
     local opts="$(helm-cluster-options)"
     opts+=" $helm_release"
     opts+=" $(calc-helm-chart-options)"
@@ -133,6 +141,8 @@ action::helm-get-manifests() {
     run-verbose-cmd helm get manifest $release $(helm-cluster-options) \| split-yaml-docs-into-files
 }
 
+action::helm-ls()       { run-helm-simple ls; }
+action::helm-history()  { run-helm-simple history $helm_release; }
 action::helm-get-diff() { action::helm-diff; } # TODO: deprecated
 action::helm-diff() {
     run-pre-actions render
