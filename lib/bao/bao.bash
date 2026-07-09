@@ -51,7 +51,6 @@ calc-bao-token() {
     local vault=$1
     local bao_token_file=./tmp/bao/${vault}.token
     local bao_token_var=BAO_TOKEN_${vault//-/_}
-    log-info bao "calc token using var ${bao_token_var} and file ${bao_token_file}"
     bao_token_var=${bao_token_var^^}
     if [[ ! -z ${!bao_token_var:-} ]]; then
         log-debug bao "using token var $bao_token_var"
