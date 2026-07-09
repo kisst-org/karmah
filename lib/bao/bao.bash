@@ -14,6 +14,7 @@ bao::init-module() {
 #######################
 # login
 action::bao-login() {
+    local bao_token_file=${bao_token_file:-./tmp/bao/${bao_vault}.token}
     if [[ -f $bao_token_file ]]; then
         local answer
         read -p "token file $bao_token_file already exist, do you want to login anyway [Y/n]? " answer
@@ -22,8 +23,9 @@ action::bao-login() {
             exit 1
         fi
     fi
-    echo "Enter password for ${bao_login_params} (will not been shown):"
-    local token=$(run-verbose-cmd bao login $bao_options $bao_login_options  -no-store -field token  $bao_login_params 2>/dev/null)
+    $bao_login_dialog_func
+    # echo "Enter password for ${bao_login_params} (will not been shown):"
+    local token=$(run-bao-tokenless login $bao_login_options  -no-store -field token  $bao_login_params) # 2>/dev/null)
     mkdir -p $(dirname ${bao_token_file})
     run-verbose-cmd echo $token \| tee ${bao_token_file}
     run-verbose-cmd chmod 600 ${bao_token_file}
@@ -43,25 +45,29 @@ action::bao-login-vars() {
     fi
 }
 
-# run-bao() {
-#     local cmd=$1; shift
-#     if [[ ! -z ${bao_token_var:-} ]]; then
-#         export VAULT_TOKEN=${!bao_token_var}
-#     else
-#         # use token from login mechanism
-#         export VAULT_TOKEN=$(<$bao_token_file)
-#     fi
-#     run-verbose-cmd bao $cmd $bao_options ${*}
-# }
-
-
-run-bao() {
-    local cmd=$1; shift
-    local bao_addr bao_token_var bao_namespace bao_prefix bao_postfix
-    ${karmah_type}::calc-bao-vars $bao_vault
-    if [[ -z ${bao_namespace:-} ]]; then
-        VAULT_TOKEN=${!bao_token_var} run-verbose-cmd bao $cmd -address=$bao_addr "$@"
+calc-bao-token() {
+    local vault=$1
+    local bao_token_file=./tmp/bao/${vault}.token
+    local bao_token_var=BAO_TOKEN_${vault//-/_}
+    log-info bao "calc token using var ${bao_token_var} and file ${bao_token_file}"
+    bao_token_var=${bao_token_var^^}
+    if [[ ! -z ${!bao_token_var:-} ]]; then
+        log-debug bao "using token var $bao_token_var"
+        echo {!bao_token_var}
+    elif [[ -f ${bao_token_file:-.} ]]; then # the . dir is never a file
+        log-debug bao "using token file  $bao_token_file"
+        # use token from login mechanism
+        echo $(<$bao_token_file)
+    elif [[ -z ${VAULT_TOKEN:-} ]]; then
+        echo $VAULT_TOKEN
     else
-        VAULT_TOKEN=${!bao_token_var} run-verbose-cmd bao $cmd -address=$bao_addr -ns=$bao_namespace "$@"
+        log-error bao "could not determine bao token, either set {bao_token_var:-VAULT_TOKEN} or do a bao-login action"
     fi
+}
+
+
+run-bao() { VAULT_TOKEN=$(${calc_bao_token_func:-calc-bao-token} $bao_vault) run-bao-tokenless "$@"; }
+run-bao-tokenless() {
+    local cmd=$1; shift  # the cmd can be multiple words, like "kv list" that need to come before the options
+    run-verbose-cmd bao $cmd $($bao_calc_vault_options_func $bao_vault) "$@"
 }
