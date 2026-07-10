@@ -28,7 +28,7 @@ karmah::init-module() {
     declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
     declare-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
-    log-verbose ifed "default_karmah_type=${default_karmah_type:-base}"
+    log-verbose karmah "default_karmah_type=${default_karmah_type:-base}"
     default_command=run-karmah-actions
 }
 
