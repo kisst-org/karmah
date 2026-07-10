@@ -13,6 +13,7 @@ helm::init-module() {
     declare-action "" helm-import         "annotate the resources as if they are managed by helm"
     declare-action hl  helm-ls             "list the helm releases in a namespace"
     declare-action hh  helm-history        "show the history of the helm release"
+    declare-action hcv helm-chart-version-message "add the version of the (local) chart to the git-message"
     #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
 
@@ -221,4 +222,10 @@ helm-cluster-options() {
     opt+=" --kube-context ${kube_context}"
     opt+=" --namespace $kube_namespace"
     echo $opt
+}
+
+action::helm-chart-version-message() {
+    local version=$(grep ^version: $helm_chart/Chart.yaml)
+    log-verbose helm "adding to git-message \"$helm_chart $version\""
+    git-add-message "$helm_chart $version"
 }
