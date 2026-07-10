@@ -28,9 +28,15 @@ climah-run() {
 }
 
 load-lib-config() {
-    if [[ -f lib/config ]]; then
-        log-debug lib "loading initial config lib/config"
-        source lib/config
+    local file=${CLIMAH_LIB_CONFIG:-lib/config}
+    if [[ -f $file ]]; then
+        log-debug climah "loading lib config file $file"
+        source $file
+    elif [[ ! -z ${CLIMAH_LIB_CONFIG:-} ]]; then
+        log-error climah "lib config file CLIMAH_LIB_CONFIG=$file not found, exiting"
+        exit 1
+    else
+        log-debug climah "defaul lib config file $file does not exist"
     fi
 }
 
