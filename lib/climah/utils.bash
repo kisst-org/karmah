@@ -4,6 +4,23 @@
 add-commas() { local args="${*// /,}"; echo ${args%%,}; }
 add-spaces() { local args="${*//,/ }"; echo ${args%% }; }
 
+# returns first argument only when it is not in one of remaining arguments
+# prefix with a space if there are other elements
+# to be used to append to a list if it is not in there yet
+#   list+=$(iif-unique-in-list value $list)
+iif-unique-in-list() {
+    local first=$1; shift
+    local prefix=""
+    for i in $*; do
+        if [[ $first == $i ]]; then
+            echo ""
+            return
+        fi
+        prefix=" "
+    done
+    echo $prefix$first
+fi
+
 add-map-value() {
     local map_name=$1 map_idx=$2 value=$3 handler=${4:-warn} dupl_handler=${5:-debug}
     local oldval="$(eval "echo \${$map_name[$map_idx]:-}")"

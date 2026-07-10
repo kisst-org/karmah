@@ -5,4 +5,5 @@ for lib in $libdir/pre.bash $libdir/*/*.bash; do
     source $lib
 done
 
+: {CLIMAH_LIB_CONFIG:=lib/config.develop}
 karmah-main "${@}"
