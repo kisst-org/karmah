@@ -19,7 +19,7 @@ iif-unique-in-list() {
         prefix=" "
     done
     echo $prefix$first
-fi
+}
 
 add-map-value() {
     local map_name=$1 map_idx=$2 value=$3 handler=${4:-warn} dupl_handler=${5:-debug}
