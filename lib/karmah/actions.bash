@@ -97,6 +97,7 @@ run-pre-actions() {
 show-actions() { list-help-items action; }
 
 log-from-action() { log-at-level $1 "$module.$action" "$2"; }
+action-log() { log-at-level $1 "$module.$action" "$2"; }
 
 show-help-about-action() {
     local key=$1
