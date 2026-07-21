@@ -6,12 +6,19 @@ bao::init-module() {
     add-karmah-var "" bao_addr url        "address (url) to use for openbao"
     add-karmah-var g  grep     pat        "get/grep a pattern/field from the lookup info"
 
+    add-karmah-var ""  bao_vault       vault "the vault to use"
+    add-karmah-var ""  bao_path        path  "the path to copy or diff"
+    add-karmah-var ""  bao_other_vault vault "the other vault to copy from or compare with"
+    add-karmah-var ""  bao_other_path  path  "the other path to copy or diff from"
+
     declare-action bli bao-login  "login and store the token in a file"
     declare-action blo bao-logout "remove the file with the login token"
     declare-action blv bao-login-vars  "show the vars you can export"
-    declare-action by  bao-yaml    "get the values of path and show in yaml format"
-    declare-action bx  bao-export  "get the values of path and show in format to export env vars"
-    declare-action bd  bao-diff    "compare the values with another vault"
+
+    declare-action bpy  bao-path-yaml      "get the values of path and show in yaml format"
+    declare-action bpx  bao-path-export    "get the values of path and show in format to export env vars"
+    declare-action bpd  bao-path-diff      "compare the values of a path with another vault"
+    declare-action BPCF bao-path-copy-from "copy secret from a path in other vault"
 }
 
 #######################
@@ -75,18 +82,47 @@ run-bao-tokenless() {
 }
 
 
-action::bao-yaml() { run-bao "kv get" -field=data -format=yaml $bao_path; }
+action::bao-path-yaml() { run-bao "kv get" -field=data -format=yaml $bao_path; }
 
-action::bao-export() {
+action::bao-path-export() {
+    add-karmah-var ""  bao_other_path  path  "the other path to copy or diff from"
     log-info bao "export the following vars. This can be done with:"
-    log-info bao "    eval \$($climah_prog_path $target_path bao-get-export -q)"
-    run-bao "kv get" -field=data -format=yaml $bao_path | sed -e "s/: /='/" -e 's/^/export /' -e "s/$/'/"
+    log-info bao "    eval \$($climah_prog_path $target_path bao-path-export -q)"
+    run-bao "kv get" -field=data -format=yaml $bao_path | sed -e "s/'/'\\\\''/g" -e "s/: /='/" -e 's/^/export /' -e "s/$/'/"
 }
 
-action::bao-diff() {
-    local yaml1=$(run-bao "kv get" -field=data -format=yaml $bao_path)
-    local yaml2=$(bao_vault=$bao_other_vault run-bao "kv get" -field=data -format=yaml $bao_other_path)
-    log-verbose bao "diff $yaml1"
-    log-verbose bao "with $yaml2"
-    diff -r <(printf "%s\n" "$yaml1") <(printf "%s\n" "$yaml2")
+bao::get-json() { local path=$1; run-bao "kv get" -format=json -field=data $path; }
+bao::put-json() { local path=$1; run-bao "kv put" $path -; }
+
+action::bao-path-diff() {
+    use-karmah-var bao_vault
+    use-karmah-var bao_path
+    use-karmah-var bao_other_vault
+    use-karmah-var bao_other_path
+    local json_from=$(bao_vault=$bao_other_vault bao::get-json $bao_other_path)
+    local json_to=$(bao::get-json $bao_path)
+    # local yaml1=$(run-bao "kv get" -field=data -format=yaml $bao_path)
+    # local yaml2=$(bao_vault=$bao_other_vault run-bao "kv get" -field=data -format=yaml $bao_other_path)
+    if [[ "$json_from" == "$json_to" ]]; then
+        action-log info "identical $bao_other_vault/$bao_other_path and $bao_vault/$bao_path"
+    else
+        action-log info "different $bao_other_vault/$bao_other_path and $bao_vault/$bao_path"
+        diff <(echo "$json_from" | yq -P ) <(echo "$json_to" | yq -P ) || true
+        # diff -r <(printf "%s\n" "$yaml1") <(printf "%s\n" "$yaml2")
+    fi
+}
+
+action::bao-path-copy-from () {
+    use-karmah-var bao_vault
+    use-karmah-var bao_path
+    use-karmah-var bao_other_vault
+    use-karmah-var bao_other_path
+    local json_from=$(bao_vault=$bao_other_vault bao::get-json $bao_other_path)
+    local json_to=$(bao::get-json $bao_path)
+    if [[ "$json_from" == "$json_to" ]]; then
+        action-log info "skipping identical copy $bao_other_vault/$bao_other_path to $bao_vault/$bao_path"
+    else
+        action-log info "copying $bao_other_vault/$bao_other_path to $bao_vault/$bao_path"
+        echo $json_from | bao::put-json $bao_path
+    fi
 }

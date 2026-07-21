@@ -2,19 +2,15 @@
 bao-mirror::init-module() {
     add-module-summary "actions to copy and compare keys in two bao vaults"
 
-    declare-action bda bao-diff-all      "diff all keys between bao_from vault and bao_to vault"
-    declare-action BCF bao-copy-from "copy all keys from other vault"
-    # declare-action BCT bao-copy-to   "copy all keys to other vault"
+    declare-action bda  bao-diff-all      "diff all keys between bao_from vault and bao_to vault"
+    declare-action BCAF bao-copy-all-from "copy all keys from other vault"
+    # declare-action BCAT bao-copy-all-to   "copy all keys to other vault"
     # declare-action be  bao-export    "export all keys from vault to a file"
     # declare-action bi  bao-import    "import all keys from a file to vault"
 
-    add-karmah-var  ""  bao_path         "a path to copy or diff"
-    add-karmah-var  ""  bao_other_vault  "the other vault to copy from or comapre with"
     add-karmah-var  ""  bao_keys         "selection of keys to be used"
 }
 
-bao::get-json() { local path=$1; run-bao "kv get" -format=json -field=data $path; }
-bao::put-json() { local path=$1; run-bao "kv put" $path -; }
 bao::postfix-exists() {
     local path=$1 postfix=$2
     local list=$(bao-list-path $path | grep "^$postfix\$" || true)
@@ -28,7 +24,7 @@ bao-list-path() {
     run-bao "kv list" $path| tail -n +3 | sort
 }
 
-action::bao-copy-from () {
+action::bao-copy-all-from () {
     use-karmah-var bao_other_vault
     use-karmah-var bao_keys
     declare -A map="${bao_map_path:-}"
