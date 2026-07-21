@@ -30,6 +30,7 @@ karmah::init-module() {
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
     log-verbose karmah "default_karmah_type=${default_karmah_type:-base}"
     default_command=run-karmah-actions
+    add-value-option "" skip-if     func "skip target if a function returns true"
 }
 
 command::version() { echo karmah version: $karmah_version; }
@@ -37,7 +38,16 @@ command::run-karmah-actions() { run-func-for-targets run-karmah-actions; }
 run-karmah-actions() {
     declare -A action_already_run=()
     if [[ -e $target_path ]]; then
-        run-actions "init-karmah,$action_list,clear-karmah"
+        run-actions init-karmah
+        local func=$(get-option-value skip-if)
+        if [[ ! -z $func ]]; then
+            if $($func); then
+                log-info karmah "skipping $target_path because $func returned true"
+                run-actions clear-karmah
+                return
+            fi
+        fi
+        run-actions "$action_list,clear-karmah"
     else
         log-info karmah "skipping non existing path $target_path"
     fi
