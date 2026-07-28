@@ -1,11 +1,11 @@
 
 deploy::init-module() {
     add-module-summary "actions to work with deploy/plan"
-    declare-action D  deploy "render to deployed/manifests and optionally deploy to kubernetes"
-    declare-action P  plan   "show what deploy action would do"
+    declare-action  D deploy "render to deployed/manifests and optionally deploy to kubernetes"
+    add-func-option y yes "" "do not ask for confirmation (with ask, deploy, ...)"
     help_level=expert
-    declare-action     "" ask    "ask for confirmation (unless --yes is specified)"
-    add-func-option y yes "" "do not ask for confirmation (with ask, kapp-deploy, ...)"
+    declare-action p  plan   "show what deploy action would do"
+    declare-action "" ask    "ask for confirmation (unless --yes is specified)"
     yes_arg=""
 }
 

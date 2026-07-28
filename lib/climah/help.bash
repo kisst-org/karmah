@@ -106,6 +106,5 @@ $(list-help-items $actions)
 
 See additional help topics with
    ${climah_prog_name} help topic
-   ${climah_prog_name} help module
 EOF
 }

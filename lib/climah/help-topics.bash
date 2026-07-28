@@ -25,6 +25,16 @@ show-help-about-topic() {
     fi
 }
 
+
+show-help-about-topic-topic() {
+    help_show_level=all
+    echo "All general topics"
+    list-help-items all::topic
+    echo
+    echo "All modules"
+    list-help-items all::module
+}
+
 show-help-section() {
     local topic=$1 header=${2:-}
     if $(has-help-items $topic); then
