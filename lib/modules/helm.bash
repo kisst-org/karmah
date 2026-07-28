@@ -3,8 +3,8 @@ helm::init-module() {
     add-module-summary "actions to work with helm"
     declare-action hd helm-diff           "run diff for target vs helm deployed manifests"
     declare-action HU helm-upgrade        "run helm upgrade --install for target"
-    declare-action hpv helm-print-value  "print the value of a path in  helm values"
     help_level=expert
+    declare-action hpv helm-print-value  "print the value of a path in  helm values"
     declare-action "" helm-plugin-diff    "run helm diff plugin for target"
     declare-action HI helm-install        "deprecated: run helm upgrade --install for target"
     declare-action "" helm-uninstall      "run helm uninstall for target"

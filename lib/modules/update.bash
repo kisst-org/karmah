@@ -1,8 +1,8 @@
 
 update::init-module() {
     add-module-summary "actions to update source files for rendering e.g. (helm values)"
-    declare-action u update "update source files with expressions from --update"
-    add-karmah-var    V version '<tag>'  "specify version (image tag) to use for update"
+    declare-action u update  "update source files with expressions from --update or --version"
+    add-karmah-var V version '<tag>'  "specify version (image tag) to use for update"
     help_level=expert
     add-func-option u update '<expr>'  "apply a custom update"
 

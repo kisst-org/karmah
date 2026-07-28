@@ -1,5 +1,6 @@
 
 log-cmd::init-module() {
+    add-module-summary "control logging and execution of commands"
     add-func-option S show-script "" "show script of commands that would be executed"
     add-flag-option D dry-run        "do not execute the actual commands"
     add-flag-option C check          "check-mode only run commands that will not change anything"

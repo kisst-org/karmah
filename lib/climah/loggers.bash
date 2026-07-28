@@ -30,6 +30,7 @@ init-loggers() {
 }
 
 loggers::init-module() {
+    add-module-summary "control what logging is shown"
     add-func-option v  verbose  ""    "give more output"
     add-func-option q  quiet    ""    "show no output"
     help_level=expert
