@@ -13,6 +13,7 @@ helm::init-module() {
     declare-action "" helm-import         "annotate the resources as if they are managed by helm"
     declare-action hl  helm-ls             "list the helm releases in a namespace"
     declare-action hh  helm-history        "show the history of the helm release"
+    declare-action hgv helm-get-values     "show the values used in current release"
     declare-action hcv helm-chart-version-message "add the version of the (local) chart to the git-message"
     #add-value-option H force-helm-chart  chrt  "force to use a specific helm chart"
     add-flag-option "" force-pull "force pulling a helm chart if already exists" # TODO:
@@ -144,6 +145,7 @@ action::helm-get-manifests() {
 
 action::helm-ls()       { run-helm-simple ls; }
 action::helm-history()  { run-helm-simple history $helm_release; }
+action::helm-get-values() { run-helm-simple get values $helm_release $argparse_remaining_args; }
 action::helm-get-diff() { action::helm-diff; } # TODO: deprecated
 action::helm-diff() {
     run-pre-actions render
