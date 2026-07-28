@@ -5,7 +5,7 @@ init-module-system() {
     declare -gA module_disabled=()
     declare -g all_modules=""
     declare -gA module_help_level=()
-    #: ${default_module_help_level:=basic}
+    : ${default_module_help_level:=basic}
     local mod; for mod in ${disable_modules:-}; do
         module_disabled[$mod]=true
     done

@@ -15,7 +15,7 @@ climah-init() {
 climah-parse-args() {
     if [[ $# == 0 ]]; then
         printf "no arguments passed, pass at least one path or command\n\n"
-        show-short-help
+        show-basic-help
         exit 1
     fi
     logger_config[level]=info # reset root loglevels, from pre-init-debug

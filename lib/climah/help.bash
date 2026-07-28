@@ -34,7 +34,7 @@ show-help() {
         if [[ ${help_show_level:-} == all ]]; then
             ${help_full_function:-${climah_prog}::show-full-help}
         else
-            show-short-help
+            show-basic-help
         fi
     fi
     if [[ ! -z $unknown_topics ]]; then
@@ -83,23 +83,29 @@ show-type-help() {
     # TODO: uit help text
 }
 
-show-basic-help() {
-  echo Options:
-  options-show-help
-  echo
-  echo see additional help topics with
-  echo "   ${climah_prog_name} help topic"
-}
 
-show-short-help() {
-  echo Options:
-  options-show-help
-  echo
-  echo Commands/actions:
-  commands-show-help
-  list-help-items command
-  list-help-items action
-  echo
-  echo see additional help topics with
-  echo "   ${climah_prog_name} help topic"
+show-basic-help() {
+    local options commands actions
+    local mod; for mod in $basic_help_modules; do
+        options+=" $mod::option"
+        commands+=" $mod::command"
+        actions+=" $mod::action"
+    done
+cat <<EOF
+  ${climah_prog_name} [options...] [actions...] [targets...]
+Run one or more actions for each target
+
+Options:
+$(list-help-items $options)
+
+Commands:
+$(list-help-items $commands)
+
+Actions: (run for each target)
+$(list-help-items $actions)
+
+See additional help topics with
+   ${climah_prog_name} help topic
+   ${climah_prog_name} help module
+EOF
 }

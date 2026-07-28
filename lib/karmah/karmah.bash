@@ -21,10 +21,10 @@ karmah::declare-vars() {
 
 karmah::init-module() {
     add-command "" version ""  "show version of karmah"
-    add-command run run-karmah-actions "" "run one or more actions for all targets"
+    help_level=expert
+    add-command run run-karmah-actions "" "run one or more actions for all targets (default command)"
     climah_prog=karmah
     default_action=render
-    help_level=expert
     declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
     declare-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
