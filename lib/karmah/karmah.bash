@@ -30,6 +30,7 @@ karmah::init-module() {
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
     log-verbose karmah "default_karmah_type=${default_karmah_type:-base}"
     default_command=run-karmah-actions
+    add-value-option "" only-if     func "run target only if a function returns true"
     add-value-option "" skip-if     func "skip target if a function returns true"
 }
 
@@ -43,6 +44,14 @@ run-karmah-actions() {
         if [[ ! -z $func ]]; then
             if $($func); then
                 log-info karmah "skipping $target_path because $func returned true"
+                run-actions clear-karmah
+                return
+            fi
+        fi
+        local onlyfunc=$(get-option-value only-if)
+        if [[ ! -z $onlyfunc ]]; then
+            if ! $($onlyfunc); then
+                log-info karmah "skipping $target_path because $onlyfunc returned false"
                 run-actions clear-karmah
                 return
             fi
