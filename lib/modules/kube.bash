@@ -12,6 +12,7 @@ kube::init-module() {
     declare-action KR   kube-restart      "rollout restart resource(s)"
     declare-action kenv kube-env          "show the environment vars of a pod (run env in a shell)"
     help_level=expert
+    declare-action kww  kube-watch-window "watch target resources every 2 seconds in a separate window"
     declare-action kg   kube-get          "get a resource"
     declare-action kbak kube-backup       "backup specified resources"
     declare-action kdsc kube-describe     "describe a resource"
@@ -110,6 +111,9 @@ action::kube-events() {
 
 action::kube-watch() {
 run-verbose-cmd watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) "${@}"
+}
+action::kube-watch-window() {
+   run-verbose-cmd kitten @ launch --type=window --keep-focus=no --tab-title kube-watch --hold=no --copy-env --cwd current watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) "${@}"
 }
 action::kube-exec() {
     run-kubectl exec $(kube-calc-resource kube-exec) "${@:--- sh}"
