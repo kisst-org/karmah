@@ -78,11 +78,7 @@ action::bao-secret-id-update() {
 }
 
 action::bao-secret-id-create() {
-    if $(log-shows-verbose); then
-        run-verbose-cmd bao write -force auth/approle/role/$(bao-role-name)/secret-id
-    else
-        echo $(bao-secret-create)
-    fi
+    run-bao write -force auth/approle/role/$(bao-role-name)/secret-id
 }
 
 #######################
