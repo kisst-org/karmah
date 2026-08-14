@@ -88,7 +88,7 @@ action::bao-secret-id-create() {
 #######################
 # roles
 
-bao-role-name()     { echo -n external-secret-$postfix; }
+bao-role-name()     { echo -n $bao_approle_role_name; }
 bao-role-id()       { run-bao read -format=yaml auth/approle/role/$(bao-role-name)/role-id | yq .data.role_id; }
 bao-role-policies() { run-bao read -format=yaml auth/approle/role/$(bao-role-name) | yq '.data.token_policies[]'; }
 
@@ -99,18 +99,17 @@ action::bao-role-info() {
     run-bao read auth/approle/role/$(bao-role-name)
 }
 action::bao-role-create() {
-    run-bao write auth/approle/role/external-secret-$postfix  token_policies="$bao_token_policies"
+    run-bao write auth/approle/role/$(bao-role-name) token_policies="$bao_token_policies"
 }
 
 #######################
 # policies
 
 action::bao-policy-create() {
-    bao policy write read-kv-$postfix - <<EOF
+    bao policy write $bao_policy_name - <<EOF
 {
     "path": {
-        "kv-$postfix/*": {"capabilities": ["read"]}
-        "auth/*": {"capabilities": ["read"]}
+        "$bao_policy_path/*": {"capabilities": ["read"]}
     }
 }
 EOF
