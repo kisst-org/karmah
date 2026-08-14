@@ -15,8 +15,6 @@ bao-approle::init-module() {
 
     declare-action bpi  bao-policy-info  "lookup the details of a bao policy"
     declare-action bpc  bao-policy-create  "create a bao policy"
-
-
 }
 
 #######################

@@ -11,6 +11,8 @@ bao::init-module() {
     add-karmah-var ""  bao_other_vault vault "the other vault to copy from or compare with"
     add-karmah-var ""  bao_other_path  path  "the other path to copy or diff from"
 
+    action_uses_unknown_args[bao]=true
+    declare-action b   bao        "run any bao cmd"
     declare-action bli bao-login  "login and store the token in a file"
     declare-action blo bao-logout "remove the file with the login token"
     declare-action blv bao-login-vars  "show the vars you can export"
@@ -82,6 +84,7 @@ run-bao-tokenless() {
 }
 
 
+action::bao() { local cmd="$1"; shift; run-bao "${cmd//-/ }" "$@"; }
 action::bao-path-yaml() { run-bao "kv get" -field=data -format=yaml $bao_path; }
 
 action::bao-path-export() {
