@@ -22,6 +22,7 @@ kube::init-module() {
     declare-action kup  kube-uptime       "run the uptime commando on a pod"
     declare-action kpip kube-pod-ip       "show pods with IP"
     declare-action kpn  kube-pod-node     "show pods with node"
+    action_uses_unknown_args[kubectl]=true
     declare-action k   kubectl            "generic kubectl in the right cluster and namespace of all targets"
     #declare-action ks  kube-status    "show status of relevant resources"
     declare-action ke  kube-exec          "execute a command on a pod of a resource"
@@ -58,7 +59,7 @@ run-kubectl() {
 }
 
 action::kubectl() {
-    log-info kube "kubectl $manifest_dir"
+    log-info kube "kubectl $target_name"
     # TODO: would be nice if we could use calced resource somewhere
     run-kubectl "$@"
 }
