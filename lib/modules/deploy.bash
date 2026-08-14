@@ -27,10 +27,8 @@ action::ask() {
 
 action::deploy() {
     local deploy_actions=$(add-commas ${deploy_actions:-render,git-diff,ask,git-commit})
-    log-verbose deploy "deploy ${target_name} with actions: ${deploy_actions}"
+    local to_dir="${deploy_dir:-deployed/manifests}/${target_name}"
     git-add-message "deploy $target_name"
-    # TODO: manifest_dir is different for actions before this action
-    # should be first (only) action
     log-info deploy "deploying $target_name with actions ${deploy_actions// /,}"
     run-actions $deploy_actions # This is depends on karmah_type
 }

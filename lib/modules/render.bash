@@ -21,11 +21,11 @@ option::with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
 action::render() {
     run-pre-actions update
     local tmp=$(get-option-value tmp false)
-    if $tmp; then
-        manifest_dir="${to_dir:-tmp/manifests}/${target_name}"
-    else
-        manifest_dir="${to_dir:-deployed/manifests}/${target_name}"
-    fi
+    # if $tmp; then
+        # manifest_dir="${to_dir:-tmp/manifests}/${target_name}"
+    # else
+    manifest_dir="${to_dir:-tmp/manifests}/${target_name}"
+    # fi
     log-info render "render with ${renderer} to ${manifest_dir}"
     run-verbose-cmd rm -rf ${manifest_dir}
     run-verbose-cmd mkdir -p ${manifest_dir}

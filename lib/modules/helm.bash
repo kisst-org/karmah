@@ -109,7 +109,8 @@ action::helm-plugin-diff() {
 }
 
 action::helm-upgrade() {
-    run-pre-actions helm-diff,ask
+    # always is needed, if previously rendered, diffed to other manifest_dir
+    run-pre-actions update,always:render,always:helm-diff,always:ask
     local bg=$(get-option-value bg false)
     log-info helm "helm-upgrade release $helm_release"
     : ${helm_atomic_wait:=--wait --rollback-on-failure --timeout ${helm_wait_timeout:-4m}}
