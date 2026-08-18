@@ -112,7 +112,8 @@ action::kube-events() {
 }
 
 action::kube-watch() {
-run-verbose-cmd watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) "${@}"
+    local res="$(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb)"
+    run-verbose-cmd watch kubectl $(kubectl-options) get $res "${@}"
 }
 action::kube-watch-window() {
    run-verbose-cmd kitten @ launch --type=window --keep-focus=yes --tab-title kube-watch --hold=no --copy-env --cwd current watch kubectl $(kubectl-options) get $(kube-calc-resource kube-watch pods,deploy,sts,cm,svc,ingress,pdb) "${@}"
@@ -184,34 +185,21 @@ kube-calc-resource() {
     use-karmah-var resource default
     local result=""
     local res; for res in ${resource//,/ }; do
-        find-karmah-method-output calc-resource-${kube_action} $res
+        result+=" $(kall-method calc-resource-${kube_action} $res)"
     done
     result=$(echo $result) # trim spaces
     echo ${result// /,}
 }
 
-find-karmah-method-output() {
-    local method=$1; shift
-    local cls; for cls in $(karmah-classes); do
-        if $(function-exists $cls::$method); then
-            local val="$($cls::$method "$@")"
-            if [[ ! -z $val ]]; then
-                echo "$val"
-                return
-            fi
-        fi
-    done
-}
-
 get-latest-pod-name() { run-kubectl get pods --sort-by .status.startTime -o name "$@"  | tail -1; }
 
-base::calc-resource-kube-log-follow() { find-karmah-method-output calc-resource-kube-log $1; }
-base::calc-resource-kube-exec-it()    { find-karmah-method-output calc-resource-kube-exec $1; }
-base::calc-resource-kube-watch()      { find-karmah-method-output calc-resource-kube-get $1; }
-base::calc-resource-kube-describe()   { find-karmah-method-output calc-resource-kube $1; }
-base::calc-resource-kube-events()     { find-karmah-method-output calc-resource-kube $1; }
-base::calc-resource-kube-log()        { find-karmah-method-output calc-resource-kube $1; }
-base::calc-resource-kube-exec()       { find-karmah-method-output calc-resource-kube $1; }
-base::calc-resource-kube-get()        { find-karmah-method-output calc-resource-kube $1; }
-base::calc-resource-kube-restart()    { find-karmah-method-output calc-resource-kube $1; }
+base::calc-resource-kube-log-follow() { kall-method calc-resource-kube-log $1; }
+base::calc-resource-kube-exec-it()    { kall-method calc-resource-kube-exec $1; }
+base::calc-resource-kube-watch()      { kall-method calc-resource-kube-get $1; }
+base::calc-resource-kube-describe()   { kall-method calc-resource-kube $1; }
+base::calc-resource-kube-events()     { kall-method calc-resource-kube $1; }
+base::calc-resource-kube-log()        { kall-method calc-resource-kube $1; }
+base::calc-resource-kube-exec()       { kall-method calc-resource-kube $1; }
+base::calc-resource-kube-get()        { kall-method calc-resource-kube $1; }
+base::calc-resource-kube-restart()    { kall-method calc-resource-kube $1; }
 base::calc-resource-kube() { echo pod,deployment,ingress; }

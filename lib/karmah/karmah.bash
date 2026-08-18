@@ -16,7 +16,6 @@ karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name disable_target"
     declare -g default_karmah_type
     declare -gA karmah_var_names=()
-    declare -g karmah_parent_classes=""
 }
 
 karmah::init-module() {
@@ -40,6 +39,7 @@ run-karmah-actions() {
     declare -A action_already_run=()
     if [[ -e $target_path ]]; then
         run-actions init-karmah
+        local current_klass=${karmah_klass:-$karmah_type}
         local func=$(get-option-value skip-if)
         if [[ ! -z $func ]]; then
             if $($func); then
@@ -64,25 +64,15 @@ run-karmah-actions() {
 
 init-parent-karmah() {
     local typ=$1
-    karmah_parent_classes+=" $typ"
     log-verbose karmah "calling ${typ}::init-karmah"
-    $typ::init-karmah
+    if $(function-exists $typ::init-klass); then
+        current_klass=$typ $typ::init-klass
+    else
+        $typ::init-karmah # for backward compatibility
+    fi
 }
 
 base::init-karmah() { log-verbose karmah "using base karmah_type initializer"; }
-
-#karmah-parents() { echo ${karmah_parent_classes:-} base; }
-karmah-classes() { echo $karmah_type ${karmah_parent_classes:-} base; }
-#call-karmah-method() {
-#    local method=${1:-}; shift
-#    local typ; for typ in $(karmah-classes); do
-#        if $(function-exists $typ::$method); then
-#            $typ::$method "$@"
-#            return
-#        fi
-#    done
-#}
-
 
 action::init-karmah() {
     if [[ -f $target_path ]]; then
