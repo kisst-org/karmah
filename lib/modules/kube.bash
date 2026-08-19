@@ -1,8 +1,9 @@
 kube::init-module() {
     add-module-summary "helper actions to work with kubernetes"
-    add-karmah-var "" kube_config  "file" "The kube config file to be used (default means none)"
-    add-karmah-var "" kube_context "ctx"  "The kube context"
-    add-karmah-var "" kube_namespace "ns" "The kube namespace"
+    add-karmah-var "" kube_config    file "The kube config file to be used (default means none)"
+    add-karmah-var "" kube_context   ctx  "The kube context"
+    add-karmah-var "" kube_namespace ns   "The kube namespace"
+    add-karmah-var r  resource       res  "specify a resource"
 
     # local action_params="..."
     declare-action kw   kube-watch        "watch target resources every 2 seconds"
@@ -33,15 +34,11 @@ kube::init-module() {
     #local_vars+=" kube_config kube_context kube_namespace"
     add-flag-option A all-namespaces  "search all namespaces"
     add-karmah-var R replicas nr  "specify number of replicas"
-    add-karmah-var r resource res "specify a resource"
     add-karmah-vars-for-actions replicas kube-scale
-    add-karmah-vars-for-actions resource kube-watch,kube-watch-window # TODO: almost all actions????
+    # add-karmah-vars-for-actions resource kube-watch,kube-watch-window,kube-es-sync # TODO: almost all actions????
 }
 
 kubectl-options() {
-    use-karmah-var kube_context
-    use-karmah-var kube_config
-    use-karmah-var kube_namespace
     local cfg=${kube_config:-default}
     local opt=""
     if [[ $cfg != default ]]; then
@@ -86,7 +83,6 @@ action::kube-get-manifests() {
 }
 
 action::kube-backup() {
-    use-karmah-var resource
     local manifest_dir="$(get-option-value to "tmp/backup-$(date -Idate)/$kube_context")" # TODO: better option than context
     local res; for res in ${resource//,/ }; do
         log-info kube.backup "backing up $res to $manifest_dir"
@@ -164,7 +160,6 @@ action::kube-scale() {
 }
 
 kube-calc-replicas() {
-    use-karmah-var replicas
     if [[  $replicas == default ]]; then
         ${karmah_type}::kube-default-replicas
     else
@@ -183,7 +178,6 @@ kube-calc-resource-names() {
 
 kube-calc-resource() {
     local kube_action=$1 defaults="${2:-}"
-    use-karmah-var resource default
     local result=""
     local res; for res in ${resource//,/ }; do
         result+=" $(kall-method calc-resource-${kube_action} $res)"
