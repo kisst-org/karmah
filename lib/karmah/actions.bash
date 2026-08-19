@@ -22,7 +22,7 @@ add-action-karmah-vars() { local act=$1; shift; add-karmah-vars-for-actions "$*"
 set-action-karmah-vars() { local act=$1; shift; set-karmah-vars-for-actions "$*" $act; }
 add-karmah-vars-for-actions() {
     local vars=$1 actions=$2
-    if [[ $vars == "all-vars-known-in-module" ]]; then
+    if [[ $vars == "declared-module-vars" ]]; then
         vars=""
         local v; for v in ${!karmah_var_module[@]}; do
             if [[ ${karmah_var_module[$v]} == $module ]]; then
@@ -42,13 +42,18 @@ set-karmah-vars-for-actions() {
 }
 
 declare-action() {
-    local short=$1 name=$2 summary="$3" vars=${4:-${use_karmah_vars:-all-vars-known-in-module}}
+    local short=$1 name=$2 summary="$3" vars="${4:-}"
     log-trace actions "adding action: ${@}"
     if ! $(function-exists action::$name) ; then
         log-error action "adding action $name without function action::$name in module $module"
         exit 1
     fi
-    add-karmah-vars-for-actions "${vars}" $name
+    if [[ $vars == set-vars:* ]]; then
+        set-karmah-vars-for-actions "${vars#set-vars:}" $name
+    else
+        add-karmah-vars-for-actions "${use_karmah_vars:-declared-module-vars}" $name
+        add-karmah-vars-for-actions "${vars#add-vars:}" $name
+    fi
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     action_module[$name]=$module
     if [[ ! -z ${action_params:-} ]]; then
