@@ -42,13 +42,13 @@ set-karmah-vars-for-actions() {
 }
 
 declare-action() {
-    local short=$1 name=$2 summary="$3"
+    local short=$1 name=$2 summary="$3" vars=${4:-${use_karmah_vars:-all-vars-known-in-module}}
     log-trace actions "adding action: ${@}"
     if ! $(function-exists action::$name) ; then
         log-error action "adding action $name without function action::$name in module $module"
         exit 1
     fi
-    add-karmah-vars-for-actions ${use_karmah_vars:-all-vars-known-in-module} $name
+    add-karmah-vars-for-actions "${vars}" $name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     action_module[$name]=$module
     if [[ ! -z ${action_params:-} ]]; then
