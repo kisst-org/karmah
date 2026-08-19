@@ -48,7 +48,9 @@ action::bao-login() {
 action::bao-logout() { rm -f $bao_token_file; } # TODO: revoke token
 
 action::bao-login-vars() {
-    use-karmah-var bao_addr
+    local opt=$($bao_calc_vault_options_func $bao_vault)
+    local bao_addr=$($bao_vault_klass::bao-vault-addr $bao_vault)
+    local bao_namespace=$($bao_vault_klass::bao-vault-ns $bao_vault)
     log-info bao "export the following vars. This can be done with:"
     log-info bao "    eval \$($climah_prog_path $target_path bao-login-vars -q)"
     echo export VAULT_ADDR=${bao_addr}
@@ -81,7 +83,8 @@ calc-bao-token() {
 run-bao() { VAULT_TOKEN=$(${calc_bao_token_func:-calc-bao-token} $bao_vault) run-bao-tokenless "$@"; }
 run-bao-tokenless() {
     local cmd=$1; shift  # the cmd can be multiple words, like "kv list" that need to come before the options
-    run-verbose-cmd bao $cmd $($bao_calc_vault_options_func $bao_vault) "$@"
+    local opt=$(kall-klass-method $bao_vault_klass bao-vault-options $bao_vault)
+    run-verbose-cmd bao $cmd $opt "$@"
 }
 
 
@@ -99,10 +102,6 @@ bao::get-json() { local path=$1; run-bao "kv get" -format=json -field=data $path
 bao::put-json() { local path=$1; run-bao "kv put" $path -; }
 
 action::bao-path-diff() {
-    use-karmah-var bao_vault
-    use-karmah-var bao_path
-    use-karmah-var bao_other_vault
-    use-karmah-var bao_other_path
     local json_from=$(bao_vault=$bao_other_vault bao::get-json $bao_other_path)
     local json_to=$(bao::get-json $bao_path)
     # local yaml1=$(run-bao "kv get" -field=data -format=yaml $bao_path)
@@ -117,10 +116,6 @@ action::bao-path-diff() {
 }
 
 action::bao-path-copy-from () {
-    use-karmah-var bao_vault
-    use-karmah-var bao_path
-    use-karmah-var bao_other_vault
-    use-karmah-var bao_other_path
     local json_from=$(bao_vault=$bao_other_vault bao::get-json $bao_other_path)
     local json_to=$(bao::get-json $bao_path)
     if [[ "$json_from" == "$json_to" ]]; then
@@ -128,5 +123,15 @@ action::bao-path-copy-from () {
     else
         action-log info "copying $bao_other_vault/$bao_other_path to $bao_vault/$bao_path"
         echo $json_from | bao::put-json $bao_path
+    fi
+}
+base::bao-vault-options() {
+    local vaultname=$1
+    local ns="$(kall-klass-method $bao_vault_klass bao-vault-ns $vaultname)"
+    local addr="$(kall-klass-method $bao_vault_klass bao-vault-addr $vaultname)"
+    if [[ -z $ns ]]; then
+        echo "-address $addr"
+    else
+        echo "-address $addr -ns $ns"
     fi
 }
