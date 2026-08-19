@@ -34,7 +34,6 @@ parse-if-karmah-var() {
         argparse_parse_count=2
         value=$2
     fi
-    log-debug karvar "setting karmah value $varname to $value"
     karmah_var_option_value[$varname]="$value"
 }
 
@@ -44,22 +43,21 @@ use-karmah-var() {
         log-error karmah "code refers to unknown karmah-var $varname"
         exit 1
     fi
-    declare -g $varname=$(get-karmah-var $varname "${default}")
-}
-get-karmah-var() {
-    local varname=$1 default="${2:-}"  # error if not found and no default???
     local default_varname=default_$varname
     if [[ ! -z ${karmah_var_option_value[$varname]:-} ]]; then
-        echo "${karmah_var_option_value[$varname]}"
+        value="${karmah_var_option_value[$varname]}"
     elif [[ ! -z $(get-karmah-var-from-env $varname) ]]; then
-        echo "$(get-karmah-var-from-env $varname)"
+        value="$(get-karmah-var-from-env $varname)"
     elif [[ ! -z ${!varname:-} ]]; then
-        echo "${!varname}"
+        value="${!varname}"
     elif [[ ! -z ${!default_varname:-} ]]; then
-        echo "${!default_varname}"
+        value="${!default_varname}"
     else
-        echo "$default"
+        value="$default"
     fi
+    log-debug karvar "setting karmah value $varname to $value"
+    read $varname <<<"$value"
+    # could also be declare -g $varname="$value"   or   eval $varname="$value"
 }
 
 get-karmah-var-from-env() {

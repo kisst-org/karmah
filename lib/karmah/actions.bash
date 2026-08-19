@@ -32,6 +32,12 @@ add-karmah-vars-for-actions() {
         action_karmah_vars[$a]+=" ${vars//, /}"
     done
 }
+set-karmah-vars-for-actions() {
+    local vars=$1 actions=$2
+    local a; for a in ${actions//,/ }; do
+        action_karmah_vars[$a]="${vars//, /}"
+    done
+}
 
 declare-action() {
     local short=$1 name=$2 summary="$3"
@@ -89,6 +95,9 @@ run-action() {
     else
         log-verbose action "running $action for ${target_name:-$target_path}"
     fi
+    local v; for v in ${action_karmah_vars[$action]}; do
+        use-karmah-var $v
+    done
     action::$action $params
 }
 

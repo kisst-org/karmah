@@ -37,6 +37,11 @@ command::run-karmah-actions() { run-func-for-targets run-karmah-actions; }
 run-karmah-actions() {
     declare -A action_already_run=()
     if [[ -e $target_path ]]; then
+        local a; for a in $action_list; do
+            local v; for v in ${action_karmah_vars[$a]}; do
+                local $v
+            done
+        done
         run-actions init-karmah
         local current_klass=${karmah_klass:-$karmah_type}
         local func=$(get-option-value skip-if)
@@ -117,7 +122,6 @@ load-karmah-file() {
     source ${karmah_file}
     common-karmah
     use-karmah-var karmah_type
-    log-verbose karmah "using karmah-type $karmah_type"
 }
 
 common-karmah() {
