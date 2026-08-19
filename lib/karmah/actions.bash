@@ -18,6 +18,8 @@ actions::init-module() {
 
 action::debug-print-action-var() { command::debug-print-var "$@"; }
 
+add-action-karmah-vars() { local act=$1; shift; add-karmah-vars-for-actions "$*" $act; }
+set-action-karmah-vars() { local act=$1; shift; set-karmah-vars-for-actions "$*" $act; }
 add-karmah-vars-for-actions() {
     local vars=$1 actions=$2
     if [[ $vars == "all-vars-known-in-module" ]]; then
