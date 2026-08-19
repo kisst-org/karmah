@@ -20,6 +20,7 @@ kall-klass-method() {
     log-error klass "could not find method $method in klass $klass to call with $*"
     exit 1
   fi
+  log-debug klass "kalling klass method $func $*"
   $func "$@"
 }
 # call-parent-klass-method
@@ -30,11 +31,11 @@ find-klass-method() {
   local kl=$klass
   while [[ ! -z $kl ]]; do
     if $(function-exists $kl::$method); then
-      log-debug klass "calling klass method $kl::$method"
+      log-trace klass "found klass method $kl::$method"
       echo $kl::$method
       return
     fi
-    log-debug klass "not found $kl::$method"
+    log-trace klass "no klass method $kl::$method"
     if [[ $kl == base ]]; then
       kl=""
     else
