@@ -24,7 +24,7 @@ add-karmah-vars-for-actions() {
     local vars=$1 actions=$2
     if [[ $vars == "declared-module-vars" ]]; then
         vars=""
-        local v; for v in ${!karmah_var_module[@]}; do
+        local v; for v in ${karmah_var_list}; do
             if [[ ${karmah_var_module[$v]} == $module ]]; then
                 vars+=" $v"
             fi
