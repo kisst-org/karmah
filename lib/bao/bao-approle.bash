@@ -15,10 +15,10 @@ bao-approle::init-module() {
     declare-action bri  bao-role-info      "lookup the info of an approle"
     declare-action brc  bao-role-create    "create a new approle"
 
-    declare-action bpi  bao-policy-info    "lookup the details of a bao policy" \
-       bao_vault,bao_policy_name
+    local use_karmah_vars=bao_vault,bao_policy_name
+    declare-action bpi  bao-policy-info    "lookup the details of a bao policy"
     declare-action bpc  bao-policy-create  "create a bao policy" \
-       bao_vault,bao_policy_name,bao_policy_path
+       bao_policy_path
 
 
     add-karmah-var a  accessor  uid "bao secret-id/token accessor"
