@@ -29,7 +29,7 @@ add-karmah-vars-for-actions() {
         done
     fi
     local a; for a in ${actions//,/ }; do
-        action_karmah_vars[$a]+=" ${vars//, /}"
+        action_karmah_vars[$a]+=" ${vars//,/ }"
     done
 }
 set-karmah-vars-for-actions() {
