@@ -125,9 +125,11 @@ show-help-about-action() {
     # type action::$name| grep run-actions
 
     printf "karmah-vars for $name:\n"
+    local keys=""
     local v; for v in ${action_karmah_vars[$name]}; do
-        printf "  $v\n"
+        keys+=" ${karmah_var_module[$v]}::karmah-var:--${v//_/-}"
     done
+    show-help-items $keys
 
     if $(help-is-verbose); then
         printf "Code:\n"

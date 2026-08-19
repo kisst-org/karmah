@@ -97,6 +97,7 @@ list-help-items() {
 
 
 show-help-items() {
+    # declare -p help_item_params | sed  's/" /"\n/g'
     local key keys="$@"
     local item len=1 slen=0
     for key in ${keys}; do
@@ -112,8 +113,6 @@ show-help-items() {
         local name=$(help-item-name $key)
         local lname=$name
         lname+="$(_param-name $key)"
-        if $(help-is-visible $key); then
-            printf "  %-${slen}s %-${len}s   %s\n" "${help_item_short[$key]:-}" "$lname" "${help_item_summary[$key]}"
-        fi
+        printf "  %-${slen}s %-${len}s   %s\n" "${help_item_short[$key]:-}" "$lname" "${help_item_summary[$key]}"
     done
 }
