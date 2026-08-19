@@ -83,6 +83,7 @@ argparse-redefine-short() {
 }
 argparse-add-short() {
     local short=$1 long=$2
+    if [[ -z $short ]]; then return 0; fi
     if [[ $long == ${argparse_short_map[$short]:-} ]]; then
         log-verbose argparse "WARN redefining short $short ==> $long"
     elif [[ ! -z ${argparse_short_map[$short]:-} ]]; then

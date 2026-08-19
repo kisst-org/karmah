@@ -1,6 +1,6 @@
 # karmah: do stuff based on *.karmah file
 karmah-main() {
-    declare -g used_karmah_vars=""
+    declare -g karmah_var_list=""
     # too many actions and options so only show some basic stuff
     default_module_help_level=expert
     basic_help_modules="loggers actions options commands"
@@ -15,7 +15,6 @@ karmah-main() {
 karmah::declare-vars() {
     declare -g local_vars="karmah_type target_name disable_target"
     declare -g default_karmah_type
-    declare -gA karmah_var_names=()
 }
 
 karmah::init-module() {

@@ -48,6 +48,7 @@ show-help-about-module() {
     show-help-section $module::command
     show-help-section $module::action
     show-help-section $module::option
+    show-help-section $module::karmah-var
 }
 
 
