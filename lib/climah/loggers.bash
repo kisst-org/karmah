@@ -34,8 +34,10 @@ loggers::init-module() {
     add-func-option v  verbose  ""    "give more output"
     add-func-option q  quiet    ""    "show no output"
     help_level=expert
-    add-help-item "" --log option:--log "<cfg> <value>"  "set a log config e.g. --log level:cmd verbose"
-    add-help-item "" ""   "option:--log-<cfg>" "<value>" "set a log config e.g. --log-level:cmd verbose"
+    add-help-item -l --log-level option:--log-level "<logger> <lvl>"  "set a logger level config e.g. --log-level cmd verbose"
+    add-help-item -d --debug-log option:--debug-log "<logger>"        "set a logger level to debug"
+    add-help-item "" --log option:--log "<cfg> <lvl>"  "set a log config e.g. --log level:cmd verbose"
+    add-help-item "" ""   "option:--log-<cfg>" "<lvl>" "set a log config e.g. --log-level:cmd verbose"
     append-argparse-func parse-if-multi-verbose-option
     append-argparse-func parse-if-log
 }
@@ -64,6 +66,12 @@ parse-if-log() {
     if [[ $arg == --log ]]; then
         local cfg=$2 value=$3
         argparse_parse_count=3
+    elif [[ $arg == --log-level ]] || [[ $arg == -l ]]; then
+        local cfg=level:$2 value=$3
+        argparse_parse_count=3
+    elif [[ $arg == --debug-log ]] || [[ $arg == -d ]]; then
+        local cfg=level:$2 value=debug
+        argparse_parse_count=2
     elif [[ $arg == --log-* ]]; then
         local cfg=${arg#--log-} value=$2
         argparse_parse_count=2
