@@ -2,25 +2,26 @@ bao::init-module() {
     add-module-summary "actions to work with bao"
 
     # see https://openbao.org/docs/concepts/duration-format/
-    add-karmah-var "" ttl      duration   "set the ttl voor a token, e.g. 30m of 60d"
-    add-karmah-var "" bao_addr url        "address (url) to use for openbao"
-    add-karmah-var g  grep     pat        "get/grep a pattern/field from the lookup info"
 
     add-karmah-var ""  bao_vault       vault "the vault to use"
-    add-karmah-var ""  bao_path        path  "the path to copy or diff"
-    add-karmah-var ""  bao_other_vault vault "the other vault to copy from or compare with"
-    add-karmah-var ""  bao_other_path  path  "the other path to copy or diff from"
-
     action_uses_unknown_args[bao]=true
     declare-action b   bao        "run any bao cmd"
     declare-action bli bao-login  "login and store the token in a file"
     declare-action blo bao-logout "remove the file with the login token"
     declare-action blv bao-login-vars  "show the vars you can export"
 
+    add-karmah-var ""  bao_path        path  "the path to copy or diff"
     declare-action bpy  bao-path-yaml      "get the values of path and show in yaml format"
     declare-action bpx  bao-path-export    "get the values of path and show in format to export env vars"
+
+    add-karmah-var ""  bao_other_vault vault "the other vault to copy from or compare with"
+    add-karmah-var ""  bao_other_path  path  "the other path to copy or diff from"
     declare-action bpd  bao-path-diff      "compare the values of a path with another vault"
     declare-action BPCF bao-path-copy-from "copy secret from a path in other vault"
+
+    add-karmah-var "" ttl      duration   "set the ttl voor a token, e.g. 30m of 60d"
+    add-karmah-var "" bao_addr url        "address (url) to use for openbao"
+    add-karmah-var g  grep     pat        "get/grep a pattern/field from the lookup info"
 }
 
 #######################
