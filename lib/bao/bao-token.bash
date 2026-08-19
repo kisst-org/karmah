@@ -2,19 +2,23 @@ bao-token::init-module() {
     add-module-summary "actions to work with bao tokens"
 
     local action_params="[tok/acc]"
+    local use_karmah_vars=bao_vault
     declare-action btc  bao-token-create     "create a new token"
     declare-action bti  bao-token-info       "lookup the details of a token"
     declare-action btr  bao-token-revoke     "revoke an existing token"
     action_params=""
     declare-action btl  bao-token-list       "list all token accessor"
     declare-action btli bao-token-list-info  "list details of all token accessor"
+
+    add-action-karmah-vars bao-token-info        grep,secret_value
+    add-action-karmah-vars bao-token-list-info   grep
+    add-action-karmah-vars bao-token-create      ttl
+    add-action-karmah-vars bao-token-revokee     accessor
 }
 
 action::bao-token-info() {
-    use-karmah-var grep
     local token="${*:-}"
     if [[ -z ${token} ]]; then
-        use-karmah-var secret_value
         token=$secret_value
     fi
     local error
@@ -37,18 +41,13 @@ action::bao-token-info() {
 }
 
 action::bao-token-create() {
-    use-karmah-var ttl 30m
     #bao token create -ttl=$ttl -format=yaml
-    secret_value=$(run-bao "token create" -orphan -ttl=$ttl -format=yaml | yq .auth.client_token)
+    secret_value=$(run-bao "token create" -orphan -ttl=${ttl:-30m} -format=yaml | yq .auth.client_token)
 }
-action::bao-token-revoke() {
-    use-karmah-var accessor
-    run-bao "token revoke" -accessor $accessor
-}
+action::bao-token-revoke() { run-bao "token revoke" -accessor $accessor; }
 action::bao-token-list() { run-bao list auth/token/accessors | tail -n +3; }
 action::bao-token-list-info() {
     local accessors=$(action::bao-token-list)
-    use-karmah-var grep
     local acc; for acc in $accessors; do
         echo ======= $acc
         #run-bao "token lookup" -accessor $acc 2>/dev/null || exitcode=$?

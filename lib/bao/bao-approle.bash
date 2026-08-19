@@ -1,20 +1,30 @@
 bao-approle::init-module() {
     add-module-summary "actions to work with bao approles and secret-id's"
-    add-karmah-var a  accessor  uid "bao secret-id/token accessor"
-    add-karmah-var "" secret_id uid "bao secret-id"
 
+    local use_karmah_vars=bao_vault,secret_id
     declare-action bsl  bao-secret-id-list    "list all secret-id's for an approle"
     declare-action bsi  bao-secret-id-info    "lookup the details of a secret-id for an approle in bao"
     declare-action bsc  bao-secret-id-create  "create a new secret-id for an approle in bao"
     declare-action bsd  bao-secret-id-destroy "destroy a new secret-id for an approle in bao"
     #declare-action ""   bao-secret-id-rm-all  "remove all known approle secret-id's"
 
+    add-action-karmah-vars secret-id-info    accessor,secret_value
+    add-action-karmah-vars secret-id-destroy accessor
+
     declare-action brl  bao-role-list      "list all approles"
     declare-action bri  bao-role-info      "lookup the info of an approle"
     declare-action brc  bao-role-create    "create a new approle"
 
-    declare-action bpi  bao-policy-info  "lookup the details of a bao policy"
-    declare-action bpc  bao-policy-create  "create a bao policy"
+    declare-action bpi  bao-policy-info    "lookup the details of a bao policy" \
+       bao_vault,bao_policy_name
+    declare-action bpc  bao-policy-create  "create a bao policy" \
+       bao_vault,bao_policy_name,bao_policy_path
+
+
+    add-karmah-var a  accessor  uid "bao secret-id/token accessor"
+    add-karmah-var "" secret_id uid "bao secret-id"
+    add-karmah-var "" bao_policy_name name "bao policy name"
+    add-karmah-var "" bao_policy_path path "bao policy path"
 }
 
 #######################
@@ -24,8 +34,6 @@ action::bao-secret-id-create() {
     log-info bao "created secret-id $secret_value"
 }
 action::bao-secret-id-info() {
-    use-karmah-var secret_value
-    use-karmah-var accessor
     local error
     exitcode=0
     local field=secret-id-accessor
@@ -59,7 +67,6 @@ action::bao-secret-id-list()   {
     fi
 }
 action::bao-secret-id-destroy() {
-    use-karmah-var accessor
     run-bao write auth/approle/role/$(bao-role-name)/secret-id-accessor/destroy secret_id_accessor=$accessor
 }
 action::bao-secret-id-update() {
@@ -111,6 +118,6 @@ action::bao-policy-create() {
 EOF
 }
 
-action::bao-policy-info() { run-verbose-cmd bao policy read read-kv-$postfix; }
+action::bao-policy-info() { run-verbose-cmd bao policy read $bao_policy_path; }
 
 # TODO: action::bao-role-login() { bao write auth/approle/login role_id= secret_id=... }
