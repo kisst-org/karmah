@@ -3,6 +3,7 @@ update::init-module() {
     add-module-summary "actions to update source files for rendering e.g. (helm values)"
     declare-action u update  "update source files with expressions from --update or --version"
     add-karmah-var V version '<tag>'  "specify version (image tag) to use for update"
+    add-karmah-vars-for-actions replicas,version update
     help_level=expert
     add-func-option u update '<expr>'  "apply a custom update"
 
@@ -16,8 +17,6 @@ update::init-module() {
 option::update()   { updates+=("$2"); argparse_parse_count=2; }
 
 action::update() {
-    use-karmah-var replicas
-    use-karmah-var version
     local any_updates=false
     if [[ ! -z ${version:-} ]]; then
         log-info update "update version to $version"
