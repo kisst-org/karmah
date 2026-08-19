@@ -84,28 +84,36 @@ _param-name() {
 
 list-help-items() {
     local topic topics="$*"
+    local keys="" key
+    for topic in $topics; do
+        for key in ${help_item_list[$topic]:-}; do
+            if $(help-is-visible $key); then
+                keys+=" $key"
+            fi
+        done
+    done
+    show-help-items $keys
+}
+
+
+show-help-items() {
+    local key keys="$@"
     local item len=1 slen=0
-    for topic in $topics; do
-    for key in ${help_item_list[$topic]:-}; do
-        if $(help-is-visible $key); then
-            local name=$(help-item-name $key)
-            local lname=$name
-            lname+="$(_param-name $key)"
-            if (( $len < ${#lname} )); then len=${#lname}; fi
-            local short=${help_item_short[$key]:-}
-            local shortlen=${#short}
-            if (( $slen < $shortlen)); then slen=$shortlen; fi
-        fi
+    for key in ${keys}; do
+        local name=$(help-item-name $key)
+        local lname=$name
+        lname+="$(_param-name $key)"
+        if (( $len < ${#lname} )); then len=${#lname}; fi
+        local short=${help_item_short[$key]:-}
+        local shortlen=${#short}
+        if (( $slen < $shortlen )); then slen=$shortlen; fi
     done
-    done
-    for topic in $topics; do
-    for key in ${help_item_list[$topic]:-}; do
+    for key in ${keys}; do
         local name=$(help-item-name $key)
         local lname=$name
         lname+="$(_param-name $key)"
         if $(help-is-visible $key); then
             printf "  %-${slen}s %-${len}s   %s\n" "${help_item_short[$key]:-}" "$lname" "${help_item_summary[$key]}"
         fi
-    done
     done
 }
