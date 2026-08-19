@@ -1,8 +1,8 @@
 kube::init-module() {
     add-module-summary "helper actions to work with kubernetes"
-    add-karmah-var R replicas nr  "specify number of replicas"
-    add-karmah-var r resource res "specify a resource"
-
+    add-karmah-var "" kube_config  "file" "The kube config file to be used (default means none)"
+    add-karmah-var "" kube_context "ctx"  "The kube context"
+    add-karmah-var "" kube_namespace "ns" "The kube namespace"
 
     # local action_params="..."
     declare-action kw   kube-watch        "watch target resources every 2 seconds"
@@ -30,11 +30,12 @@ kube::init-module() {
     declare-action kst kube-stern         "use stern to show logging of multiple pods"
     declare-action kgm kube-get-manifests "get current manifests from cluster to --to <path> (default) deployed/manifests"
 
-    add-karmah-var "" kube_config  "file" "The kube config file to be used (default means none)"
-    add-karmah-var "" kube_context "ctx"  "The kube context"
-    add-karmah-var "" kube_namespace "ns" "The kube namespace"
     #local_vars+=" kube_config kube_context kube_namespace"
     add-flag-option A all-namespaces  "search all namespaces"
+    add-karmah-var R replicas nr  "specify number of replicas"
+    add-karmah-var r resource res "specify a resource"
+    add-karmah-vars-for-actions replicas kube-scale
+    add-karmah-vars-for-actions resource kube-watch,kube-watch-window # TODO: almost all actions????
 }
 
 kubectl-options() {

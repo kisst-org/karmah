@@ -1,10 +1,10 @@
-# raftah: run actions for all targets
 
 actions::declare-vars() {
     declare -g tmp=false
     declare -g action_list=""
     declare -gA action_module=()
     declare -gA action_uses_unknown_args=()
+    declare -gA action_karmah_vars=()
 }
 
 actions::init-module() {
@@ -18,6 +18,21 @@ actions::init-module() {
 
 action::debug-print-action-var() { command::debug-print-var "$@"; }
 
+add-karmah-vars-for-actions() {
+    local vars=$1 actions=$2
+    if [[ $vars == "all-vars-known-in-module" ]]; then
+        vars=""
+        local v; for v in ${!karmah_var_module[@]}; do
+            if [[ ${karmah_var_module[$v]} == $module ]]; then
+                vars+=" $v"
+            fi
+        done
+    fi
+    local a; for a in ${actions//,/ }; do
+        action_karmah_vars[$a]+=" ${vars//, /}"
+    done
+}
+
 declare-action() {
     local short=$1 name=$2 summary="$3"
     log-trace actions "adding action: ${@}"
@@ -25,6 +40,7 @@ declare-action() {
         log-error action "adding action $name without function action::$name in module $module"
         exit 1
     fi
+    add-karmah-vars-for-actions ${use_karmah_vars:-all-vars-known-in-module} $name
     if [[ ! -z $short ]]; then argparse-add-short $short $name; fi
     action_module[$name]=$module
     if [[ ! -z ${action_params:-} ]]; then
@@ -106,7 +122,12 @@ show-help-about-action() {
     echo action $name: ${help_item_summary[$key]:-no summary}
     echo
     show-text-for-help-item $key
-    type action::$name| grep run-actions
+    # type action::$name| grep run-actions
+
+    printf "karmah-vars for $name:\n"
+    local v; for v in ${action_karmah_vars[$name]}; do
+        printf "  $v\n"
+    done
 
     if $(help-is-verbose); then
         printf "Code:\n"
