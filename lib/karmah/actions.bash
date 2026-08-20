@@ -43,9 +43,9 @@ set-karmah-vars-for-actions() {
 
 declare-action() {
     local short=$1 name=$2 summary="$3" vars="${4:-}"
-    log-trace actions "adding action: ${@}"
+    log-trace karmah.action "adding action: ${@}"
     if ! $(function-exists action::$name) ; then
-        log-error action "adding action $name without function action::$name in module $module"
+        log-error karmah.action "adding action $name without function action::$name in module $module"
         exit 1
     fi
     if [[ $vars == set-vars:* ]]; then
@@ -86,9 +86,9 @@ run-action() {
     local action=$(strip-action-prefix $1)
     if ${action_already_run[$action]:-false}; then
         if [[ $1 == always:$action ]]; then
-            log-verbose action "running $action again, because of always:prefix"
+            log-verbose karmah.action "running $action again, because of always:prefix"
         else
-            log-verbose action "skipping $action because it already has run"
+            log-verbose karmah.action "skipping $action because it already has run"
             return
         fi
     fi
@@ -98,9 +98,9 @@ run-action() {
     local params=""
     if ${action_uses_unknown_args[$action]:-false}; then
         params="$argparse_unknown_args $argparse_remaining_args"
-        log-verbose action "running $action for ${target_name:-$target_path} with params $params"
+        log-verbose karmah.action "running $action for ${target_name:-$target_path} with params $params"
     else
-        log-verbose action "running $action for ${target_name:-$target_path}"
+        log-verbose karmah.action "running $action for ${target_name:-$target_path}"
     fi
     local v; for v in ${action_karmah_vars[$action]}; do
         use-karmah-var $v
@@ -120,7 +120,7 @@ run-actions() {
 }
 run-pre-actions() {
     if $(get-option-value skip-pre-actions false); then
-        log-verbose actions "skipping pre-actions $*"
+        log-verbose karmah.action "skipping pre-actions $*"
     else
       run-actions "$@"
     fi
