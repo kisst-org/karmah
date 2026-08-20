@@ -55,7 +55,7 @@ use-karmah-var() {
     else
         value="$default"
     fi
-    log-debug karvar "setting karmah value $varname to $value"
+    log-debug karmah.var "setting karmah-var $varname to \"$value\""
     read $varname <<<"$value"
     # could also be declare -g $varname="$value"   or   eval $varname="$value"
 }

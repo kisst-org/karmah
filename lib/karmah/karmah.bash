@@ -36,6 +36,7 @@ command::run-karmah-actions() { run-func-for-targets run-karmah-actions; }
 run-karmah-actions() {
     declare -A action_already_run=()
     if [[ -e $target_path ]]; then
+        log-trace karmah.var "clearing karmah-vars $karmah_var_list $local_vars"
         local $karmah_var_list $local_vars # TODO remove local vars
         run-actions init-karmah
         local current_klass=${karmah_klass:-$karmah_type}
