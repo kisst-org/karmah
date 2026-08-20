@@ -12,8 +12,12 @@ option::show-script() {
     option::yes
 }
 
-run-verbose-cmd() {
-    local maincmd=$1 cmd="$@"
+run-info-cmd()    { run-log-cmd info    "$@"; }
+run-verbose-cmd() { run-log-cmd verbose "$@"; }
+run-debug-cmd()   { run-log-cmd debug   "$@"; }
+run-trace-cmd()   { run-log-cmd trace   "$@"; }
+run-log-cmd() {
+    local level=$1 maincmd=$2; shift; local cmd="$@"
     local logger=cmd.$maincmd
     if [[ ! -z ${module:-} ]]; then
         logger+=".${module}"
@@ -33,7 +37,7 @@ run-verbose-cmd() {
     fi
     local logmsg
     printf -v logmsg "%q " "$@"
-    log-at-level verbose $logger "$prefix$logmsg"
+    log-at-level $level $logger "$prefix$logmsg"
     cmd_exit_code=0
     if ${do_run}; then
         pipe=${cmd/*|/}
