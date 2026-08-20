@@ -18,7 +18,7 @@ run-debug-cmd()   { run-log-cmd debug   "$@"; }
 run-trace-cmd()   { run-log-cmd trace   "$@"; }
 run-log-cmd() {
     local level=$1 maincmd=$2; shift; local cmd="$@"
-    local logger=cmd.$maincmd
+    local logger=${use_logger:-cmd.$maincmd}
     if [[ ! -z ${module:-} ]]; then
         logger+=".${module}"
     fi
