@@ -24,7 +24,6 @@ karmah::init-module() {
     climah_prog=karmah
     default_action=render
     declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
-    declare-action "" clear-karmah "clear all karmah-vars"
     add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
     log-verbose karmah "default_karmah_type=${default_karmah_type:-base}"
     default_command=run-karmah-actions
@@ -37,18 +36,13 @@ command::run-karmah-actions() { run-func-for-targets run-karmah-actions; }
 run-karmah-actions() {
     declare -A action_already_run=()
     if [[ -e $target_path ]]; then
-        local a; for a in $action_list; do
-            local v; for v in ${action_karmah_vars[$a]}; do
-                local $v
-            done
-        done
+        local $karmah_var_list $local_vars # TODO remove local vars
         run-actions init-karmah
         local current_klass=${karmah_klass:-$karmah_type}
         local func=$(get-option-value skip-if)
         if [[ ! -z $func ]]; then
             if $($func); then
                 log-info karmah "skipping $target_path because $func returned true"
-                run-actions clear-karmah
                 return
             fi
         fi
@@ -56,11 +50,10 @@ run-karmah-actions() {
         if [[ ! -z $onlyfunc ]]; then
             if ! $($onlyfunc); then
                 log-info karmah "skipping $target_path because $onlyfunc returned false"
-                run-actions clear-karmah
                 return
             fi
         fi
-        run-actions "$action_list,clear-karmah"
+        run-actions "$action_list"
     else
         log-info karmah "skipping non existing path $target_path"
     fi
@@ -98,12 +91,6 @@ action::init-karmah() {
     log-verbose karmah "calling ${karmah_type}::init-karmah"
     ${karmah_type}::init-karmah
 }
-action::clear-karmah() {
-    local vars_to_clear="${used_karmah_vars:-} ${local_vars:-}"
-    log-debug karmah "clearing karmah-vars: ${vars_to_clear}"
-    unset ${vars_to_clear}
-}
-
 
 load-karmah-file() {
     declare -g karmah_type
