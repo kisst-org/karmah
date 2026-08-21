@@ -38,13 +38,16 @@ kube::init-module() {
     # add-karmah-vars-for-actions resource kube-watch,kube-watch-window,kube-es-sync # TODO: almost all actions????
 }
 
-kubectl-options() {
-    local cfg=${kube_config:-default}
+kubectl-options() { base::kube-cluster-kubectl-options $kube_cluster; }
+base::kube-cluster-kubectl-options() {
+    local cluster=$1
+    local context="$(kall-klass-method $kubectl_options_klass kube-cluster-context $cluster)"
+    local cfg="$(kall-klass-method  $kubectl_options_klass kube-cluster-config  $cluster)"
     local opt=""
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
     fi
-    opt+="--context ${kube_context} -n $kube_namespace"
+    opt+="--context ${context} -n $kube_namespace"
     echo $opt
 }
 
