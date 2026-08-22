@@ -31,7 +31,6 @@ kube::init-module() {
     declare-action kst kube-stern         "use stern to show logging of multiple pods"
     declare-action kgm kube-get-manifests "get current manifests from cluster to --to <path> (default) deployed/manifests"
 
-    #local_vars+=" kube_config kube_context kube_namespace"
     add-flag-option A all-namespaces  "search all namespaces"
     add-karmah-var R replicas nr  "specify number of replicas"
     add-karmah-vars-for-actions replicas kube-scale
