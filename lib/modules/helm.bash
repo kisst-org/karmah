@@ -1,10 +1,12 @@
 
 helm::init-module() {
     add-module-summary "actions to work with helm"
+    use_karmah_vars=kube_cluster,kube_namespace
     declare-action hd helm-diff           "run diff for target vs helm deployed manifests"
     declare-action HU helm-upgrade        "run helm upgrade --install for target"
     help_level=expert
-    declare-action hpv helm-print-value  "print the value of a path in  helm values"
+    declare-action hpv helm-print-value  "print the value of a path in  helm values" \
+        set-vars:json_path
     declare-action "" helm-plugin-diff    "run helm diff plugin for target"
     declare-action HI helm-install        "deprecated: run helm upgrade --install for target"
     declare-action "" helm-uninstall      "run helm uninstall for target"
@@ -168,7 +170,6 @@ action::helm-diff() {
 }
 
 action::helm-print-value() {
-    use-karmah-var json_path
     helm-get-path-value $json_path
 }
 
@@ -209,16 +210,14 @@ helm-update-value-path() {
 }
 
 helm-cluster-options() {
-    use-karmah-var kube_config
-    use-karmah-var kube_context
-    use-karmah-var kube_namespace
-    local cfg=${kube_config:-default}
+    local cluster=${1:-$kube_cluster}
+    local context="$(kall-klass-method $kubectl_options_klass kube-cluster-context $cluster)"
+    local cfg="$(kall-klass-method  $kubectl_options_klass kube-cluster-config  $cluster)"
     local opt=""
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
     fi
-    opt+=" --kube-context ${kube_context}"
-    opt+=" --namespace $kube_namespace"
+    opt+="--kube-context ${context} -n $kube_namespace"
     echo $opt
 }
 
