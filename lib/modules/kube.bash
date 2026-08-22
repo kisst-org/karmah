@@ -1,9 +1,9 @@
 kube::init-module() {
     add-module-summary "helper actions to work with kubernetes"
-    add-karmah-var "" kube_config    file "The kube config file to be used (default means none)"
-    add-karmah-var "" kube_context   ctx  "The kube context"
+    add-karmah-var "" kube_cluster   name "The kubernetes cluster to be used"
     add-karmah-var "" kube_namespace ns   "The kube namespace"
-    add-karmah-var r  resource       res  "specify a resource"
+    add-karmah-var r  kube_resource  res  "specify a resource"
+    use_karmah_vars=kube_cluster,kube_namespace,kube_resource:=
 
     # local action_params="..."
     declare-action kw   kube-watch        "watch target resources every 2 seconds"
@@ -86,7 +86,7 @@ action::kube-get-manifests() {
 
 action::kube-backup() {
     local manifest_dir="$(get-option-value to "tmp/backup-$(date -Idate)/$kube_context")" # TODO: better option than context
-    local res; for res in ${resource//,/ }; do
+    local res; for res in ${kube_resource//,/ }; do
         log-info kube.backup "backing up $res to $manifest_dir"
         run-kubectl get $res "${@}" -o yaml| split-yaml-items-into-files
     done
@@ -181,7 +181,7 @@ kube-calc-resource-names() {
 kube-calc-resource() {
     local kube_action=$1 defaults="${2:-}"
     local result=""
-    local res; for res in ${resource//,/ }; do
+    local res; for res in ${kube_resource//,/ }; do
         result+=" $(kall-method calc-resource-${kube_action} $res)"
     done
     result=$(echo $result) # trim spaces
