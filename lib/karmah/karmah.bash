@@ -31,6 +31,7 @@ karmah::init-module() {
     default_command=run-karmah-actions
     add-value-option "" only-if     func "run target only if a function returns true"
     add-value-option "" skip-if     func "skip target if a function returns true"
+    add-help-topic karvar karmah-var "show all karmah-vars"
 }
 
 command::version() { echo karmah version: $karmah_version; }
