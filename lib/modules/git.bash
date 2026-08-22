@@ -3,16 +3,20 @@ git::init-module() {
     add-module-summary "actions to work with git"
     help_level=expert
     declare-action gd git-diff     "shows the changes to source and rendered manifests with git"
-    declare-action ga git-add      "adds the changes to source and rendered manifests to git, for committing"
-    declare-action gc git-commit   "commits the changes to source and rendered manifests to git"
-    declare-action gr git-restore  "restores the changed files (source and rendered manifests)"
+    declare-action ga git-add      "adds the changes to source and rendered manifests to git, for committing" \
+        set-vars:git_used_paths,git_changed_paths
+    declare-action gc git-commit   "commits the changes to source and rendered manifests to git" \
+        set-vars:git_commit_message
+    declare-action gr git-restore  "restores the changed files (source and rendered manifests)" \
+        set-vars:git_changed_paths
     declare-action "" git-pull     "pull the latest version of the repo"
-    add-value-option m   message        msg   "set message to use with git commit"
-    add-flag-option Q quiet-diff "do not show the output of diff"
-    add-flag-option U commit-used-paths "also commit any files that might have been used"
-    local_vars+=" used_paths changed_paths git_commit_message"
+    add-value-option m   message            msg   "set message to use with git commit"
+    add-flag-option  Q   git-quiet-diff           "do not show the output of diff"
+    add-flag-option  U   git-add-used-paths       "add (and thus commit) any paths that might have been used, next to changed paths"
+    add-karmah-var   ""  git_used_paths     path  "a list of paths that were used, and might need to be committed"
+    add-karmah-var   ""  git_changed_paths  path  "a list of paths that were changed, and might need to be committed"
+    add-karmah-var   ""  git_commit_message msg   "the message for a git commit, often automatically filled"
 }
-
 change-paths() {
     local p; for p in "$@"; do
         if [[ ! $p == tmp/* ]]; then
@@ -20,7 +24,7 @@ change-paths() {
         fi
     done
 }
-use-paths()    { used_paths+=" $*"; }
+use-paths()    { git_used_paths+=" $*"; }
 
 git-add-message() {
     if [[ -z ${git_commit_message:-} ]] then
@@ -39,7 +43,7 @@ action::git-pull() {
 }
 
 action::git-diff() {
-    local quiet_diff=$(get-option-value quiet-diff false)
+    local quiet_diff=$(get-option-value git-quiet-diff false)
     log-info git "git-diff ${changed_paths:-} ..."
     if [[ -z ${changed_paths:-} ]]; then
         log-warn git "no paths specfied to diff"
@@ -61,7 +65,7 @@ action::git-add() {
     local paths_to_add="${changed_paths:-}"
     local params=""
     if $commit_used_paths; then
-        paths_to_add+=" ${used_paths:-}"
+        paths_to_add+=" ${git_used_paths:-}"
         # only show ellipses to keep log short
         params=" ..."
     fi

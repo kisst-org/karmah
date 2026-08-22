@@ -21,18 +21,15 @@ helm::init-module() {
     add-karmah-var "" json_path "path" "the path to show from helm values"
     add-flag-option "" bg "run helm-update in the background"
 
-    local_vars+=" helm_template_command"
-    local_vars+=" helm_value_files"
-    local_vars+=" helm_chart"
-    local_vars+=" helm_chart_repo"
-    local_vars+=" helm_chart_version"
-    local_vars+=" helm_chart_location"
-    local_vars+=" helm_install_command"
-    local_vars+=" helm_atomic_wait"
-    local_vars+=" helm_release"
-    local_vars+=" helm_wait_timeout"
-    local_vars+=" helm_post_renderer"
-    local_vars+=" helm_value_already_updated"
+    add-karmah-var "" helm_value_files val      "a list of the values files"
+    add-karmah-var "" helm_chart val            "the chart to use"
+    add-karmah-var "" helm_chart_repo val       "the repository of the chart"
+    add-karmah-var "" helm_chart_version val    "the version of the chart"
+    add-karmah-var "" helm_chart_location val   "where the chart is stored, can be local, pulled, ..."
+    add-karmah-var "" helm_atomic_wait val      "deprecated"
+    add-karmah-var "" helm_release val          "the release name"
+    add-karmah-var "" helm_wait_timeout val     "the timeout waiting for an upgrade or install"
+    add-karmah-var "" helm_post_renderer val    "a post renderer to be run"
 }
 
 add-optional-helm-values-file() {
@@ -208,10 +205,7 @@ helm-update-value-path() {
     local val_file=${helm_value_files[@]:(-1)}
     log-verbose helm "updating $path to \"$value\""
     run-verbose-cmd yq -i $path=\"$value\"   $val_file
-    if ! ${helm_value_already_updated:-false}; then
-        change-paths $val_file
-        helm_value_already_updated=true
-    fi
+    change-paths $val_file
 }
 
 helm-cluster-options() {
