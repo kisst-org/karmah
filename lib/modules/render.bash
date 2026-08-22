@@ -1,8 +1,12 @@
 
 render::init-module() {
     add-module-summary "actions to render manifests"
-    local_vars+=" renderer manifest_dir already_rendered sort_env_vars"
     declare -g to_dir
+
+    add-karmah-var "" renderer tool "tool used to render (e.g. helm, kustomize or ytt)"
+    add-karmah-var "" manifest_dir dir "directory where manifests are rendered"
+    # TODO: redesign manifest_dir that is input to many actions, and --to
+
     declare-action r render "render manifests to --to <path> (default tmp/manifests)"
 
     help_level=expert
@@ -21,11 +25,7 @@ option::with()      { with_dir="${2%%/}"; argparse_parse_count=2; }
 action::render() {
     run-pre-actions update
     local tmp=$(get-option-value tmp false)
-    # if $tmp; then
-        # manifest_dir="${to_dir:-tmp/manifests}/${target_name}"
-    # else
     manifest_dir="${to_dir:-tmp/manifests}/${target_name}"
-    # fi
     log-info render "render with ${renderer} to ${manifest_dir}"
     run-verbose-cmd rm -rf ${manifest_dir}
     run-verbose-cmd mkdir -p ${manifest_dir}
@@ -33,7 +33,6 @@ action::render() {
     for r in ${renderer//,/ }; do
         render-$r
     done
-    already_rendered=true
 }
 
 action::render-rm() {
