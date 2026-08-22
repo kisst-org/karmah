@@ -4,7 +4,7 @@ git::init-module() {
     help_level=expert
     declare-action gd git-diff     "shows the changes to source and rendered manifests with git"
     declare-action ga git-add      "adds the changes to source and rendered manifests to git, for committing" \
-        set-vars:git_used_paths,git_changed_paths
+        set-vars:git_used_paths:=,git_changed_paths:=
     declare-action gc git-commit   "commits the changes to source and rendered manifests to git" \
         set-vars:git_commit_message
     declare-action gr git-restore  "restores the changed files (source and rendered manifests)" \

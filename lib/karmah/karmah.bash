@@ -26,7 +26,8 @@ karmah::init-module() {
     default_action=render
     add-karmah-var "" karmah_type name "define the karmah_type to define extra vars"
     add-karmah-var "" disable_target bool  "flag to signal that the target should be skipped"
-    declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
+    declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function" \
+        set-vars:karmah_type,disable_target:=false
     log-verbose karmah "default_karmah_type=${default_karmah_type:-base}"
     default_command=run-karmah-actions
     add-value-option "" only-if     func "run target only if a function returns true"
