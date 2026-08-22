@@ -1,7 +1,6 @@
 
 karmah-var::declare-vars() {
     declare -gA karmah_var_module=()
-    declare -gA karmah_var_option_value=()
 }
 
 karmah-var::init-module() {
@@ -34,7 +33,7 @@ parse-if-karmah-var() {
         argparse_parse_count=2
         value=$2
     fi
-    karmah_var_option_value[$varname]="$value"
+    option_value[$varname]="$value"
 }
 
 use-karmah-var() {
@@ -44,8 +43,8 @@ use-karmah-var() {
         exit 1
     fi
     local default_varname=default_$varname
-    if [[ ! -z ${karmah_var_option_value[$varname]:-} ]]; then
-        value="${karmah_var_option_value[$varname]}"
+    if [[ ! -z ${option_value[$varname]:-} ]]; then
+        value="${option_value[$varname]}"
     elif [[ ! -z $(get-karmah-var-from-env $varname) ]]; then
         value="$(get-karmah-var-from-env $varname)"
     elif [[ ! -z ${!varname:-} ]]; then
