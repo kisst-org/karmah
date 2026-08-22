@@ -2,14 +2,22 @@ klass::declare-vars() {
     declare -gA klass_parent=()
 }
 
-init-parent-klass() {
+declare-parent-klass() {
   local parent=$1
   if [[ -z ${current_klass:-} ]]; then
     log-error klass "current_klass not defined when setting parent $parent"
     exit 1
   fi
   klass_parent[$current_klass]=$parent
-  current_klass=$parent $parent::init-klass
+}
+
+init-parent-klass() {
+  local parent=$1
+  declare-parent-klass $parent
+  log-trace klass "init klass $parent"
+  if $(function-exists $parent::init-klass); then
+      current_klass=$parent $parent::init-klass
+  fi
 }
 
 kall-method() { kall-klass-method $current_klass "$@"; }
@@ -17,7 +25,7 @@ kall-klass-method() {
   local klass=$1 method=$2; shift 2
   local func=$(find-klass-method $klass $method)
   if [[ -z $func ]]; then
-    log-error klass "could not find method $method in klass $klass to call with $*"
+    log-error klass "could not call method $klass::$method $*"
     exit 1
   fi
   log-debug klass "kalling klass method $func $*"
