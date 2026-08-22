@@ -181,7 +181,8 @@ kube-calc-resource-names() {
 kube-calc-resource() {
     local kube_action=$1 defaults="${2:-}"
     local result=""
-    local res; for res in ${kube_resource//,/ }; do
+    local resources=${kube_resource:-default}
+    local res; for res in ${resources//,/ }; do
         result+=" $(kall-method calc-resource-${kube_action} $res)"
     done
     result=$(echo $result) # trim spaces
