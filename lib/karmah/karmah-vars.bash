@@ -37,7 +37,8 @@ parse-if-karmah-var() {
 }
 
 use-karmah-var() {
-    local varname=$1 default="${2:-}"
+    local vardef="$1" default="${2:-}"
+    local varname=${vardef/:=*/}
     if [[ -z ${karmah_var_module[$varname]:-} ]]; then
         log-error karmah "code refers to unknown karmah-var $varname"
         exit 1
@@ -53,6 +54,14 @@ use-karmah-var() {
         value="${!default_varname}"
     else
         value="$default"
+    fi
+    if [[ -z $value ]]; then
+        if [[ $vardef == $varname ]]; then # no :=...
+            log-warn karmah.var "mandatory karmah-var $varname for action $action is empty"
+            # exit 1 # TODO, should it be possible to enable this
+        else
+            value="${vardef/*:=/}"
+        fi
     fi
     log-debug karmah.var "setting karmah-var $varname to \"$value\""
     read $varname <<<"$value"
