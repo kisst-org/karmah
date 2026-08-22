@@ -44,6 +44,8 @@ run-karmah-actions() {
         local $karmah_var_list $local_vars # TODO remove local vars
         run-actions init-karmah
         local current_klass=${karmah_klass:-$karmah_type}
+        log-verbose karmah "calling ${karmah_type}::init-karmah"
+        ${karmah_type}::init-karmah
         local func=$(get-option-value skip-if)
         if [[ ! -z $func ]]; then
             if $($func); then
@@ -65,12 +67,13 @@ run-karmah-actions() {
 }
 
 init-parent-karmah() {
-    local kls=$1
-    log-verbose karmah "calling ${kls}::init-karmah"
-    if $(function-exists $kls::init-klass); then
-        current_klass=$kls $kls::init-klass
+    local parent=$1
+    log-verbose karmah "init karmah of parent klass ${parent}"
+    if $(function-exists $parent::init-klass); then
+        current_klass=$parent $parent::init-klass
     else
-        $kls::init-karmah # for backward compatibility
+        declare-parent-klass $parent
+        current_klass=$parent $parent::init-karmah # for backward compatibility
     fi
 }
 
@@ -93,8 +96,6 @@ action::init-karmah() {
         log-info actions "skipping $target_path, because disable_target is set to true"
         return
     fi
-    log-verbose karmah "calling ${karmah_type}::init-karmah"
-    ${karmah_type}::init-karmah
 }
 
 load-karmah-file() {
