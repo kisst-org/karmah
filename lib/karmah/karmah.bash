@@ -13,18 +13,20 @@ karmah-main() {
 
 
 karmah::declare-vars() {
-    declare -g local_vars="karmah_type target_name disable_target"
+    declare -g local_vars=""
     declare -g default_karmah_type
 }
 
 karmah::init-module() {
+    add-module-summary "mechanism to set vars per target to be used by actions"
     add-command "" version ""  "show version of karmah"
     help_level=expert
     add-command run run-karmah-actions "" "run one or more actions for all targets (default command)"
     climah_prog=karmah
     default_action=render
+    add-karmah-var "" karmah_type name "define the karmah_type to define extra vars"
+    add-karmah-var "" disable_target bool  "flag to signal that the target should be skipped"
     declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function"
-    add-karmah-var "" karmah_type "<name>" "override any karmah_type declared in karmah files and init-karmah"
     log-verbose karmah "default_karmah_type=${default_karmah_type:-base}"
     default_command=run-karmah-actions
     add-value-option "" only-if     func "run target only if a function returns true"
