@@ -49,8 +49,8 @@ action::bao-logout() { rm -f $bao_token_file; } # TODO: revoke token
 
 action::bao-login-vars() {
     local opt=$($bao_calc_vault_options_func $bao_vault)
-    local bao_addr=$($bao_vault_klass::bao-vault-addr $bao_vault)
-    local bao_namespace=$($bao_vault_klass::bao-vault-ns $bao_vault)
+    local bao_addr=$(kall-method bao-vault-addr $bao_vault)
+    local bao_namespace=$(kall-method bao-vault-ns $bao_vault)
     log-info bao "export the following vars. This can be done with:"
     log-info bao "    eval \$($climah_prog_path $target_path bao-login-vars -q)"
     echo export VAULT_ADDR=${bao_addr}
@@ -83,7 +83,7 @@ calc-bao-token() {
 run-bao() { VAULT_TOKEN=$(${calc_bao_token_func:-calc-bao-token} $bao_vault) run-bao-tokenless "$@"; }
 run-bao-tokenless() {
     local cmd=$1; shift  # the cmd can be multiple words, like "kv list" that need to come before the options
-    local opt=$(kall-klass-method $bao_vault_klass bao-vault-options $bao_vault)
+    local opt=$(kall-method bao-vault-options $bao_vault)
     run-verbose-cmd bao $cmd $opt "$@"
 }
 
@@ -127,8 +127,8 @@ action::bao-path-copy-from () {
 }
 base::bao-vault-options() {
     local vaultname=$1
-    local ns="$(kall-klass-method $bao_vault_klass bao-vault-ns $vaultname)"
-    local addr="$(kall-klass-method $bao_vault_klass bao-vault-addr $vaultname)"
+    local ns="$(kall-method   bao-vault-ns   $vaultname)"
+    local addr="$(kall-method bao-vault-addr $vaultname)"
     if [[ -z $ns ]]; then
         echo "-address $addr"
     else

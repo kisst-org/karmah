@@ -40,8 +40,8 @@ kube::init-module() {
 kubectl-options() { base::kube-cluster-kubectl-options $kube_cluster; }
 base::kube-cluster-kubectl-options() {
     local cluster=$1
-    local context="$(kall-klass-method $kubectl_options_klass kube-cluster-context $cluster)"
-    local cfg="$(kall-klass-method  $kubectl_options_klass kube-cluster-config  $cluster)"
+    local context="$(kall-method kube-cluster-context $cluster)"
+    local cfg="$(kall-method kube-cluster-config $cluster)"
     local opt=""
     if [[ $cfg != default ]]; then
         opt="--kubeconfig $cfg " # extra space at end
