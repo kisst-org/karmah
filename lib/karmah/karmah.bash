@@ -65,12 +65,12 @@ run-karmah-actions() {
 }
 
 init-parent-karmah() {
-    local typ=$1
-    log-verbose karmah "calling ${typ}::init-karmah"
-    if $(function-exists $typ::init-klass); then
-        current_klass=$typ $typ::init-klass
+    local kls=$1
+    log-verbose karmah "calling ${kls}::init-karmah"
+    if $(function-exists $kls::init-klass); then
+        current_klass=$kls $kls::init-klass
     else
-        $typ::init-karmah # for backward compatibility
+        $kls::init-karmah # for backward compatibility
     fi
 }
 
