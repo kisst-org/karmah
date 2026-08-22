@@ -77,7 +77,7 @@ _param-name() {
         if [[ $param == ... ]]; then
             echo " ..."
         else
-            echo " $param"
+            echo " <$param>"
         fi
     fi
 }

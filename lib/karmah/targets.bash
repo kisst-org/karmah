@@ -8,7 +8,7 @@ targets::init-module() {
     declare-action pt print-target "print all target paths"
     help_level=expert
     add-func-option s subdir dir "add subdir to list of subdirs (can be comma separated list)"
-    add-karmah-var "" target_name "<name>" "a (symbolic) name of a target, often used in logging, and messages"
+    add-karmah-var "" target_name name "a (symbolic) name of a target, often used in logging, and messages"
 }
 
 parse-if-target() {
