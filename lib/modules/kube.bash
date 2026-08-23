@@ -4,6 +4,7 @@ kube::init-module() {
     add-karmah-var "" kube_namespace ns   "The kube namespace"
     add-karmah-var r  kube_resource  res  "specify a resource"
     use_karmah_vars=kube_cluster,kube_namespace,kube_resource:=
+    add-option-fallback kube-namespace namespace ns
 
     # local action_params="..."
     declare-action kw   kube-watch        "watch target resources every 2 seconds"
