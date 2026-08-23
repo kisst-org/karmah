@@ -143,6 +143,7 @@ show-help-about-action() {
     printf "karmah-vars for $name:\n"
     local keys=""
     local v; for v in ${action_karmah_vars[$name]}; do
+        v=${v/:=*/}
         keys+=" ${karmah_var_module[$v]}::karmah-var:--${v//_/-}"
     done
     show-help-items $keys
