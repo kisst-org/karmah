@@ -1,6 +1,7 @@
 
 options::declare-vars() {
     declare -gA option_func=()
+    declare -gA option_fallback=()
     declare -gA option_value=()
 }
 
@@ -8,12 +9,31 @@ options::init-module() {
     append-argparse-func parse-if-option
 }
 
+add-option-fallback() {
+    local opt=$1; shift
+    local fb; for fb in ${*//,/ }; do
+        option_fallback[$opt]+=" $fb"
+        option_func[$fb]=${option_func[$opt]}
+    done
+}
+
 options-show-help() { list-help-items option; }
 
 get-option-value() {
     local name=$1 default=${2:-}
     local opt_name=${name//_/-}
-    echo "${option_value[$opt_name]:-$default}"
+    local prefix=""
+    local opt; for opt in $opt_name ${option_fallback[$opt_name]:-}; do
+        local val="${option_value[$opt]:-}"
+        # log-trace option "checking option $opt"
+        if [[ ! -z $val ]]; then
+            echo "$val"
+            log-trace option "found option $opt $prefix with value \"$val\""
+            return
+        fi
+        prefix="as fallback for $opt_name"
+    done
+    echo $default
 }
 
 set-option-value() {
