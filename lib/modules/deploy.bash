@@ -30,7 +30,7 @@ action::deploy() {
     local to_dir="${deploy_dir:-deployed/manifests}"
     git-add-message "deploy $target_name"
     log-info deploy "deploying $target_name with actions ${deploy_actions// /,}"
-    run-actions $deploy_actions # This is depends on karmah_type
+    run-actions $deploy_actions # This is depends on karmah_klass
 }
 
 action::plan() {

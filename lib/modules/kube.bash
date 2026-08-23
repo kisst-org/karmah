@@ -163,7 +163,7 @@ action::kube-scale() {
 
 kube-calc-replicas() {
     if [[  $replicas == default ]]; then
-        ${karmah_type}::kube-default-replicas
+        ${karmah_klass}::kube-default-replicas
     else
         echo $replicas
     fi

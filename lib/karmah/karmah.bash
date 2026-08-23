@@ -14,7 +14,7 @@ karmah-main() {
 
 karmah::declare-vars() {
     declare -g local_vars=""
-    declare -g default_karmah_type
+    declare -g default_karmah_klass
 }
 
 karmah::init-module() {
@@ -24,11 +24,11 @@ karmah::init-module() {
     add-command run run-karmah-actions "" "run one or more actions for all targets (default command)"
     climah_prog=karmah
     default_action=render
-    add-karmah-var "" karmah_type name "define the karmah_type to define extra vars"
+    add-karmah-var "" karmah_klass name "defines extra vars and methods"
     add-karmah-var "" disable_target bool  "flag to signal that the target should be skipped"
     declare-action "" init-karmah "load *.karmah init file(s) and run ::init-karmah function" \
-        set-vars:karmah_type,disable_target:=false
-    log-verbose karmah "default_karmah_type=${default_karmah_type:-base}"
+        set-vars:karmah_klass,disable_target:=false
+    log-verbose karmah "default_karmah_klass=${default_karmah_klass:-base}"
     default_command=run-karmah-actions
     add-value-option "" only-if     func "run target only if a function returns true"
     add-value-option "" skip-if     func "skip target if a function returns true"
@@ -43,9 +43,10 @@ run-karmah-actions() {
         log-trace karmah.var "clearing karmah-vars $karmah_var_list $local_vars"
         local $karmah_var_list $local_vars # TODO remove local vars
         run-actions init-karmah
-        local current_klass=${karmah_klass:-$karmah_type}
-        log-verbose karmah "calling ${karmah_type}::init-karmah"
-        ${karmah_type}::init-karmah
+        : ${karmah_klass:=${karmah_type:-}}
+        local current_klass=${karmah_klass}
+        log-verbose karmah "calling ${karmah_klass}::init-karmah"
+        ${karmah_klass}::init-karmah
         local func=$(get-option-value skip-if)
         if [[ ! -z $func ]]; then
             if $($func); then
@@ -77,7 +78,7 @@ init-parent-karmah() {
     fi
 }
 
-base::init-karmah() { log-verbose karmah "using base karmah_type initializer"; }
+base::init-karmah() { log-verbose karmah "using base karmah_klass initializer"; }
 
 action::init-karmah() {
     if [[ -f $target_path ]]; then
@@ -99,7 +100,7 @@ action::init-karmah() {
 }
 
 load-karmah-file() {
-    declare -g karmah_type
+    declare -g karmah_klass
     if [[ ! -f "${karmah_file}" ]]; then
         log-info karmah "skipping $karmah_file"
         return
@@ -110,11 +111,11 @@ load-karmah-file() {
     log-verbose karmah "loading $karmah_file"
     source ${karmah_file}
     common-karmah
-    use-karmah-var karmah_type
+    use-karmah-var karmah_klass
 }
 
 common-karmah() {
-    local force_karmah_type=$(get-option-value force-karmah-type) # TODO karmah_var will do this
+    local force_karmah_klass=$(get-option-value force-karmah-type) # TODO karmah_var will do this
     use-paths ${karmah_dir}
     local common_karmah_file=($common_dir/common*.karmah)
     if [[ -f $common_karmah_file ]]; then
