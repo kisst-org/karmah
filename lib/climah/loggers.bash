@@ -141,3 +141,16 @@ log-info()    { log-at-level info $1 "$2"; }
 log-verbose() { log-at-level verbose $1 "$2"; }
 log-debug()   { log-at-level debug $1 "$2"; }
 log-trace()   { log-at-level trace $1 "$2"; }
+
+
+function print-stack-trace() {
+    local offset=${1:-1}
+    for idx in "${!FUNCNAME[@]}"; do
+        if [[ $idx -lt $offset ]]; then continue; fi # do not print this function
+        local file="${BASH_SOURCE[$idx]}"
+        file=${file/*\/bin\//bin/}
+        local func="${FUNCNAME[$idx]}"
+        local line="${BASH_LINENO[$(( idx - 1 ))]}"
+        printf '\tat %s:%s\t%s\n' "${file/*\/lib\//lib/}" "$line" "$func"
+    done
+}
