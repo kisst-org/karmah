@@ -3,7 +3,7 @@ kube::init-module() {
     add-karmah-var "" kube_cluster   name "The kubernetes cluster to be used"
     add-karmah-var "" kube_namespace ns   "The kube namespace"
     add-karmah-var r  kube_resource  res  "specify a resource"
-    use_karmah_vars=kube_cluster,kube_namespace,kube_resource:=
+    use_karmah_vars=kube_cluster,kube_namespace,kube_resource
     add-option-fallback kube-namespace namespace ns
 
     # local action_params="..."
@@ -35,6 +35,9 @@ kube::init-module() {
     add-flag-option A all-namespaces  "search all namespaces"
     add-karmah-var R replicas nr  "specify number of replicas"
     add-karmah-vars-for-actions replicas kube-scale
+
+    add-karmah-var "" kube_exec_cmd cmd "command to run with kube-exec"
+    add-karmah-vars-for-actions kube_exec_cmd kube-exec
     # add-karmah-vars-for-actions resource kube-watch,kube-watch-window,kube-es-sync # TODO: almost all actions????
 }
 
@@ -122,7 +125,7 @@ action::kube-watch-close() {
    run-verbose-cmd kitten @ close-window --match cmdline:watch
 }
 action::kube-exec() {
-    run-kubectl exec $(kube-calc-resource kube-exec) "${@:--- sh}"
+    run-kubectl exec $(kube-calc-resource kube-exec) -- ${kube_exec_cmd:-ps aux}
 }
 action::kube-env() {
     run-kubectl exec $(kube-calc-resource kube-exec) -- sh -c env
