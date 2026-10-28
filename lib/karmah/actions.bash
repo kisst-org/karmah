@@ -144,7 +144,11 @@ show-help-about-action() {
     local keys=""
     local v; for v in ${action_karmah_vars[$name]}; do
         v=${v/:=*/}
-        keys+=" ${karmah_var_module[$v]}::karmah-var:--${v//_/-}"
+        local opt=${v//_/-}
+        keys+=" ${karmah_var_module[$v]}::karmah-var:--${opt}"
+        if [[ ! -z ${option_fallback[$opt]:-} ]]; then
+            echo fallback\(s\) for $v are ${option_fallback[$opt]}
+        fi
     done
     show-help-items $keys
 
