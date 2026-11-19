@@ -110,7 +110,10 @@ action::bao-path-diff() {
         action-log info "identical $bao_other_vault/$bao_other_path and $bao_vault/$bao_path"
     else
         action-log info "different $bao_other_vault/$bao_other_path and $bao_vault/$bao_path"
-        diff <(echo "$json_from" | yq -P ) <(echo "$json_to" | yq -P ) || true
+        diff -w <(echo "$json_from" | yq -P ) <(echo "$json_to" | yq -P ) || true
+        if [[ $? == 0 ]]; then
+            echo "    probably only json whitespace formatting differences"
+        fi
         # diff -r <(printf "%s\n" "$yaml1") <(printf "%s\n" "$yaml2")
     fi
 }
